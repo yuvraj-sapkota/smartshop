@@ -16,7 +16,7 @@ export default function Navbar() {
     <>
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur shadow-md">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between ">
           
           {/* Logo */}
           <h1 className="text-xl font-bold text-white">SmartShop</h1>
