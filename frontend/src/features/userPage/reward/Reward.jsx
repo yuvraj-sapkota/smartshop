@@ -28,12 +28,19 @@ const Reward = () => {
       accessorKey: "mrp",
       cell: (row) => <span className="text-gray-800">Rs {row.mrp}</span>,
     },
+    {
+      header: "Total Price",
+      accessorKey: "totalPrice",
+      cell: (row) => (
+        <span className="text-gray-800 font-medium">Rs {row.totalPrice}</span>
+      ),
+    },
 
     {
       header: "Reward Type",
       accessorKey: "rewardType",
       cell: (row) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium `}>
+        <span className={`px-2 py-1 rounded-full text-sm font-medium `}>
           {row.rewardType}
         </span>
       ),
@@ -58,6 +65,7 @@ const Reward = () => {
       product: "Pen",
       quantity: 2,
       mrp: 200,
+      totalPrice: 400,
       rewardType: "Cashback",
       datetime: "2026-04-23 10:30 AM",
     },
@@ -68,6 +76,7 @@ const Reward = () => {
       product: "Pen",
       quantity: 2,
       mrp: 200,
+      totalPrice: 400,
       rewardType: "user",
       datetime: "2026-04-23 10:30 AM",
     },
@@ -77,7 +86,8 @@ const Reward = () => {
       reward: 20,
       product: "Pen",
       quantity: 2,
-      mrp: 200,
+      mrp:  200,
+      totalPrice: 400,
       rewardType: "seller",
       datetime: "2026-04-23 10:30 AM",
     },

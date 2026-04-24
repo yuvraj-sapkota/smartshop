@@ -24,9 +24,9 @@ export default function StoreCard({ store }) {
       </div>
 
       {/* Buttons */}
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-between ">
         <button className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-100 transition">
-          View Details
+          Details
         </button>
         <button className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition">
           Contact

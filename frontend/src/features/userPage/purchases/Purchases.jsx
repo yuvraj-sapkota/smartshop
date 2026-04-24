@@ -9,6 +9,7 @@ export default function TransactionTable() {
       product: "Product A",
       quantity: 2,
       totalMrp: 500,
+       totalPrice: 400,
       cashback: 50,
       seller: "ABC Store",
       datetime: "2026-04-23 10:30 AM",
@@ -19,6 +20,7 @@ export default function TransactionTable() {
       product: "Product B",
       quantity: 1,
       totalMrp: 1000,
+       totalPrice: 400,
       cashback: 100,
       seller: "XYZ Shop",
       datetime: "2026-04-23 12:15 PM",
@@ -42,6 +44,11 @@ export default function TransactionTable() {
       header: "MRP",
       accessorKey: "totalMrp",
       cell: (row) => <span>Rs {row.totalMrp}</span>,
+    },
+    {
+      header: "Total Price",
+      accessorKey: "totalPrice",
+      cell: (row) => <span className="font-medium">Rs {row.totalPrice}</span>,
     },
 
     {

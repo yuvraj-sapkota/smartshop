@@ -23,6 +23,47 @@ export default function Landing() {
         { name: "Shoes", price: 3000 },
       ],
     },
+    {
+      id: 1,
+      name: "ABC Store",
+      location: "Kathmandu",
+      featuredItems: [
+        { name: "Pen", price: 10 },
+        { name: "iPhone 13", price: 100000 },
+        { name: "Notebook", price: 50 },
+      ],
+    },
+    {
+      id: 2,
+      name: "XYZ Mart",
+      location: "Pokhara",
+      featuredItems: [
+        { name: "Copy", price: 40 },
+        { name: "Bag", price: 1500 },
+        { name: "Shoes", price: 3000 },
+      ],
+    },
+    {
+      id: 1,
+      name: "ABC Store",
+      location: "Kathmandu",
+      featuredItems: [
+        { name: "Pen", price: 10 },
+        { name: "iPhone 13", price: 100000 },
+        { name: "Notebook", price: 50 },
+      ],
+    },
+    {
+      id: 2,
+      name: "XYZ Mart",
+      location: "Pokhara",
+      featuredItems: [
+        { name: "Copy", price: 40 },
+        { name: "Bag", price: 1500 },
+        { name: "Shoes", price: 3000 },
+      ],
+    },
+   
   ];
 
   return (
