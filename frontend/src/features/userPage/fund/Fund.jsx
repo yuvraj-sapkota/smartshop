@@ -102,7 +102,7 @@ const Fund = () => {
                 <span className="font-semibold">Name:</span> Ram Prasad Poudel
               </p>
               <p>
-                <strong>Account:</strong> 000208987654321
+                <span>Account:</span> 000208987654321
               </p>
               {/* 
             {bankDetails.qr && (
