@@ -5,13 +5,15 @@ const AffiliatedUser = () => {
   const data = [
     {
       sn: 1,
-      storeName: "ABC Store",
+      store: "ABC Store",
+      name: "ishor",
       totalSales: 5000,
       datetime: "2026-04-23 10:30 AM",
     },
     {
       sn: 2,
-      storeName: "XYZ Shop",
+      store: "XYZ Shop",
+      name: "krish",
       totalSales: 12000,
       datetime: "2026-04-23 12:15 PM",
     },
@@ -24,10 +26,17 @@ const AffiliatedUser = () => {
     },
 
     {
-      header: "Store Name",
-      accessorKey: "storeName",
+      header: "Store ",
+      accessorKey: "store",
       cell: (row) => (
-        <span className="font-medium text-gray-800">{row.storeName}</span>
+        <span className="font-medium text-gray-800">{row.store}</span>
+      ),
+    },
+    {
+      header: "Name ",
+      accessorKey: "name",
+      cell: (row) => (
+        <span className="font-medium text-gray-800">{row.name}</span>
       ),
     },
 

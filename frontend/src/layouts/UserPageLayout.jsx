@@ -15,22 +15,26 @@ const UserPageLayout = () => {
         {/* ================= MAIN CONTENT ================= */}
         <main className="flex-1 flex flex-col overflow-hidden ">
           {/*  Header */}
-          <div className=" flex items-center justify-between  md:justify-end gap-4  p-4  bg-white   shadow">
-            <button
-              onClick={() => setMobileOpen(true)}
-              className=" rounded-lg hover:bg-gray-100 transition-all duration-300 ease-in-out md:hidden"
-            >
-              <Menu className="w-6 h-6 text-gray-700" />
-            </button>
+          <div className="  bg-white   ">
+            <div className="flex items-center justify-between  md:justify-end gap-4  p-4  max-w-7xl shadow">
+              <button
+                onClick={() => setMobileOpen(true)}
+                className=" rounded-lg hover:bg-gray-100 transition-all duration-300 ease-in-out md:hidden"
+              >
+                <Menu className="w-6 h-6 text-gray-700" />
+              </button>
 
-            <div className="bg-gray-200 h-8 w-8 flex items-center justify-center rounded-full">
-              <User size={20} />
+              <div className="bg-gray-200 h-8 w-8 flex items-center justify-center rounded-full">
+                <User size={20} />
+              </div>
             </div>
           </div>
 
           {/* Outlet Content */}
-          <div className="flex-1 overflow-y-auto p-4">
-            <Outlet />
+          <div className="flex-1 overflow-y-auto ">
+            <div className=" max-w-7xl p-4">
+              <Outlet />
+            </div>
           </div>
         </main>
       </div>

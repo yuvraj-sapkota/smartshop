@@ -33,13 +33,7 @@ const Reward = () => {
       header: "Reward Type",
       accessorKey: "rewardType",
       cell: (row) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            row.rewardType === "Cashback"
-              ? "bg-green-100 text-green-600"
-              : "bg-yellow-100 text-yellow-600"
-          }`}
-        >
+        <span className={`px-2 py-1 rounded-full text-xs font-medium `}>
           {row.rewardType}
         </span>
       ),
@@ -58,6 +52,7 @@ const Reward = () => {
 
   const data = [
     {
+      _id: 101,
       sn: 1,
       reward: 20,
       product: "Pen",
@@ -67,30 +62,23 @@ const Reward = () => {
       datetime: "2026-04-23 10:30 AM",
     },
     {
+      _id: 102,
       sn: 1,
       reward: 20,
       product: "Pen",
       quantity: 2,
       mrp: 200,
-      rewardType: "Cashback",
+      rewardType: "user",
       datetime: "2026-04-23 10:30 AM",
     },
     {
+      _id: 103,
       sn: 1,
       reward: 20,
       product: "Pen",
       quantity: 2,
       mrp: 200,
-      rewardType: "Cashback",
-      datetime: "2026-04-23 10:30 AM",
-    },
-    {
-      sn: 1,
-      reward: 20,
-      product: "Pen",
-      quantity: 2,
-      mrp: 200,
-      rewardType: "Cashback",
+      rewardType: "seller",
       datetime: "2026-04-23 10:30 AM",
     },
   ];
