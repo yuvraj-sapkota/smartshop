@@ -6,14 +6,14 @@ const AffiliatedUser = () => {
     {
       sn: 1,
       store: "ABC Store",
-      name: "ishor",
+      name: "Ishor",
       totalSales: 5000,
       datetime: "2026-04-23 10:30 AM",
     },
     {
       sn: 2,
       store: "XYZ Shop",
-      name: "krish",
+      name: "Krish",
       totalSales: 12000,
       datetime: "2026-04-23 12:15 PM",
     },

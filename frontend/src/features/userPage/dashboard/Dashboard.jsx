@@ -70,11 +70,16 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-4 gap-4">
-      {stats.map((item, index) => (
-        <StatCard key={item._id} item={item} />
-      ))}
-    </div>
+    <>
+      <h1 className="font-bold text-xl md:text-2xl text-primary mb-4">
+        Dashboard
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-4 gap-4">
+        {stats.map((item, index) => (
+          <StatCard key={item._id} item={item} />
+        ))}
+      </div>
+    </>
   );
 };
 

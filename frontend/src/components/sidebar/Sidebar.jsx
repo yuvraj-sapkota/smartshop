@@ -13,6 +13,7 @@ import {
   Gift,
   Wallet,
   Users,
+  ShoppingBasket,
 } from "lucide-react";
 import MobileSidebar from "./sidebarComponents/MobileSidebar";
 import DesktopSidebar from "./sidebarComponents/DesktopSidebar";
@@ -21,8 +22,9 @@ export default function Sidebar({ mobileOpen, setMobileOpen }) {
   const [openLogout, setOpenLogout] = useState(false);
 
   const menuItems = [
+    { path: "shop", label: "Shop Now", icon: ShoppingBag },
     { path: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { path: "purchases", label: "Purchases", icon: ShoppingBag },
+    { path: "purchases", label: "Purchases", icon: ShoppingBasket },
     { path: "reward", label: "Reward", icon: Gift },
     { path: "fund", label: "Fund", icon: Wallet },
     { path: "affiliateduser", label: "Affiliate user", icon: Users },

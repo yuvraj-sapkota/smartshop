@@ -7,6 +7,7 @@ import Purchases from "./features/userPage/purchases/Purchases";
 import Reward from "./features/userPage/reward/Reward";
 import Fund from "./features/userPage/fund/Fund";
 import AffiliatedUser from "./features/userPage/affiliatedUser/AffiliatedUser";
+import ShopNow from "./features/userPage/shopNow/ShopNow";
 
 const App = () => {
   return (
@@ -16,7 +17,8 @@ const App = () => {
           <Route path="/" element={<Landing />} />
 
           <Route path="/user" element={<UserPage />}>
-            <Route index element={<Navigate to="dashboard" />} />
+            <Route index element={<Navigate to="shop" />} />
+            <Route path="shop" element={<ShopNow />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="purchases" element={<Purchases />} />
             <Route path="reward" element={<Reward />} />

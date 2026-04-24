@@ -42,7 +42,7 @@ const Navbar = () => {
 
             {/* Login */}
             <Link
-              to="/user/dashboard"
+              to="/user/shop"
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
             >
               Login
@@ -111,7 +111,10 @@ const Navbar = () => {
           </p>
 
           {/* Login */}
-          <Link to="/user/dashboard" className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition">
+          <Link
+            to="/user/shop"
+            className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
+          >
             Login
           </Link>
         </div>

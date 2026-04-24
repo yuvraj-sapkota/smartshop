@@ -153,7 +153,7 @@ export default function BankModal({ open, setOpen }) {
         {/* ACTION */}
         <button
           onClick={handleSubmit}
-          className="w-full bg-primary text-white py-2 rounded-lg mt-5 hover:bg-primary-hover transition"
+          className="w-full bg-primary text-white py-2 rounded-lg mt-5 hover:bg-primary-hover transition cursor-pointer"
         >
           Save Details
         </button>

@@ -12,7 +12,7 @@ const StatCard = ({ item }) => {
 
       {/* Content */}
       <div className="flex flex-col gap-4 pr-10">
-        <p className="text-gray-500 text-xs sm:text-sm truncate">
+        <p className="text-gray-500  truncate">
           {item.label}
         </p>
         <h2 className="text-lg sm:text-2xl font-semibold text-gray-800">

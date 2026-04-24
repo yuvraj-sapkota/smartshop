@@ -16,7 +16,7 @@ const UserPageLayout = () => {
         <main className="flex-1 flex flex-col overflow-hidden ">
           {/*  Header */}
           <div className="  bg-white   ">
-            <div className="flex items-center justify-between  md:justify-end gap-4  p-4  max-w-7xl shadow">
+            <div className="flex items-center justify-between  md:justify-end gap-4  p-4 shadow">
               <button
                 onClick={() => setMobileOpen(true)}
                 className=" rounded-lg hover:bg-gray-100 transition-all duration-300 ease-in-out md:hidden"
@@ -32,7 +32,7 @@ const UserPageLayout = () => {
 
           {/* Outlet Content */}
           <div className="flex-1 overflow-y-auto ">
-            <div className=" max-w-7xl p-4">
+            <div className=" p-4">
               <Outlet />
             </div>
           </div>
