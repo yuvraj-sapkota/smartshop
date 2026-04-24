@@ -53,7 +53,7 @@ const AffiliatedUser = () => {
   return (
     <>
       <h1 className="font-bold text-xl md:text-2xl text-primary mb-4">
-        Affiliated User
+        Affiliated Users
       </h1>
       <DataTable columns={columns} data={data} />
     </>

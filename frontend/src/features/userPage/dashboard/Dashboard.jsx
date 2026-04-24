@@ -1,4 +1,4 @@
-import StatCard from "../../../components/statCard";
+// import StatCard from "../../../components/statCard";
 import {
   Wallet,
   Clock,
@@ -7,6 +7,7 @@ import {
   Gift,
   Users,
 } from "lucide-react";
+import StatCard from "../../../components/StatCard";
 
 const Dashboard = () => {
   const stats = [
