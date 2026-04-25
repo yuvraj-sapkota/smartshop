@@ -3,14 +3,20 @@ import { Menu, User } from "lucide-react";
 import Sidebar from "../components/sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
 
-const UserPageLayout = () => {
+const AppLayout = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const role = localStorage.getItem("role");
 
   return (
     <>
       <div className="flex h-screen bg-gray-50">
-        <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+        <Sidebar
+          role={role}
+          mobileOpen={mobileOpen}
+          setMobileOpen={setMobileOpen}
+        />
 
         {/* ================= MAIN CONTENT ================= */}
         <main className="flex-1 flex flex-col overflow-hidden ">
@@ -42,4 +48,4 @@ const UserPageLayout = () => {
   );
 };
 
-export default UserPageLayout;
+export default AppLayout;

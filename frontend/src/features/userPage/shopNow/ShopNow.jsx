@@ -14,7 +14,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 2,
+      id: 3,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [
@@ -24,7 +24,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 1,
+      id: 4,
       name: "ABC Store",
       location: "Kathmandu",
       featuredItems: [
@@ -34,7 +34,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 2,
+      id: 5,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [
@@ -44,7 +44,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 1,
+      id: 6,
       name: "ABC Store",
       location: "Kathmandu",
       featuredItems: [
@@ -54,7 +54,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 2,
+      id: 7,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [
@@ -64,7 +64,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 1,
+      id: 8,
       name: "ABC Store",
       location: "Kathmandu",
       featuredItems: [
@@ -74,7 +74,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 2,
+      id: 9,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [
@@ -84,7 +84,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 1,
+      id: 10,
       name: "ABC Store",
       location: "Kathmandu",
       featuredItems: [
@@ -94,7 +94,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 2,
+      id: 11,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [
@@ -104,7 +104,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 1,
+      id: 12,
       name: "ABC Store",
       location: "Kathmandu",
       featuredItems: [
@@ -114,7 +114,7 @@ const ShopNow = () => {
       ],
     },
     {
-      id: 2,
+      id: 13,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [

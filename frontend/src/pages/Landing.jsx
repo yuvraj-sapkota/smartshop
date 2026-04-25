@@ -24,7 +24,7 @@ export default function Landing() {
       ],
     },
     {
-      id: 1,
+      id: 3,
       name: "ABC Store",
       location: "Kathmandu",
       featuredItems: [
@@ -34,7 +34,7 @@ export default function Landing() {
       ],
     },
     {
-      id: 2,
+      id: 4,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [
@@ -44,7 +44,7 @@ export default function Landing() {
       ],
     },
     {
-      id: 1,
+      id: 5,
       name: "ABC Store",
       location: "Kathmandu",
       featuredItems: [
@@ -54,7 +54,7 @@ export default function Landing() {
       ],
     },
     {
-      id: 2,
+      id: 6,
       name: "XYZ Mart",
       location: "Pokhara",
       featuredItems: [

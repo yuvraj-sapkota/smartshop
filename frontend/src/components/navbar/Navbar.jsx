@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { Menu, Search, X, Plus } from "lucide-react";
+import { Menu, Search, X, Plus, User } from "lucide-react";
 import Logo from "../logo/Logo";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const inputRef = useRef(null);
@@ -36,17 +37,29 @@ const Navbar = () => {
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center gap-3">
             {/* Plus Button */}
-            <button className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+            {/* <button className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
               <Plus size={20} />
-            </button>
+            </button> */}
 
             {/* Login */}
-            <Link
-              to="/user/shop"
+            <button
+              onClick={() => {
+                localStorage.setItem("role", "user");
+                navigate("/user/shop");
+              }}
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
             >
               Login
-            </Link>
+            </button>
+            <button
+              onClick={() => {
+                localStorage.setItem("role", "seller");
+                navigate("/seller/seller-dashboard");
+              }}
+              className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
+            >
+              Become a seller
+            </button>
           </div>
 
           {/* Mobile Icons */}
@@ -111,12 +124,24 @@ const Navbar = () => {
           </p>
 
           {/* Login */}
-          <Link
-            to="/user/shop"
+          <button
+            onClick={() => {
+              localStorage.setItem("role", "user");
+              navigate("/seller/seller-dashboard");
+            }}
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >
             Login
-          </Link>
+          </button>
+          <button
+            onClick={() => {
+              localStorage.setItem("role", "seller");
+              navigate("/seller/seller-dashboard");
+            }}
+            className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
+          >
+            Become a seller
+          </button>
         </div>
       </div>
     </>

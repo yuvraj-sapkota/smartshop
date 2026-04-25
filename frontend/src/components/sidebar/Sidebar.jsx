@@ -1,34 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Outlet } from "react-router-dom";
-import {
-  LayoutDashboard,
-  UtensilsCrossed,
-  Calendar,
-  QrCode,
-  Settings,
-  Menu,
-  X,
-  ShoppingBag,
-  Gift,
-  Wallet,
-  Users,
-  ShoppingBasket,
-} from "lucide-react";
+
 import MobileSidebar from "./sidebarComponents/MobileSidebar";
 import DesktopSidebar from "./sidebarComponents/DesktopSidebar";
+import { menuConfig } from "../../config/menuConfig";
 
-export default function Sidebar({ mobileOpen, setMobileOpen }) {
+export default function Sidebar({ mobileOpen, setMobileOpen, role }) {
   const [openLogout, setOpenLogout] = useState(false);
 
-  const menuItems = [
-    { path: "shop", label: "Shop Now", icon: ShoppingBag },
-    { path: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { path: "purchases", label: "Purchases", icon: ShoppingBasket },
-    { path: "reward", label: "Reward", icon: Gift },
-    { path: "fund", label: "Fund", icon: Wallet },
-    { path: "affiliateduser", label: "Affiliate user", icon: Users },
-  ];
+  const menuItems = menuConfig[role] || [];
 
   return (
     <div className="flex h-screen bg-gray-50">
