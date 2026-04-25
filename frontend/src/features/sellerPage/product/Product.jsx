@@ -30,7 +30,15 @@ const Product = () => {
       product: "Notebook",
       price: 100,
       commission: 10,
-      status: "paid",
+      status: "approved",
+    },
+    {
+      _id: 3,
+      sn: 2,
+      product: "Notebook",
+      price: 100,
+      commission: 10,
+      status: "rejected",
     },
   ];
 
@@ -68,7 +76,9 @@ const Product = () => {
       cell: (row) => (
         <span
           className={`px-2 py-1 rounded-full  font-semibold ${
-            row.status === "paid"
+            row.status === "rejected"
+              ? "bg-red-100 text-red-600"
+              : row.status === "approved"
               ? "bg-green-100 text-green-600"
               : "bg-yellow-100 text-yellow-600"
           }`}
