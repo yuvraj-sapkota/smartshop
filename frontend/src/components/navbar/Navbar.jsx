@@ -127,7 +127,7 @@ const Navbar = () => {
           <button
             onClick={() => {
               localStorage.setItem("role", "user");
-              navigate("/seller/seller-dashboard");
+              navigate("/user/dashboard");
             }}
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >

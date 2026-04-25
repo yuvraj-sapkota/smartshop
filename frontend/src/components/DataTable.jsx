@@ -6,7 +6,7 @@ const DataTable = ({ columns, data }) => {
     <>
       <div>
         {/* Scroll wrapper for mobile */}
-        <div className="overflow-x-auto rounded-md shadow-md border border-gray-200 bg-white">
+        <div className="overflow-x-auto  rounded-md shadow-md border border-gray-200 bg-white">
           <table className="min-w-[700px] w-full text-sm">
             {/* HEADER */}
             <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">

@@ -1,4 +1,3 @@
-// import StatCard from "../../../components/statCard";
 import {
   Wallet,
   Clock,

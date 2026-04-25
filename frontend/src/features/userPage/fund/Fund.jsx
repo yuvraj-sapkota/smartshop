@@ -135,6 +135,7 @@ const Fund = () => {
         </div>
       </div>
 
+      {/* modal  */}
       {open && <BankModal open={open} setOpen={setOpen} />}
     </>
   );
