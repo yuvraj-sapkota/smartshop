@@ -16,7 +16,7 @@ const Commission = () => {
     },
     {
       _id: 102,
-      sn: 1,
+      sn: 2,
       commission: 5,
       mrp: 200,
       product: "Pen",
@@ -26,7 +26,7 @@ const Commission = () => {
     },
     {
       _id: 103,
-      sn: 1,
+      sn: 3,
       commission: 5,
       mrp: 200,
       product: "Pen",

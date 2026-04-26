@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import DataTable from "../../../components/DataTable";
-import BankModal from "./fundComponents/BankModal";
 import { FileWarning } from "lucide-react";
+import FormModal from "../../../components/FormModal";
 
 const Fund = () => {
   const [open, setOpen] = useState(false);
@@ -61,11 +61,36 @@ const Fund = () => {
     },
   ];
 
+  const bankDetails = [
+    {
+      name: "bankName",
+      type: "text",
+      placeholder: "Bank Name / esewa",
+      label: "Enter Bank Name",
+    },
+    {
+      name: "fullName",
+      type: "text",
+      placeholder: "Full Name",
+      label: "Enter Account Holder's Name",
+    },
+    {
+      name: "accountNumber",
+      type: "text",
+      placeholder: "Account Number ",
+      label: "Enter Account Number",
+    },
+
+    {
+      name: "qr",
+      type: "file",
+      label: "upload Qr code",
+    },
+  ];
+
   return (
     <>
       <div className="space-y-10">
-        {/* bank details setup garna ko lagi auta button rakhna paryo yaha */}
-
         <div className="flex items-center justify-between ">
           <h1 className="font-bold text-xl md:text-2xl text-primary ">
             Fund Management
@@ -87,7 +112,6 @@ const Fund = () => {
         </div>
 
         {/* user bank details  */}
-
         <div>
           <h2 className="font-semibold text-lg mb-3 text-gray-700">
             Bank Details
@@ -116,6 +140,7 @@ const Fund = () => {
           </div>
         </div>
 
+        {/* Available Balance  */}
         <div className="flex justify-between items-center bg-white shadow-md border border-gray-200 rounded-lg p-4">
           <div className="flex flex-col gap-2">
             <p className="text-gray-500 text-sm">Available Balance</p>
@@ -126,6 +151,7 @@ const Fund = () => {
           </button>
         </div>
 
+        {/* withdrawal history  */}
         <div>
           <h1 className="font-semibold text-lg text-gray-700 mb-3">
             Withdrawal History
@@ -136,7 +162,16 @@ const Fund = () => {
       </div>
 
       {/* modal  */}
-      {open && <BankModal open={open} setOpen={setOpen} />}
+      {open && (
+        <FormModal
+          open={open}
+          setOpen={setOpen}
+          fields={bankDetails}
+          title="Payment Details"
+          btnText="Submit"
+          onSubmit={(data) => console.log(data)}
+        />
+      )}
     </>
   );
 };
