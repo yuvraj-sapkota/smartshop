@@ -118,10 +118,16 @@ const SellerFund = () => {
       label: "Enter Account Name",
     },
     {
+      name: "time",
+      type: "text",
+      placeholder: "screenshot time ",
+      label: "Enter screenshot time ",
+    },
+    {
       name: "screenshot",
       type: "file",
       placeholder: "Screenshot",
-      label: "upload Screenshot",
+      label: "Upload Screenshot",
     },
   ];
   return (
