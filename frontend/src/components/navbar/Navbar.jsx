@@ -60,6 +60,15 @@ const Navbar = () => {
             >
               Become a seller
             </button>
+            <button
+              onClick={() => {
+                localStorage.setItem("role", "admin");
+                navigate("/admin/admin-dashboard");
+              }}
+              className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
+            >
+              Admin
+            </button>
           </div>
 
           {/* Mobile Icons */}
@@ -141,6 +150,15 @@ const Navbar = () => {
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >
             Become a seller
+          </button>
+          <button
+            onClick={() => {
+              localStorage.setItem("role", "admin");
+              navigate("/admin/admin-dashboard");
+            }}
+            className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
+          >
+            Admin
           </button>
         </div>
       </div>

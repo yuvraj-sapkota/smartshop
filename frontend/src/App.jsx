@@ -15,6 +15,15 @@ import SellerFund from "./features/sellerPage/sellerFund/SellerFund";
 import Sales from "./features/sellerPage/sales/Sales";
 import Commission from "./features/sellerPage/commission/Commission";
 import AppLayout from "./layouts/AppLayout";
+import AdminDashboard from "./features/adminSection/adminDashboard/AdminDashboard";
+import AdminProducts from "./features/adminSection/products/AdminProducts";
+import SalesHistory from "./features/adminSection/salesHistory/SalesHistory";
+import SellerCommission from "./features/adminSection/sellerCommission/SellerCommission";
+import UserCommission from "./features/adminSection/userCommission/UserCommission";
+import AdminFund from "./features/adminSection/adminFund/AdminFund";
+import Users from "./features/adminSection/users/Users";
+import Sellers from "./features/adminSection/sellers/Sellers";
+import RewardRation from "./features/adminSection/rewardRatio/RewardRation";
 
 const App = () => {
   return (
@@ -32,17 +41,40 @@ const App = () => {
             <Route path="purchases" element={<Purchases />} />
             <Route path="reward" element={<Reward />} />
             <Route path="fund" element={<Fund />} />
-            <Route path="affiliateduser" element={<AffiliatedUser />} />
+            <Route path="affiliated-user" element={<AffiliatedUser />} />
           </Route>
 
           <Route path="/seller" element={<AppLayout />}>
             <Route index element={<Navigate to="seller-dashboard" />} />
             <Route path="seller-dashboard" element={<SellerDashboard />} />
             <Route path="create-order" element={<CreateOrder />} />
-            <Route path="product" element={<Product />} />
+            <Route path="products" element={<Product />} />
             <Route path="sales" element={<Sales />} />
             <Route path="commission" element={<Commission />} />
             <Route path="seller-fund" element={<SellerFund />} />
+          </Route>
+
+          {/* admin routes */}
+          <Route path="/admin" element={<AppLayout />}>
+            <Route index element={<Navigate to="admin-dashboard" />} />
+
+            <Route path="admin-dashboard" element={<AdminDashboard />} />
+
+            <Route path="products" element={<AdminProducts />} />
+
+            <Route path="sales-history" element={<SalesHistory />} />
+
+            <Route path="seller-commission" element={<SellerCommission />} />
+
+            <Route path="user-commission" element={<UserCommission />} />
+
+            <Route path="fund" element={<AdminFund />} />
+
+            <Route path="users" element={<Users />} />
+
+            <Route path="sellers" element={<Sellers />} />
+
+            <Route path="reward-ratio" element={<RewardRation />} />
           </Route>
         </Routes>
       </BrowserRouter>

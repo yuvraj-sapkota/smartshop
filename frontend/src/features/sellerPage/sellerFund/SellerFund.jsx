@@ -135,12 +135,6 @@ const SellerFund = () => {
       <div className="space-y-8 ">
         <div className="flex items-center justify-between">
           <PageHeader text="Fund Management" />
-          <button
-            onClick={() => setOpen(true)}
-            className="bg-white text-primary border border-primary px-5 py-2 rounded-lg hover:bg-primary hover:text-white transition cursor-pointer"
-          >
-            Add Payment Details
-          </button>
         </div>
 
         {/* Admin's Bank details  */}
@@ -178,7 +172,10 @@ const SellerFund = () => {
             <p className="text-gray-500 text-sm">Due Amount</p>
             <h2 className="text-xl font-bold text-gray-800">Rs 100</h2>
           </div>
-          <button className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition">
+          <button
+            onClick={() => setOpen(true)}
+            className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition"
+          >
             Pay due
           </button>
         </div>
@@ -188,7 +185,7 @@ const SellerFund = () => {
           <h1 className="font-semibold text-lg text-gray-700 mb-3">
             Payment History
           </h1>
-
+          /
           <DataTable columns={depositColumns} data={depositData} />
         </div>
       </div>
