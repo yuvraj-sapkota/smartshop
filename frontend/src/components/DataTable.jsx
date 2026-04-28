@@ -12,7 +12,10 @@ const DataTable = ({ columns, data }) => {
             <thead className="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">
               <tr>
                 {columns.map((col) => (
-                  <th key={col.header} className="p-4 text-left font-medium">
+                  <th
+                    key={col.header}
+                    className="py-4 px-3 text-left font-medium whitespace-nowrap"
+                  >
                     {col.header}
                   </th>
                 ))}
@@ -37,7 +40,7 @@ const DataTable = ({ columns, data }) => {
                     className="border-t border-gray-100 hover:bg-gray-50 transition"
                   >
                     {columns.map((col) => (
-                      <td key={col.header} className="p-4">
+                      <td key={col.header} className="py-4  px-3 whitespace-nowrap">
                         {col.cell ? col.cell(row) : row[col.accessorKey]}
                       </td>
                     ))}

@@ -46,7 +46,7 @@ const Product = () => {
     {
       header: "SN",
       accessorKey: "sn",
-      cell: (row) => <span className="ont-medium text-gray-700">{row.sn}</span>,
+      cell: (row) => <span className="font-medium text-gray-700">{row.sn}</span>,
     },
     {
       header: "Product",
