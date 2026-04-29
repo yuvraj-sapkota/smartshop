@@ -185,7 +185,7 @@ const SellerFund = () => {
           <h1 className="font-semibold text-lg text-gray-700 mb-3">
             Payment History
           </h1>
-          /
+          
           <DataTable columns={depositColumns} data={depositData} />
         </div>
       </div>
