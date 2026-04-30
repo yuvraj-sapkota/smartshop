@@ -93,8 +93,10 @@ const Sellers = () => {
   ];
   return (
     <>
-      <PageHeader text="Sellers" />
-      <DataTable data={storeData} columns={storeColumns} />
+      <div className="space-y-10">
+        <PageHeader text="Sellers" />
+        <DataTable data={storeData} columns={storeColumns} />
+      </div>
     </>
   );
 };

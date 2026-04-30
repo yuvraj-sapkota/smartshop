@@ -71,7 +71,7 @@ const UserCommission = () => {
   ];
   return (
     <>
-      <div className="space-y-8 ">
+      <div className="space-y-10 ">
         <PageHeader text="User Commmission" />
         <DataTable data={rewardData} columns={rewardColumns} />
       </div>

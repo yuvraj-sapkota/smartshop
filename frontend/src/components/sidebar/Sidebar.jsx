@@ -10,7 +10,6 @@ export default function Sidebar({ mobileOpen, setMobileOpen, role }) {
   const [openLogout, setOpenLogout] = useState(false);
 
   const menuItems = menuConfig[role] || [];
-  console.log(menuItems);
 
   return (
     <div className="flex h-screen bg-gray-50">

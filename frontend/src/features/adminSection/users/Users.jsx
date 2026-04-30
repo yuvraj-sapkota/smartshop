@@ -86,8 +86,10 @@ const Users = () => {
   ];
   return (
     <>
-      <PageHeader text="Users" />
-      <DataTable columns={userColumns} data={userData} />
+      <div className="space-y-10">
+        <PageHeader text="Users" />
+        <DataTable columns={userColumns} data={userData} />
+      </div>
     </>
   );
 };
