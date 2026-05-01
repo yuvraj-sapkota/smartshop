@@ -9,6 +9,7 @@ const Sales = () => {
       sn: 1,
       product: "Pen",
       qty: 2,
+      price: 100,
       totalPrice: 200,
       buyer: "Ram",
       commission: 5,
@@ -20,6 +21,7 @@ const Sales = () => {
       product: "Pen",
       qty: 2,
       totalPrice: 200,
+      price: 100,
       buyer: "Ram",
       commission: 5,
       time: "2026-04-25 11:00 AM",
@@ -38,6 +40,7 @@ const Sales = () => {
     },
 
     { header: "Qty", accessorKey: "qty" },
+    { header: "Price", accessorKey: "price" },
 
     {
       header: "Total Price",

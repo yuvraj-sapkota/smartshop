@@ -58,6 +58,14 @@ const SellerDashboard = () => {
       bg: "bg-orange-100",
       text: "text-orange-600",
     },
+    {
+      _id: 7,
+      label: "Pending Product",
+      value: 11,
+      icon: Package,
+      bg: "bg-yellow-100",
+      text: "text-yellow-600",
+    },
   ];
   return (
     <>

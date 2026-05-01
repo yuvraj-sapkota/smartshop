@@ -12,8 +12,9 @@ const UserCommission = () => {
       quantity: 2,
       price: 20,
       totalPrice: 40,
-      referredBy: "Ram Store",
-      earnBy: "John",
+      seller: "Shyam Store",
+      buyer: "Ram ",
+      earnBy: "sita",
       datetime: "2026-04-28 11:00 AM",
     },
   ];
@@ -54,9 +55,14 @@ const UserCommission = () => {
       ),
     },
     {
-      header: "Referred By",
-      accessorKey: "referredBy",
-      cell: (row) => <span>{row.referredBy}</span>,
+      header: "Seller",
+      accessorKey: "seller",
+      cell: (row) => <span>{row.seller}</span>,
+    },
+    {
+      header: "Buyer",
+      accessorKey: "buyer",
+      cell: (row) => <span>{row.buyer}</span>,
     },
     {
       header: "Earn By",

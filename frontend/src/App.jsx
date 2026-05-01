@@ -45,7 +45,9 @@ const App = () => {
           </Route>
 
           <Route path="/seller" element={<AppLayout />}>
-            <Route index element={<Navigate to="seller-dashboard" />} />
+            <Route index element={<Navigate to="shop" />} />
+            <Route path="shop" element={<ShopNow />} />
+
             <Route path="seller-dashboard" element={<SellerDashboard />} />
             <Route path="create-order" element={<CreateOrder />} />
             <Route path="products" element={<Product />} />
@@ -56,18 +58,13 @@ const App = () => {
 
           {/* admin routes */}
           <Route path="/admin" element={<AppLayout />}>
-            <Route index element={<Navigate to="admin-dashboard" />} />
-
+            <Route index element={<Navigate to="shop" />} />
+            <Route path="shop" element={<ShopNow />} />
             <Route path="admin-dashboard" element={<AdminDashboard />} />
-
             <Route path="products" element={<AdminProducts />} />
-
             <Route path="sales-history" element={<SalesHistory />} />
-
             <Route path="seller-commission" element={<SellerCommission />} />
-
             <Route path="user-commission" element={<UserCommission />} />
-
             <Route path="fund" element={<AdminFund />} />
 
             <Route path="users" element={<Users />} />

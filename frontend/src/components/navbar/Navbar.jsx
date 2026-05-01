@@ -54,7 +54,7 @@ const Navbar = () => {
             <button
               onClick={() => {
                 localStorage.setItem("role", "seller");
-                navigate("/seller/seller-dashboard");
+                navigate("/seller/shop");
               }}
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
             >
@@ -63,7 +63,7 @@ const Navbar = () => {
             <button
               onClick={() => {
                 localStorage.setItem("role", "admin");
-                navigate("/admin/admin-dashboard");
+                navigate("/admin/shop");
               }}
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
             >
@@ -145,7 +145,7 @@ const Navbar = () => {
           <button
             onClick={() => {
               localStorage.setItem("role", "seller");
-              navigate("/seller/seller-dashboard");
+              navigate("/seller/shop");
             }}
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >
@@ -154,7 +154,7 @@ const Navbar = () => {
           <button
             onClick={() => {
               localStorage.setItem("role", "admin");
-              navigate("/admin/admin-dashboard");
+              navigate("/admin/shop");
             }}
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >

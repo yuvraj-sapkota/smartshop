@@ -17,6 +17,7 @@ export const menuConfig = {
     { path: "affiliated-user", label: "Affiliate user", icon: Users },
   ],
   seller: [
+    { path: "shop", label: "Shop Now", icon: ShoppingBag },
     { path: "seller-dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "create-order", label: "Create Order", icon: ShoppingBag },
     { path: "products", label: "Products", icon: ShoppingBasket },
@@ -26,6 +27,7 @@ export const menuConfig = {
   ],
 
   admin: [
+    { path: "shop", label: "Shop Now", icon: ShoppingBag },
     { path: "admin-dashboard", label: "Dashboard", icon: LayoutDashboard },
 
     { path: "products", label: "Products", icon: ShoppingBasket },

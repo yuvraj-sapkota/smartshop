@@ -19,6 +19,7 @@ const SellerFund = () => {
       datetime: "2026-04-24 10:00 PM",
       screenshot:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLvpyxhKPgXyZgDQAbvYj21z01wh40m07kwQ&s",
+      screenshottime: " 10:00 PM",
     },
   ];
   const depositColumns = [
@@ -87,6 +88,16 @@ const SellerFund = () => {
           onClick={() => setPreviewImage(row.screenshot)}
           className="w-12 h-12 object-cover rounded-md "
         />
+      ),
+    },
+
+    {
+      header: "Screenshot Time",
+      accessorKey: "screenshottime",
+      cell: (row) => (
+        <span className="text-gray-500 text-xs whitespace-nowrap">
+          {row.screenshottime}
+        </span>
       ),
     },
   ];
@@ -185,7 +196,7 @@ const SellerFund = () => {
           <h1 className="font-semibold text-lg text-gray-700 mb-3">
             Payment History
           </h1>
-          
+
           <DataTable columns={depositColumns} data={depositData} />
         </div>
       </div>

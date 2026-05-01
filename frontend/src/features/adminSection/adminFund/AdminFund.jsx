@@ -9,26 +9,28 @@ const AdminFund = () => {
       sn: 1,
       amount: 100,
       type: "deposit",
-      seller: "Ram Store",
+      sellerUser: "Ram Store",
       bankName: "Nepal Bank",
       accountName: "Ram Prasad",
       accountNumber: "0098076473",
       screenshot:
         "https://storage.googleapis.com/support-forums-api/attachment/thread-191661601-15203805108075818741.JPG", // image path or url
+      screenshottime: " 10:00 PM",
       status: "pending",
       datetime: "2026-04-24 10:30 AM",
     },
     {
-      _id: 1,
+      _id: 2,
       sn: 2,
       amount: 100,
-      type: "deposit",
-      seller: "Ram Store",
+      type: "withdraw",
+      sellerUser: "Shyam",
       bankName: "Nepal Bank",
       accountName: "Ram Prasad",
       accountNumber: "0098076473",
       screenshot:
         "https://storage.googleapis.com/support-forums-api/attachment/thread-191661601-15203805108075818741.JPG", // image path or url
+      screenshottime: " 10:00 PM",
       status: "approved",
       datetime: "2026-04-24 10:30 AM",
     },
@@ -54,8 +56,8 @@ const AdminFund = () => {
     },
 
     {
-      header: "Seller",
-      accessorKey: "seller",
+      header: "Seller or User",
+      accessorKey: "sellerUser",
     },
 
     {
@@ -82,6 +84,15 @@ const AdminFund = () => {
           alt="screenshot"
           className="w-12 h-12 object-cover rounded "
         />
+      ),
+    },
+    {
+      header: "Screenshot Time",
+      accessorKey: "screenshottime",
+      cell: (row) => (
+        <span className="text-gray-500 text-xs whitespace-nowrap">
+          {row.screenshottime}
+        </span>
       ),
     },
 

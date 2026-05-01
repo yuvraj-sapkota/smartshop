@@ -8,9 +8,10 @@ const Commission = () => {
       _id: 101,
       sn: 1,
       commission: 5,
-      mrp: 200,
       product: "Pen",
+      price: 200,
       qty: 2,
+      totalPrice: 400,
       buyer: "Ram",
       time: "2026-04-25 11:00 AM",
     },
@@ -18,9 +19,10 @@ const Commission = () => {
       _id: 102,
       sn: 2,
       commission: 5,
-      mrp: 200,
       product: "Pen",
+      price: 200,
       qty: 2,
+      totalPrice: 400,
       buyer: "Ram",
       time: "2026-04-25 11:00 AM",
     },
@@ -28,9 +30,10 @@ const Commission = () => {
       _id: 103,
       sn: 3,
       commission: 5,
-      mrp: 200,
       product: "Pen",
+      price: 200,
       qty: 2,
+      totalPrice: 400,
       buyer: "Ram",
       time: "2026-04-25 11:00 AM",
     },
@@ -45,13 +48,6 @@ const Commission = () => {
         <span className="text-purple-600 font-medium">Rs {row.commission}</span>
       ),
     },
-
-    {
-      header: "MRP",
-      accessorKey: "mrp",
-      cell: (row) => <span>Rs {row.mrp}</span>,
-    },
-
     {
       header: "Product",
       accessorKey: "product",
@@ -60,7 +56,18 @@ const Commission = () => {
       ),
     },
 
+    {
+      header: "Price",
+      accessorKey: "price",
+      cell: (row) => <span>Rs {row.price}</span>,
+    },
+
     { header: "Qty", accessorKey: "qty" },
+    {
+      header: "Total Price",
+      accessorKey: "totalPrice",
+      cell: (row) => <span>Rs {row.totalPrice}</span>,
+    },
 
     {
       header: "Buyer",

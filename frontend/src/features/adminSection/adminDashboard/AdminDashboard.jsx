@@ -6,6 +6,7 @@ import {
   Wallet,
   Clock,
   TrendingUp,
+  Package,
   AlertCircle,
 } from "lucide-react";
 import PageHeader from "../../../components/PageHeader";
@@ -16,6 +17,14 @@ const AdminDashboard = () => {
   const highlights = [
     {
       _id: 1,
+      label: "Gross Profit",
+      value: 2000,
+      icon: DollarSign,
+      bg: "bg-green-100",
+      text: "text-green-600",
+    },
+    {
+      _id: 2,
       label: "Net Profit",
       value: 1500,
       icon: DollarSign,
@@ -23,7 +32,7 @@ const AdminDashboard = () => {
       text: "text-emerald-600",
     },
     {
-      _id: 2,
+      _id: 3,
       label: "Total Sales",
       value: 120,
       icon: ShoppingCart,
@@ -31,7 +40,23 @@ const AdminDashboard = () => {
       text: "text-blue-600",
     },
     {
-      _id: 3,
+      _id: 4,
+      label: "Total Product",
+      value: 300,
+      icon: Package,
+      bg: "bg-indigo-100",
+      text: "text-indigo-600",
+    },
+    {
+      _id: 5,
+      label: "Pending Product",
+      value: 25,
+      icon: Clock,
+      bg: "bg-yellow-100",
+      text: "text-yellow-600",
+    },
+    {
+      _id: 6,
       label: "Total Users",
       value: 50,
       icon: Users,
@@ -39,7 +64,7 @@ const AdminDashboard = () => {
       text: "text-purple-600",
     },
     {
-      _id: 4,
+      _id: 7,
       label: "Total Sellers",
       value: 20,
       icon: Store,
@@ -47,7 +72,6 @@ const AdminDashboard = () => {
       text: "text-orange-600",
     },
   ];
-
   // 🔹 Seller Stats
   const sellerStats = [
     {
