@@ -24,6 +24,10 @@ import AdminFund from "./features/adminSection/adminFund/AdminFund";
 import Users from "./features/adminSection/users/Users";
 import Sellers from "./features/adminSection/sellers/Sellers";
 import RewardRation from "./features/adminSection/rewardRatio/RewardRation";
+import Login from "./auth/login/Login";
+import ChooseRole from "./auth/ChooseRole";
+import UserSignup from "./auth/signup/UserSignup";
+import SellerSignup from "./auth/signup/SellerSignup";
 
 const App = () => {
   return (
@@ -31,6 +35,10 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<ChooseRole />} />
+          <Route path="/signup/user" element={<UserSignup />} />
+          <Route path="/signup/seller" element={<SellerSignup />} />
 
           {/* user routes  */}
 

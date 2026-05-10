@@ -71,7 +71,7 @@ export default function Landing() {
       {/* Navbar */}
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 mb-10">
+      <div className="max-w-7xl mx-auto px-4 mb-10 mt-8">
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {stores.map((store) => (
             <StoreCard key={store.id} store={store} />

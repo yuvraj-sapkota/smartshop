@@ -17,7 +17,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100 mb-8">
+      <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100 ">
         <div className="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between">
           {/* Logo */}
           <Logo />
@@ -45,7 +45,7 @@ const Navbar = () => {
             <button
               onClick={() => {
                 localStorage.setItem("role", "user");
-                navigate("/user/shop");
+                navigate("/login");
               }}
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
             >
@@ -53,14 +53,15 @@ const Navbar = () => {
             </button>
             <button
               onClick={() => {
-                localStorage.setItem("role", "seller");
-                navigate("/seller/shop");
+                // localStorage.setItem("role", "seller");
+
+                navigate("/signup");
               }}
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
             >
-              Become a seller
+              Signup
             </button>
-            <button
+            {/* <button
               onClick={() => {
                 localStorage.setItem("role", "admin");
                 navigate("/admin/shop");
@@ -68,7 +69,7 @@ const Navbar = () => {
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"
             >
               Admin
-            </button>
+            </button> */}
           </div>
 
           {/* Mobile Icons */}
@@ -136,7 +137,7 @@ const Navbar = () => {
           <button
             onClick={() => {
               localStorage.setItem("role", "user");
-              navigate("/user/dashboard");
+              navigate("/login");
             }}
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >
@@ -144,14 +145,14 @@ const Navbar = () => {
           </button>
           <button
             onClick={() => {
-              localStorage.setItem("role", "seller");
-              navigate("/seller/shop");
+              // localStorage.setItem("role", "seller");
+              navigate("/signup");
             }}
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >
-            Become a seller
+            Singup
           </button>
-          <button
+          {/* <button
             onClick={() => {
               localStorage.setItem("role", "admin");
               navigate("/admin/shop");
@@ -159,7 +160,7 @@ const Navbar = () => {
             className="px-4 py-2 border rounded-lg hover:bg-gray-900 hover:text-white transition"
           >
             Admin
-          </button>
+          </button> */}
         </div>
       </div>
     </>
