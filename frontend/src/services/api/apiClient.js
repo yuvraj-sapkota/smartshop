@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "https://https://smartshop-mh7v.onrender.com/api",
+  baseURL: "https://smartshop-mh7v.onrender.com/api",
   timeout: 10000,
 });
 
