@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "https://smartshop108.vercel.app/api",
+  baseURL: "https://https://smartshop-mh7v.onrender.com/api",
   timeout: 10000,
 });
 
