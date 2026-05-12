@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import AuthForm from "../AuthForm";
+import { registerSellerApi } from "../../services/auth/auth.api";
+import { showSuccess } from "../../utils/toast";
 
 const SellerSignup = () => {
   const [form, setForm] = useState({
@@ -7,8 +9,8 @@ const SellerSignup = () => {
     username: "",
     email: "",
     password: "",
-    storename: "",
-    storeaddress: "",
+    storeName: "",
+    storeAddress: "",
   });
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -44,11 +46,11 @@ const SellerSignup = () => {
       newErrors.password = "Minimum 6 characters required";
     }
 
-    if (!form.storename.trim()) {
-      newErrors.storename = "Store name is required";
+    if (!form.storeName.trim()) {
+      newErrors.storeName = "Store name is required";
     }
-    if (!form.storeaddress.trim()) {
-      newErrors.storeaddress = "Store address is required";
+    if (!form.storeAddress.trim()) {
+      newErrors.storeAddress = "Store address is required";
     }
 
     setErrors(newErrors);
@@ -64,11 +66,11 @@ const SellerSignup = () => {
     try {
       setIsLoading(true);
 
-      console.log(form);
-
-      // API CALL HERE
+      const data = await registerSellerApi(form);
+      showSuccess(data.message);
     } catch (error) {
       console.log(error);
+      showError(error.response?.dta?.message || "something went wrong");
     } finally {
       setIsLoading(false);
     }
@@ -101,13 +103,13 @@ const SellerSignup = () => {
     },
     {
       label: "Store Name",
-      name: "storename",
+      name: "storeName",
       type: "text",
       placeholder: "Enter storeName",
     },
     {
       label: "Store Address",
-      name: "storeaddress",
+      name: "storeAddress",
       type: "textarea",
       placeholder: "Enter your store address",
     },

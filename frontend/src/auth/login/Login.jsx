@@ -1,5 +1,7 @@
 import { useState } from "react";
 import AuthForm from "../AuthForm";
+import { loginApi } from "../../services/auth/auth.api";
+import { showError, showSuccess } from "../../utils/toast";
 
 const Login = () => {
   const [form, setForm] = useState({
@@ -46,11 +48,11 @@ const Login = () => {
     try {
       setIsLoading(true);
 
-      console.log(form);
-
-      // API CALL HERE
+      const data = await loginApi(form);
+      showSuccess(data.message);
     } catch (error) {
       console.log(error);
+      showError(error.response?.data?.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
