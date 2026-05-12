@@ -10,7 +10,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://192.168.1.13:5173",
-  "https://smartshop.vercel.app",
+  "https://smartshop108.vercel.app",
 ];
 
 app.use(

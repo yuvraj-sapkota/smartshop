@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "http://192.168.1.13:8000/api",
+  baseURL: "https://smartshop108.vercel.app/api",
   timeout: 10000,
 });
 
