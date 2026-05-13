@@ -2,8 +2,13 @@ import { useState } from "react";
 import AuthForm from "../AuthForm";
 import { loginApi } from "../../services/auth/auth.api";
 import { showError, showSuccess } from "../../utils/toast";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../store/auth/authStore";
 
 const Login = () => {
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -49,7 +54,15 @@ const Login = () => {
       setIsLoading(true);
 
       const data = await loginApi(form);
+      console.log(data);
+      login(data);
+      navigate(`/${data.user.role}`);
       showSuccess(data.message);
+
+      setForm({
+        email: "",
+        password: "",
+      });
     } catch (error) {
       console.log(error);
       showError(error.response?.data?.message || "Something went wrong");

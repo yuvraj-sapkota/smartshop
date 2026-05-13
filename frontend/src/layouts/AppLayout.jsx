@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { Menu, User } from "lucide-react";
 import Sidebar from "../components/sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
+import useAuthStore from "../store/auth/authStore";
 
 const AppLayout = () => {
+  const { user } = useAuthStore();
+  const role = user?.role;
+  console.log("PM role is", role);
   const [isOpen, setIsOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const role = localStorage.getItem("role");
+  // const role = localStorage.getItem("role");
 
   return (
     <>

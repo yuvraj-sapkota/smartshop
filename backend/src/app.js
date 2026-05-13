@@ -14,7 +14,7 @@ const allowedOrigins = [
   "https://smartshop108.vercel.app",
 ];
 
-app.options("*", cors());
+// app.options("*", cors());
 app.use(
   cors({
     origin: function (origin, callback) {

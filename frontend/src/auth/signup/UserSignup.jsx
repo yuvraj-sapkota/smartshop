@@ -65,9 +65,16 @@ const UserSignup = () => {
       const data = await registerUserApi(form);
 
       showSuccess(data.message);
+
+      setForm({
+        referBy: "",
+        username: "",
+        email: "",
+        password: "",
+        address: "",
+      });
     } catch (error) {
-      console.log(error);
-      showError(error.response?.dta?.message || "something went wrong");
+      showError(error.response?.data?.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }

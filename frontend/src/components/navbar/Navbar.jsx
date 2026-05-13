@@ -44,7 +44,7 @@ const Navbar = () => {
             {/* Login */}
             <button
               onClick={() => {
-                localStorage.setItem("role", "user");
+                // localStorage.setItem("role", "user");
                 navigate("/login");
               }}
               className="px-4 py-2 border rounded-lg text-primary hover:bg-primary hover:text-white transition"

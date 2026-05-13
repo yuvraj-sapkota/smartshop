@@ -28,6 +28,7 @@ import Login from "./auth/login/Login";
 import ChooseRole from "./auth/ChooseRole";
 import UserSignup from "./auth/signup/UserSignup";
 import SellerSignup from "./auth/signup/SellerSignup";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 const App = () => {
   return (
@@ -42,7 +43,14 @@ const App = () => {
 
           {/* user routes  */}
 
-          <Route path="/user" element={<AppLayout />}>
+          <Route
+            path="/user"
+            element={
+              <ProtectedRoute allowedRoles={["user"]}>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate to="shop" />} />
             <Route path="shop" element={<ShopNow />} />
             <Route path="dashboard" element={<Dashboard />} />
@@ -52,7 +60,14 @@ const App = () => {
             <Route path="affiliated-user" element={<AffiliatedUser />} />
           </Route>
 
-          <Route path="/seller" element={<AppLayout />}>
+          <Route
+            path="/seller"
+            element={
+              <ProtectedRoute allowedRoles={["seller"]}>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate to="shop" />} />
             <Route path="shop" element={<ShopNow />} />
 
@@ -65,7 +80,14 @@ const App = () => {
           </Route>
 
           {/* admin routes */}
-          <Route path="/admin" element={<AppLayout />}>
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <AppLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Navigate to="shop" />} />
             <Route path="shop" element={<ShopNow />} />
             <Route path="admin-dashboard" element={<AdminDashboard />} />
