@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AuthForm from "../AuthForm";
 import { registerSellerApi } from "../../services/auth/auth.api";
-import { showSuccess } from "../../utils/toast";
+import { showError, showSuccess } from "../../utils/toast";
 
 const SellerSignup = () => {
   const [form, setForm] = useState({
@@ -67,10 +67,21 @@ const SellerSignup = () => {
       setIsLoading(true);
 
       const data = await registerSellerApi(form);
+      console.log(data);
       showSuccess(data.message);
+
+      setForm({
+        referBy: "",
+        username: "",
+        email: "",
+        password: "",
+        storeName: "",
+        storeAddress: "",
+      });
     } catch (error) {
       console.log(error);
-      showError(error.response?.dta?.message || "something went wrong");
+      console.log(error.response?.data);
+      showError(error.response?.data?.message || "something went wrong");
     } finally {
       setIsLoading(false);
     }

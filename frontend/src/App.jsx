@@ -29,19 +29,54 @@ import ChooseRole from "./auth/ChooseRole";
 import UserSignup from "./auth/signup/UserSignup";
 import SellerSignup from "./auth/signup/SellerSignup";
 import ProtectedRoute from "./routes/ProtectedRoute";
-
+import PublicRoute from "./routes/PublicRoute";
 const App = () => {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<ChooseRole />} />
-          <Route path="/signup/user" element={<UserSignup />} />
-          <Route path="/signup/seller" element={<SellerSignup />} />
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <Landing />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PublicRoute>
+                <ChooseRole />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup/user"
+            element={
+              <PublicRoute>
+                <UserSignup />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/signup/seller"
+            element={
+              <PublicRoute>
+                <SellerSignup />
+              </PublicRoute>
+            }
+          />
 
-          {/* user routes  */}
+          {/* user routes protected  */}
 
           <Route
             path="/user"

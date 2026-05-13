@@ -1,13 +1,20 @@
 import bcrypt from "bcryptjs";
 import User from "./auth.model.js";
 import generateToken from "../../utils/generateToken.js";
+import AppError from "../../utils/AppError.js";
+import { checkEmailExists, checkUsernameExists } from "./auth.helper.js";
 
 export const createUserService = async (data) => {
+  const emailExists = await checkEmailExists(data.email);
 
-  const existingUser = await User.findOne({ email: data.email });
+  const usernameExists = await checkUsernameExists(data.username);
 
-  if (existingUser) {
-    throw new Error("Email already exists");
+  if (emailExists) {
+    throw new AppError("Email already exists", 400);
+  }
+
+  if (usernameExists) {
+    throw new AppError("username exists");
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -27,12 +34,15 @@ export const createUserService = async (data) => {
 };
 
 export const createSellerService = async (data) => {
-  const existingUser = await User.findOne({
-    email: data.email,
-  });
+  const emailExists = await checkEmailExists(data.email);
 
-  if (existingUser) {
-    throw new Error("Email already exists");
+  const usernameExists = await checkUsernameExists(data.username);
+
+  if (emailExists) {
+    throw new AppError("Email already exists", 400);
+  }
+  if (usernameExists) {
+    throw new AppError("Username already exists", 400);
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -44,7 +54,6 @@ export const createSellerService = async (data) => {
   });
 
   const token = generateToken(seller._id);
-
   return {
     token,
     user: seller,
@@ -55,7 +64,7 @@ export const loginService = async (email, password) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error("Invalid credentials");
+    throw new AppError("Invalid credentials", 400);
   }
 
   const isMatched = await bcrypt.compare(password, user.password);

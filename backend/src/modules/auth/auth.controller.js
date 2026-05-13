@@ -11,7 +11,7 @@ import {
 } from "./auth.service.js";
 
 // USER REGISTER
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res, next) => {
   try {
     const validatedData = registerUserSchema.parse(req.body);
 
@@ -23,15 +23,12 @@ export const registerUser = async (req, res) => {
       ...result,
     });
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    next(error);
   }
 };
 
 // SELLER REGISTER
-export const registerSeller = async (req, res) => {
+export const registerSeller = async (req, res, next) => {
   try {
     const validatedData = registerSellerSchema.parse(req.body);
 
@@ -43,15 +40,12 @@ export const registerSeller = async (req, res) => {
       ...result,
     });
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    next(error);
   }
 };
 
 // LOGIN
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res, next) => {
   try {
     const validatedData = loginSchema.parse(req.body);
 
@@ -66,9 +60,6 @@ export const loginUser = async (req, res) => {
       ...result,
     });
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    next(error);
   }
 };
