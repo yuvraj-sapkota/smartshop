@@ -14,7 +14,7 @@ export const createUserService = async (data) => {
   }
 
   if (usernameExists) {
-    throw new AppError("username exists");
+    throw new AppError("username exists", 400);
   }
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -70,7 +70,7 @@ export const loginService = async (email, password) => {
   const isMatched = await bcrypt.compare(password, user.password);
 
   if (!isMatched) {
-    throw new Error("Invalid credentials");
+    throw new AppError("Invalid credentials", 400);
   }
 
   const token = generateToken(user._id);
