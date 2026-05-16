@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "seller", "admin"],
       default: "user",
     },
+    // Only relevant for sellers
+    sellerStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: function () {
+        return this.role === "seller" ? "pending" : undefined;
+      },
+    },
 
     address: {
       type: String,

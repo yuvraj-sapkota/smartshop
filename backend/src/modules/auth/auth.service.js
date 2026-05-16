@@ -35,12 +35,11 @@ export const createUserService = async (data) => {
 
 export const createSellerService = async (data) => {
   const emailExists = await checkEmailExists(data.email);
-
-  const usernameExists = await checkUsernameExists(data.username);
-
   if (emailExists) {
     throw new AppError("Email already exists", 400);
   }
+
+  const usernameExists = await checkUsernameExists(data.username);
   if (usernameExists) {
     throw new AppError("Username already exists", 400);
   }

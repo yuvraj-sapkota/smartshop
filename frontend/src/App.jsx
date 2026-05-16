@@ -30,6 +30,7 @@ import UserSignup from "./auth/signup/UserSignup";
 import SellerSignup from "./auth/signup/SellerSignup";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
+import SellerDetail from "./features/adminSection/sellers/SellerDetail";
 const App = () => {
   return (
     <>
@@ -135,6 +136,7 @@ const App = () => {
             <Route path="users" element={<Users />} />
 
             <Route path="sellers" element={<Sellers />} />
+            <Route path="seller-detail/:id" element={<SellerDetail />} />
 
             <Route path="reward-ratio" element={<RewardRation />} />
           </Route>

@@ -1,32 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
+import { Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { getAllSellers } from "../../../services/seller/seller.api";
 
 const Sellers = () => {
-  const storeData = [
-    {
-      _id: 1,
-      sn: 1,
-      store: "Shyam store",
-      name: "Shyam",
-      username: "shyam24",
-      needToPay: 500,
-      status: "approved",
-      refer: "Ishor",
-      datetime: "2026-04-24 10:30 AM",
-    },
-    {
-      _id: 2,
-      sn: 2,
-      store: "Ram store",
-      name: "Shyam",
-      username: "Ram108",
-      needToPay: 500,
-      status: "approved",
-      refer: "Ishor",
-      datetime: "2026-04-24 10:30 AM",
-    },
-  ];
+  const navigate = useNavigate();
+  const [sellers, setSellers] = useState([]);
+
+  const storeData = sellers.map((item, index) => ({
+    _id: item._id,
+    sn: index + 1,
+    store: item.storeName,
+
+    username: item.username,
+    needToPay: "",
+    status: item.sellerStatus,
+    refer: item.referBy || "--",
+    datetime: new Date(item.createdAt).toLocaleString(),
+  }));
+
   const storeColumns = [
     {
       header: "Store",
@@ -39,11 +33,6 @@ const Sellers = () => {
     { header: "SN", accessorKey: "sn" },
 
     {
-      header: "Name",
-      accessorKey: "name",
-    },
-
-    {
       header: "Username",
       accessorKey: "username",
     },
@@ -52,7 +41,7 @@ const Sellers = () => {
       header: "Need to Pay",
       accessorKey: "needToPay",
       cell: (row) =>
-        row.status === "approved" ? (
+        row.status === "approved" && row.needToPay ? (
           <span className="text-blue-600 font-semibold">
             Rs {row.needToPay}
           </span>
@@ -66,7 +55,11 @@ const Sellers = () => {
       accessorKey: "status",
       cell: (row) => {
         const color =
-          row.status === "approved" ? "text-green-600" : "text-yellow-600";
+          row.status === "approved"
+            ? "text-green-600"
+            : row.status === "rejected"
+            ? "text-red-600"
+            : "text-yellow-600";
 
         return (
           <span className={`font-semibold capitalize ${color}`}>
@@ -90,7 +83,34 @@ const Sellers = () => {
         </span>
       ),
     },
+
+    {
+      header: "Actions",
+      accessorKey: "actions",
+      cell: (row) => (
+        <button
+          onClick={() => navigate(`/admin/seller-detail/${row._id}`)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-gray-200 bg-white hover:bg-gray-50 transition text-gray-700"
+        >
+          <Eye size={13} />
+          View
+        </button>
+      ),
+    },
   ];
+
+  useEffect(() => {
+    const fetchSeller = async () => {
+      try {
+        const data = await getAllSellers();
+        setSellers(data.sellers);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchSeller();
+  }, []);
   return (
     <>
       <div className="space-y-10">

@@ -2,8 +2,11 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import authRoutes from "./modules/auth/auth.routes.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import authRoutes from "./modules/auth/auth.routes.js";
+import adminRoutes from "./modules/admin/admin.routes.js";
+import productRoutes from "./modules/product/product.routes.js";
+import sellerRoutes from "./modules/seller/seller.routes.js";
 
 dotenv.config();
 
@@ -57,7 +60,13 @@ app.use(
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/product", productRoutes);
+app.use("/api/seller", sellerRoutes);
 
 app.use(errorMiddleware);
 
 export default app;
+
+// 1. seller register huda admin page ma dekhini
+// 2. admin le seller lai accept wa reject garna milni
