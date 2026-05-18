@@ -1,8 +1,12 @@
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
+import { showSuccess } from "../../../../utils/toast";
+import ConfirmModal from "../../../../components/ConfirmModal";
 
-const ActionMenu = ({ row }) => {
+const ActionMenu = ({ row, onDelete }) => {
   const [open, setOpen] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const menuRef = useRef();
   const buttonRef = useRef();
@@ -35,6 +39,19 @@ const ActionMenu = ({ row }) => {
     setOpen((prev) => !prev);
   };
 
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      await onDelete(row._id);
+      setShowConfirm(false);
+      setOpen(false);
+    } catch (error) {
+      console.log(error.response?.data?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="relative flex justify-center" ref={menuRef}>
       {/* Trigger */}
@@ -56,12 +73,30 @@ const ActionMenu = ({ row }) => {
             <Edit size={16} />
             Edit
           </button>
-          <button className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+          <button
+            onClick={() => {
+              setShowConfirm(true);
+              setOpen(false);
+            }}
+            className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition"
+          >
             <Trash size={16} />
             Delete
           </button>
         </div>
       )}
+
+      {/* 🔥 CONFIRM MODAL */}
+      <ConfirmModal
+        isOpen={showConfirm}
+        title="Delete Product"
+        message="Are you sure you want to delete this product? "
+        confirmText="Delete"
+        cancelText="Cancel"
+        loading={loading}
+        onCancel={() => setShowConfirm(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

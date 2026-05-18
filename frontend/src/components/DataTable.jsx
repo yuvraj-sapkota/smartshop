@@ -34,14 +34,17 @@ const DataTable = ({ columns, data }) => {
                   </td>
                 </tr>
               ) : (
-                data.map((row) => (
+                data.map((row, index) => (
                   <tr
                     key={row._id}
                     className="border-t border-gray-100 hover:bg-gray-50 transition"
                   >
                     {columns.map((col) => (
-                      <td key={col.header} className="py-4  px-3 whitespace-nowrap">
-                        {col.cell ? col.cell(row) : row[col.accessorKey]}
+                      <td
+                        key={col.header}
+                        className="py-4  px-3 whitespace-nowrap"
+                      >
+                        {col.cell ? col.cell(row, index) : row[col.accessorKey]}
                       </td>
                     ))}
                   </tr>

@@ -14,3 +14,21 @@ export const createProductService = async (data, sellerId) => {
 
   return product;
 };
+
+// individual seller ko products
+export const getMyProductsService = async (sellerId) => {
+  const products = await Product.find({ seller: sellerId });
+  return products;
+};
+
+// delete product
+export const deleteProductService = async (productId, sellerId) => {
+  const deletedProduct = await Product.findByIdAndDelete({
+    _id: productId,
+    seller: sellerId,
+  });
+
+  if (!deletedProduct) {
+    throw new AppError("Product not found ", 404);
+  }
+};
