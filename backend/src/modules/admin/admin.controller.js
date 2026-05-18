@@ -33,18 +33,3 @@ export const updateProductStatus = async (req, res, next) => {
   }
 };
 
-// yeslai yaha ekxin lai lekheko chu
-// admin.controller.js
-// export const getSeller = async (req, res, next) => {
-//   try {
-//     const seller = await User.findById(req.params.id)
-//       .select("-password -refreshToken")
-//       .populate("referredBy", "name email phone") // User model मा referredBy field छ भने
-//       .lean();
-
-//     if (!seller) return next(new AppError("Seller not found", 404));
-//     res.status(200).json({ success: true, seller });
-//   } catch (err) {
-//     next(err);
-//   }
-// };

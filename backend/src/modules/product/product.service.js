@@ -4,7 +4,7 @@ import AppError from "../../utils/AppError.js";
 // CREATE PRODUCT (SELLER)
 export const createProductService = async (data, sellerId) => {
   const product = await Product.create({
-    name: data.product,
+    name: data.name,
     price: data.price,
     commission: data.commission,
     measure: data.measure,

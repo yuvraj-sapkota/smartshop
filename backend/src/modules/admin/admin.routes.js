@@ -27,8 +27,4 @@ router.put(
   updateProductStatus,
 );
 
-// yeslai yaha ekxin lai lekheko chu
-// admin.routes.js
-// router.get("/sellers/:id", getSeller);
-
 export default router;

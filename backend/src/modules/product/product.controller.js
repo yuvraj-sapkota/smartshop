@@ -1,4 +1,4 @@
-import { success } from "zod";
+import { createProductService } from "./product.service.js";
 
 export const createProduct = async (req, res, next) => {
   try {

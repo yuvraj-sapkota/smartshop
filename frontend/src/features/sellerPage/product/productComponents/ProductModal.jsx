@@ -1,9 +1,11 @@
 import { X } from "lucide-react";
 import React, { useState } from "react";
+import useProductStore from "../../../../store/productStore/productStore";
 
 const ProductModal = ({ open, setOpen }) => {
+  const { createProduct, loading } = useProductStore();
   const [productDetails, setProductDetails] = useState({
-    product: "",
+    name: "",
     price: "",
     commission: "",
     measure: "",
@@ -20,7 +22,7 @@ const ProductModal = ({ open, setOpen }) => {
   const validation = () => {
     let newErrors = {};
 
-    if (!productDetails.product) newErrors.product = "Product name is required";
+    if (!productDetails.name) newErrors.name = "Product name is required";
     if (!productDetails.price) newErrors.price = "price is required";
     if (!productDetails.commission)
       newErrors.commission = "Commission is required";
@@ -30,12 +32,15 @@ const ProductModal = ({ open, setOpen }) => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validation()) return;
-    console.log(productDetails);
+
+    await createProduct(productDetails);
+    setOpen(false);
   };
+
 
   return (
     <>
@@ -57,13 +62,13 @@ const ProductModal = ({ open, setOpen }) => {
               <label>Product Name</label>
               <input
                 type="text"
-                name="product"
+                name="name"
                 onChange={handleChange}
                 placeholder="Product Name"
                 className="w-full border rounded-lg px-3 py-2"
               />
-              {errors.product && (
-                <p className="text-red-500 text-xs ">{errors.product}</p>
+              {errors.name && (
+                <p className="text-red-500 text-xs ">{errors.name}</p>
               )}
             </div>
             <div className="flex flex-col gap-1">
@@ -105,8 +110,11 @@ const ProductModal = ({ open, setOpen }) => {
                 <p className="text-red-500 text-xs ">{errors.measure}</p>
               )}
             </div>
-            <button className="w-full bg-primary text-white py-2 rounded-lg mt-5 hover:bg-primary-hover transition cursor-pointer">
-              Save Details
+            <button
+              disabled={loading}
+              className="w-full bg-primary text-white py-2 rounded-lg mt-5 hover:bg-primary-hover transition cursor-pointer"
+            >
+              {loading ? "Saving..." : "Save Details"}
             </button>
           </form>
         </div>
