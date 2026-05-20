@@ -1,26 +1,47 @@
 export default function StoreCard({ store }) {
+  console.log(store);
   return (
     <div className=" w-full bg-white rounded-2xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
       {/* Store Info */}
       <div className="mb-3">
-        <h2 className="text-xl font-semibold text-gray-800">{store.name}</h2>
-        <p className="text-gray-500 text-sm">{store.location}</p>
+        <h2 className="text-xl font-semibold text-gray-800">
+          {store.storeName}
+        </h2>
+        <p className="text-gray-500 text-sm">{store.storeAddress}</p>
       </div>
 
-      {/* Featured Items */}
-      <div className="mb-6">
+      {/* products*/}
+      {/* <div className="mb-6">
         <h3 className="text-sm font-semibold text-gray-600 mb-2">
           Featured Items
+        </h3> */}
+      {/* Products */}
+      <div className="mb-6">
+        <h3 className="text-sm font-semibold text-gray-600 mb-2">
+          Products ({store.productCount})
         </h3>
 
-        <ul className="space-y-1 text-gray-700 text-sm">
+        {/* <ul className="space-y-1 text-gray-700 text-sm">
           {store.featuredItems.map((item, index) => (
             <li key={index} className="flex justify-between">
               <span>{item.name}</span>
               <span>Rs {item.price}</span>
             </li>
           ))}
-        </ul>
+        </ul> */}
+
+        {store.products.length > 0 ? (
+          <ul className="space-y-1 text-gray-700 text-sm">
+            {store.products.slice(0, 3).map((item) => (
+              <li key={item._id} className="flex justify-between">
+                <span>{item.name}</span>
+                <span>Rs {item.price}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-gray-400">No products yet</p>
+        )}
       </div>
 
       {/* Buttons */}

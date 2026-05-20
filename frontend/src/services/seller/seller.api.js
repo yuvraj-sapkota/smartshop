@@ -11,7 +11,7 @@ export const getSingleSeller = async (id) => {
 };
 
 export const updateSellerStatus = async (id, status) => {
-  const response = await apiClient.put(`/admin/status/${id}`, {
+  const response = await apiClient.put(`/admin/status/${id}/status`, {
     sellerStatus: status,
   });
   return response.data;

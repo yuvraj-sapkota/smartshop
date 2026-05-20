@@ -1,5 +1,6 @@
 import User from "../auth/auth.model.js";
 import AppError from "../../utils/AppError.js";
+import Product from "../product/product.model.js";
 
 export const updateSellerStatusService = async (sellerId, sellerStatus) => {
   const seller = await User.findById(sellerId);

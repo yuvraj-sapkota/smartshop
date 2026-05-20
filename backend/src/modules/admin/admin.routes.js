@@ -12,15 +12,17 @@ import {
 const router = express.Router();
 
 router.put(
-  "/status/:id",
+  "/status/:id/status",
   protect,
   allowRole("admin"),
   validate(updateSellerStatusSchema),
   updateSellerStatus,
 );
 
+
+
 router.put(
-  "/products/:id",
+  "/products/:productId/status",
   protect,
   allowRole("admin"),
   validate(updateProductStatusSchema),

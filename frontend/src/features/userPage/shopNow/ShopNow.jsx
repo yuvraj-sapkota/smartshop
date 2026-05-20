@@ -1,135 +1,155 @@
 import React from "react";
 import StoreCard from "../../../components/StoreCard";
+import { useState } from "react";
+import { useEffect } from "react";
+import { getAllStoreAPI } from "../../../services/allStore/allStore.api";
 
 const ShopNow = () => {
-  const stores = [
-    {
-      id: 1,
-      name: "ABC Store",
-      location: "Kathmandu",
-      featuredItems: [
-        { name: "Pen", price: 10 },
-        { name: "iPhone 13", price: 100000 },
-        { name: "Notebook", price: 50 },
-      ],
-    },
-    {
-      id: 3,
-      name: "XYZ Mart",
-      location: "Pokhara",
-      featuredItems: [
-        { name: "Copy", price: 40 },
-        { name: "Bag", price: 1500 },
-        { name: "Shoes", price: 3000 },
-      ],
-    },
-    {
-      id: 4,
-      name: "ABC Store",
-      location: "Kathmandu",
-      featuredItems: [
-        { name: "Pen", price: 10 },
-        { name: "iPhone 13", price: 100000 },
-        { name: "Notebook", price: 50 },
-      ],
-    },
-    {
-      id: 5,
-      name: "XYZ Mart",
-      location: "Pokhara",
-      featuredItems: [
-        { name: "Copy", price: 40 },
-        { name: "Bag", price: 1500 },
-        { name: "Shoes", price: 3000 },
-      ],
-    },
-    {
-      id: 6,
-      name: "ABC Store",
-      location: "Kathmandu",
-      featuredItems: [
-        { name: "Pen", price: 10 },
-        { name: "iPhone 13", price: 100000 },
-        { name: "Notebook", price: 50 },
-      ],
-    },
-    {
-      id: 7,
-      name: "XYZ Mart",
-      location: "Pokhara",
-      featuredItems: [
-        { name: "Copy", price: 40 },
-        { name: "Bag", price: 1500 },
-        { name: "Shoes", price: 3000 },
-      ],
-    },
-    {
-      id: 8,
-      name: "ABC Store",
-      location: "Kathmandu",
-      featuredItems: [
-        { name: "Pen", price: 10 },
-        { name: "iPhone 13", price: 100000 },
-        { name: "Notebook", price: 50 },
-      ],
-    },
-    {
-      id: 9,
-      name: "XYZ Mart",
-      location: "Pokhara",
-      featuredItems: [
-        { name: "Copy", price: 40 },
-        { name: "Bag", price: 1500 },
-        { name: "Shoes", price: 3000 },
-      ],
-    },
-    {
-      id: 10,
-      name: "ABC Store",
-      location: "Kathmandu",
-      featuredItems: [
-        { name: "Pen", price: 10 },
-        { name: "iPhone 13", price: 100000 },
-        { name: "Notebook", price: 50 },
-      ],
-    },
-    {
-      id: 11,
-      name: "XYZ Mart",
-      location: "Pokhara",
-      featuredItems: [
-        { name: "Copy", price: 40 },
-        { name: "Bag", price: 1500 },
-        { name: "Shoes", price: 3000 },
-      ],
-    },
-    {
-      id: 12,
-      name: "ABC Store",
-      location: "Kathmandu",
-      featuredItems: [
-        { name: "Pen", price: 10 },
-        { name: "iPhone 13", price: 100000 },
-        { name: "Notebook", price: 50 },
-      ],
-    },
-    {
-      id: 13,
-      name: "XYZ Mart",
-      location: "Pokhara",
-      featuredItems: [
-        { name: "Copy", price: 40 },
-        { name: "Bag", price: 1500 },
-        { name: "Shoes", price: 3000 },
-      ],
-    },
-  ];
+  const [stores, setStores] = useState([]);
+
+  // const stores = [
+  //   {
+  //     id: 1,
+  //     name: "ABC Store",
+  //     location: "Kathmandu",
+  //     featuredItems: [
+  //       { name: "Pen", price: 10 },
+  //       { name: "iPhone 13", price: 100000 },
+  //       { name: "Notebook", price: 50 },
+  //     ],
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "XYZ Mart",
+  //     location: "Pokhara",
+  //     featuredItems: [
+  //       { name: "Copy", price: 40 },
+  //       { name: "Bag", price: 1500 },
+  //       { name: "Shoes", price: 3000 },
+  //     ],
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "ABC Store",
+  //     location: "Kathmandu",
+  //     featuredItems: [
+  //       { name: "Pen", price: 10 },
+  //       { name: "iPhone 13", price: 100000 },
+  //       { name: "Notebook", price: 50 },
+  //     ],
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "XYZ Mart",
+  //     location: "Pokhara",
+  //     featuredItems: [
+  //       { name: "Copy", price: 40 },
+  //       { name: "Bag", price: 1500 },
+  //       { name: "Shoes", price: 3000 },
+  //     ],
+  //   },
+  //   {
+  //     id: 6,
+  //     name: "ABC Store",
+  //     location: "Kathmandu",
+  //     featuredItems: [
+  //       { name: "Pen", price: 10 },
+  //       { name: "iPhone 13", price: 100000 },
+  //       { name: "Notebook", price: 50 },
+  //     ],
+  //   },
+  //   {
+  //     id: 7,
+  //     name: "XYZ Mart",
+  //     location: "Pokhara",
+  //     featuredItems: [
+  //       { name: "Copy", price: 40 },
+  //       { name: "Bag", price: 1500 },
+  //       { name: "Shoes", price: 3000 },
+  //     ],
+  //   },
+  //   {
+  //     id: 8,
+  //     name: "ABC Store",
+  //     location: "Kathmandu",
+  //     featuredItems: [
+  //       { name: "Pen", price: 10 },
+  //       { name: "iPhone 13", price: 100000 },
+  //       { name: "Notebook", price: 50 },
+  //     ],
+  //   },
+  //   {
+  //     id: 9,
+  //     name: "XYZ Mart",
+  //     location: "Pokhara",
+  //     featuredItems: [
+  //       { name: "Copy", price: 40 },
+  //       { name: "Bag", price: 1500 },
+  //       { name: "Shoes", price: 3000 },
+  //     ],
+  //   },
+  //   {
+  //     id: 10,
+  //     name: "ABC Store",
+  //     location: "Kathmandu",
+  //     featuredItems: [
+  //       { name: "Pen", price: 10 },
+  //       { name: "iPhone 13", price: 100000 },
+  //       { name: "Notebook", price: 50 },
+  //     ],
+  //   },
+  //   {
+  //     id: 11,
+  //     name: "XYZ Mart",
+  //     location: "Pokhara",
+  //     featuredItems: [
+  //       { name: "Copy", price: 40 },
+  //       { name: "Bag", price: 1500 },
+  //       { name: "Shoes", price: 3000 },
+  //     ],
+  //   },
+  //   {
+  //     id: 12,
+  //     name: "ABC Store",
+  //     location: "Kathmandu",
+  //     featuredItems: [
+  //       { name: "Pen", price: 10 },
+  //       { name: "iPhone 13", price: 100000 },
+  //       { name: "Notebook", price: 50 },
+  //     ],
+  //   },
+  //   {
+  //     id: 13,
+  //     name: "XYZ Mart",
+  //     location: "Pokhara",
+  //     featuredItems: [
+  //       { name: "Copy", price: 40 },
+  //       { name: "Bag", price: 1500 },
+  //       { name: "Shoes", price: 3000 },
+  //     ],
+  //   },
+  // ];
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const data = await getAllStoreAPI();
+        console.log(data);
+        setStores(data.stores);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchStores();
+  }, []);
+
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 mb-10">
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {stores.map((store) => (
-            <StoreCard key={store.id} store={store} />
+            <StoreCard key={store.sellerId} store={store} />
           ))}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { updateSellerStatusService } from "./admin.service.js";
+import { updateProductStatusService, updateSellerStatusService } from "./admin.service.js";
 
 export const updateSellerStatus = async (req, res, next) => {
   try {
@@ -17,11 +17,12 @@ export const updateSellerStatus = async (req, res, next) => {
 };
 
 export const updateProductStatus = async (req, res, next) => {
-  console.log("update route hitted");
+  console.log("backend route hitted");
   try {
+    const { productId } = req.params;
     const { status } = req.body;
 
-    const product = await updateProductStatusService(req.params.id, status);
+    const product = await updateProductStatusService(productId, status);
 
     res.status(200).json({
       success: true,
@@ -32,4 +33,3 @@ export const updateProductStatus = async (req, res, next) => {
     next(error);
   }
 };
-

@@ -5,6 +5,7 @@ import checkSellerApproved from "../../middlewares/checkSellerApproved.js";
 import {
   createProduct,
   deleteProduct,
+  getAllProducts,
   getMyProducts,
 } from "./product.controller.js";
 import protect from "../../middlewares/auth.middleware.js";
@@ -21,11 +22,13 @@ router.post(
   createProduct,
 );
 
+// get all products routes
+router.get("/all", protect, allowRole("admin"), getAllProducts);
+
 // individual seller ko products
 router.get("/my-products", protect, checkSellerApproved, getMyProducts);
 
-
-// delete product 
+// delete product
 router.delete(
   "/delete/:productId",
   protect,

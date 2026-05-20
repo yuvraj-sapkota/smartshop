@@ -1,43 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { Package } from "lucide-react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
+import useProductStore from "../../../store/productStore/productStore";
+import StatusDropdown from "./adminProductComponents/statusDropdown";
 
 const AdminProducts = () => {
-  const adminData = [
-    {
-      _id: 1,
-      sn: 1,
-      product: "Pen",
-      price: 20,
-      commission: 5,
-      seller: "Ram Store",
-      status: "pending",
-      datetime: "2026-04-28 09:30 AM",
-    },
-    {
-      _id: 2,
-      sn: 2,
-      product: "Notebook",
-      price: 100,
-      commission: 10,
-      seller: "Shyam Store",
-      status: "rejected",
-      datetime: "2026-04-27 04:15 PM",
-    },
-  ];
+  const {
+    allProducts,
+    loading,
+    getAllProducts,
+    updateProductStatus,
+  } = useProductStore();
+
+  useEffect(() => {
+    getAllProducts();
+  }, []);
+
   const adminColumns = [
     {
       header: "SN",
       accessorKey: "sn",
-      cell: (row) => (
-        <span className="font-medium text-gray-700">{row.sn}</span>
+      cell: (_, index) => (
+        <span className="font-medium text-gray-700">{index + 1}</span>
       ),
     },
     {
       header: "Product",
-      accessorKey: "product",
+      accessorKey: "name",
       cell: (row) => (
-        <div className="font-semibold text-gray-800">{row.product}</div>
+        <div className="font-semibold text-gray-800">{row.name}</div>
       ),
     },
     {
@@ -56,45 +48,50 @@ const AdminProducts = () => {
       header: "Seller",
       accessorKey: "seller",
       cell: (row) => (
-        <span className="font-medium text-gray-700">{row.seller}</span>
+        <div>
+          <p className="font-medium text-gray-800">{row.seller?.storeName}</p>
+        </div>
       ),
     },
-
-    // 🔥 STATUS DROPDOWN
     {
       header: "Status",
       accessorKey: "status",
       cell: (row) => (
-        <select
-          defaultValue={row.status}
-          className={`px-2 py-1 rounded-full font-semibold outline-none ${
-            row.status === "rejected"
-              ? "bg-red-100 text-red-600"
-              : row.status === "approved"
-              ? "bg-green-100 text-green-600"
-              : "bg-yellow-100 text-yellow-600"
-          }`}
-        >
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
+        <StatusDropdown
+          productId={row._id}
+          initialStatus={row.status}
+          onUpdate={updateProductStatus}
+        />
       ),
     },
-
     {
       header: "Date & Time",
-      accessorKey: "datetime",
-      cell: (row) => <span className="text-gray-600">{row.datetime}</span>,
+      accessorKey: "createdAt",
+      cell: (row) => (
+        <span className="text-gray-600">
+          {new Date(row.createdAt).toLocaleString()}
+        </span>
+      ),
     },
   ];
+
   return (
-    <>
-      <div className="space-y-8">
-        <PageHeader text="Product Management" />
-        <DataTable columns={adminColumns} data={adminData} />
-      </div>
-    </>
+    <div className="space-y-8">
+      <PageHeader text="Product Management" />
+
+      {loading && <p className="text-gray-400 text-sm">Loading...</p>}
+
+      {!loading && allProducts.length === 0 && (
+        <div className="text-center py-10 text-gray-400">
+          <Package size={40} className="mx-auto mb-2" />
+          <p>No products found</p>
+        </div>
+      )}
+
+      {!loading && allProducts.length > 0 && (
+        <DataTable columns={adminColumns} data={allProducts} />
+      )}
+    </div>
   );
 };
 

@@ -2,6 +2,7 @@ import {
   createProductService,
   getMyProductsService,
   deleteProductService,
+  getAllProductService,
 } from "./product.service.js";
 
 export const createProduct = async (req, res, next) => {
@@ -12,6 +13,20 @@ export const createProduct = async (req, res, next) => {
       success: true,
       message: "product sent for approval",
       product,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// get all product
+export const getAllProducts = async (req, res, next) => {
+  try {
+    const products = await getAllProductService();
+    res.status(200).json({
+      success: true,
+      message: "All products fetched successfully",
+      products,
     });
   } catch (error) {
     next(error);
