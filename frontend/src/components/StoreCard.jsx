@@ -1,25 +1,34 @@
+import { MapPin } from "lucide-react";
+
 export default function StoreCard({ store }) {
-  console.log(store);
   return (
     <div className=" w-full bg-white rounded-2xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
       {/* Store Info */}
-      <div className="mb-3">
-        <h2 className="text-xl font-semibold text-gray-800">
-          {store.storeName}
-        </h2>
-        <p className="text-gray-500 text-sm">{store.storeAddress}</p>
+      <div className="mb-3 flex items-center gap-3 border-b border-gray-300 pb-4">
+        <div className="bg-primary text-white px-3 py-2 rounded-lg">SS</div>
+        <div>
+          <h2 className="text-xl font-semibold text-gray-800">
+            {store.storeName}
+          </h2>
+          <p className="text-gray-500 text-xs leading-2 flex  items-center gap-0.5 ml-1">
+            <MapPin size={12}/>
+            {store.storeAddress}
+          </p>
+        </div>
       </div>
 
       {/* products*/}
-      {/* <div className="mb-6">
-        <h3 className="text-sm font-semibold text-gray-600 mb-2">
-          Featured Items
-        </h3> */}
-      {/* Products */}
       <div className="mb-6">
         <h3 className="text-sm font-semibold text-gray-600 mb-2">
-          Products ({store.productCount})
+          Featured Items
         </h3>
+      </div>
+
+      {/* Products */}
+      <div className="mb-6  h-20">
+        {/* <h3 className="text-sm font-semibold text-gray-600 mb-2">
+          Products ({store.productCount})
+        </h3> */}
 
         {/* <ul className="space-y-1 text-gray-700 text-sm">
           {store.featuredItems.map((item, index) => (
@@ -40,7 +49,7 @@ export default function StoreCard({ store }) {
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-400">No products yet</p>
+          <p className="text-sm text-gray-400 flex items-center justify-center h-full">No products yet</p>
         )}
       </div>
 
