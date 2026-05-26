@@ -7,36 +7,37 @@ import Product from "../product/product.model.js";
    GET STORES WITH PRODUCTS
 ========================= */
 export const getStoresWithProductsService = async () => {
-  // 1. Get all approved sellers only (fast indexed query)
-  const approvedSellers = await User.find(
-    {
-      role: "seller",
-      sellerStatus: "approved",
-    },
-    { _id: 1, storeName: 1, storeAddress: 1 },
-  );
-
-  const sellerIds = approvedSellers.map((s) => s._id);
-
-  if (!sellerIds.length) {
-    return [];
-  }
-
-  // 2. Get approved products only from those sellers
-  const products = await Product.find({
-    status: "approved",
-    seller: { $in: sellerIds },
-  })
+  // 1. Get approved products first
+  const products = await Product.find({ status: "approved" })
     .select("name price commission measure seller createdAt")
     .sort({ createdAt: -1 })
     .lean();
 
-  // 3. Group products by seller (in memory - fast for read APIs)
-  const storeMap = new Map();
+  if (!products.length) {
+    return [];
+  }
 
-  // initialize stores
+  // 2. Unique sellerIds product bata nikalne (products bhako sellers matra)
+  const sellerIdsWithProducts = [...new Set(products.map((p) => String(p.seller)))];
+
+  // 3. Tini sellers matra fetch garne
+  const approvedSellers = await User.find(
+    {
+      _id: { $in: sellerIdsWithProducts },
+      role: "seller",
+      sellerStatus: "approved",
+    },
+    { _id: 1, storeName: 1, storeAddress: 1 },
+  ).lean();
+
+  if (!approvedSellers.length) {
+    return [];
+  }
+
+  // 4. Seller lookup map banau
+  const sellerMap = new Map();
   approvedSellers.forEach((seller) => {
-    storeMap.set(String(seller._id), {
+    sellerMap.set(String(seller._id), {
       sellerId: seller._id,
       storeName: seller.storeName,
       storeAddress: seller.storeAddress,
@@ -45,12 +46,12 @@ export const getStoresWithProductsService = async () => {
     });
   });
 
-  // assign products to stores
+  // 5. Products assign garne (approved sellers matra)
   products.forEach((product) => {
     const key = String(product.seller);
 
-    if (storeMap.has(key)) {
-      const store = storeMap.get(key);
+    if (sellerMap.has(key)) {
+      const store = sellerMap.get(key);
 
       store.products.push({
         _id: product._id,
@@ -65,6 +66,6 @@ export const getStoresWithProductsService = async () => {
     }
   });
 
-  // 4. convert map → array
-  return Array.from(storeMap.values());
+  // 6. convert map → array
+  return Array.from(sellerMap.values());
 };

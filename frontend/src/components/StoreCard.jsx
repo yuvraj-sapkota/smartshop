@@ -1,67 +1,102 @@
-import { MapPin } from "lucide-react";
+import { MapPin, Store } from "lucide-react";
+import { useEffect, useState } from "react";
+import StoreModal from "./storeModal";
 
 export default function StoreCard({ store }) {
+  const [showModal, setShowModal] = useState(false);
+
+  // store ko first 2 letters likaleko
+  const words = store.storeName.trim().split(/\s+/);
+  const initials =
+    words.length > 1
+      ? words
+          .map((w) => w[0])
+          .slice(0, 2)
+          .join("")
+      : words[0].slice(0, 2);
+  const finalInitials = initials.toUpperCase();
+
+  // modal open huda background ko ui scrollable na hos
+  useEffect(() => {
+    document.body.style.overflow = showModal ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showModal]);
   return (
-    <div className=" w-full bg-white rounded-2xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
-      {/* Store Info */}
-      <div className="mb-3 flex items-center gap-3 border-b border-gray-300 pb-4">
-        <div className="bg-primary text-white px-3 py-2 rounded-lg">SS</div>
-        <div>
-          <h2 className="text-xl font-semibold text-gray-800">
-            {store.storeName}
-          </h2>
-          <p className="text-gray-500 text-xs leading-2 flex  items-center gap-0.5 ml-1">
-            <MapPin size={12}/>
-            {store.storeAddress}
-          </p>
+    <>
+      <div className=" w-full bg-white rounded-2xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
+        {/* Store Info */}
+        <div className="mb-3 flex items-center gap-3 border-b border-gray-300 pb-4">
+          <div className="bg-primary text-white px-3 py-2 rounded-lg">
+            {finalInitials}
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800">
+              {store.storeName}
+            </h2>
+            <p className="text-gray-500 text-xs leading-2 flex  items-center gap-0.5 ml-1">
+              <MapPin size={12} />
+              {store.storeAddress}
+            </p>
+          </div>
+        </div>
+
+        {/* products*/}
+        <div className="mb-6">
+          <h3 className="text-sm  text-gray-600 mb-2">Featured Items</h3>
+        </div>
+
+        {/* Products */}
+        <div className="mb-4 h-28  ">
+          {store.products.length > 0 ? (
+            <>
+              <ul className="space-y-1 text-gray-700 text-sm font-semibold  ">
+                {store.products.slice(0, 3).map((item) => (
+                  <li key={item._id} className="flex justify-between">
+                    <span>{item.name}</span>
+                    <span>Rs {Number(item.price).toLocaleString()}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {store.products.length > 3 && (
+                <p
+                  onClick={() => setShowModal(true)}
+                  className="text-sm text-primary mt-4 font-medium hover:cursor-pointer w-fit"
+                >
+                  +{store.products.length - 3} more products
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-gray-400 flex items-center justify-center h-full">
+              No products yet
+            </p>
+          )}
+        </div>
+
+        {/* Buttons */}
+        <div className="flex gap-4 justify-between ">
+          <button className="px-4 py-3 text-sm border rounded-lg hover:bg-gray-100 transition">
+            Details
+          </button>
+          <button
+            onClick={() => setShowModal(true)}
+            className="px-4 py-3 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition"
+          >
+            View all products
+          </button>
         </div>
       </div>
 
-      {/* products*/}
-      <div className="mb-6">
-        <h3 className="text-sm font-semibold text-gray-600 mb-2">
-          Featured Items
-        </h3>
-      </div>
-
-      {/* Products */}
-      <div className="mb-6  h-20">
-        {/* <h3 className="text-sm font-semibold text-gray-600 mb-2">
-          Products ({store.productCount})
-        </h3> */}
-
-        {/* <ul className="space-y-1 text-gray-700 text-sm">
-          {store.featuredItems.map((item, index) => (
-            <li key={index} className="flex justify-between">
-              <span>{item.name}</span>
-              <span>Rs {item.price}</span>
-            </li>
-          ))}
-        </ul> */}
-
-        {store.products.length > 0 ? (
-          <ul className="space-y-1 text-gray-700 text-sm">
-            {store.products.slice(0, 3).map((item) => (
-              <li key={item._id} className="flex justify-between">
-                <span>{item.name}</span>
-                <span>Rs {item.price}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-gray-400 flex items-center justify-center h-full">No products yet</p>
-        )}
-      </div>
-
-      {/* Buttons */}
-      <div className="flex gap-4 justify-between ">
-        <button className="px-4 py-2 text-sm border rounded-lg hover:bg-gray-100 transition">
-          Details
-        </button>
-        <button className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition">
-          Contact
-        </button>
-      </div>
-    </div>
+      {showModal && (
+        <StoreModal
+          finalInitials={finalInitials}
+          store={store}
+          setShowModal={setShowModal}
+        />
+      )}
+    </>
   );
 }
