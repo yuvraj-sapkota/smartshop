@@ -1,6 +1,6 @@
 import { MapPin, Store } from "lucide-react";
 import { useEffect, useState } from "react";
-import StoreModal from "./storeModal";
+import StoreModal from "./StoreModal";
 
 export default function StoreCard({ store }) {
   const [showModal, setShowModal] = useState(false);
