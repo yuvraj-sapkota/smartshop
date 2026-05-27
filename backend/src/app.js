@@ -8,6 +8,7 @@ import adminRoutes from "./modules/admin/admin.routes.js";
 import productRoutes from "./modules/product/product.routes.js";
 import sellerRoutes from "./modules/seller/seller.routes.js";
 import storeRoutes from "./modules/store/store.route.js";
+import orderRoutes from "./modules/order/order.route.js";
 
 dotenv.config();
 
@@ -65,6 +66,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/stores", storeRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.use(errorMiddleware);
 

@@ -18,7 +18,6 @@ export const getMyProductAPI = async () => {
 };
 
 // delete product
-
 export const deleteProductAPI = async (productId) => {
   const response = await apiClient.delete(`/product/delete/${productId}`);
   return response.data;

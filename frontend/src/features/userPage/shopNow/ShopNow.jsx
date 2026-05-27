@@ -23,7 +23,7 @@ const ShopNow = () => {
 
   return (
     <>
-      <div className="max-w-7xl mx-auto px-4 mb-10">
+      <div className="max-w-7xl mx-auto  mb-10 ">
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {stores.map((store) => (
             <StoreCard key={store.sellerId} store={store} />

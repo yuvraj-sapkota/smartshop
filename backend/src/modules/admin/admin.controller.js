@@ -17,7 +17,7 @@ export const updateSellerStatus = async (req, res, next) => {
 };
 
 export const updateProductStatus = async (req, res, next) => {
-  console.log("backend route hitted");
+  // console.log("backend route hitted");
   try {
     const { productId } = req.params;
     const { status } = req.body;
