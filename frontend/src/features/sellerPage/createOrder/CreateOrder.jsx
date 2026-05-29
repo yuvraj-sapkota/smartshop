@@ -11,7 +11,13 @@ const genId = () =>
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-const newRow = () => ({ _id: genId(), product: "", qty: 1, price: 0 });
+const newRow = () => ({
+  _id: genId(),
+  product: "",
+  productName: "",
+  qty: 1,
+  price: 0,
+});
 
 const CreateOrder = () => {
   const products = useProductStore((state) => state.products);
@@ -26,22 +32,30 @@ const CreateOrder = () => {
   const [items, setItems] = useState([newRow()]);
   const [loading, setLoading] = useState(false);
 
-  // ── helpers ──────────────────────────────────────────────────────────────
+  // ───────────────── helpers ─────────────────
   const handleChange = (index, field, value) => {
     setItems((prev) => {
       const updated = [...prev];
 
-      if (field === "product") {
-        const selectedProduct = products.find((p) => p._id === value);
+      // PRODUCT SEARCH
+      if (field === "productName") {
+        const selectedProduct = products.find(
+          (p) => p.name.toLowerCase() === value.toLowerCase(),
+        );
+
         updated[index] = {
           ...updated[index],
+          productName: value,
           product: selectedProduct?._id || "",
           price: selectedProduct?.price || 0,
         };
-      } else {
+      }
+
+      // QTY
+      else if (field === "qty") {
         updated[index] = {
           ...updated[index],
-          [field]: Math.max(1, Number(value)), // qty can never go below 1
+          qty: value === "" ? "" : Number(value),
         };
       }
 
@@ -49,13 +63,17 @@ const CreateOrder = () => {
     });
   };
 
-  const addRow = () => setItems((prev) => [...prev, newRow()]);
+  const addRow = () => {
+    setItems((prev) => [...prev, newRow()]);
+  };
 
-  const removeRow = (index) =>
+  const removeRow = (index) => {
     setItems((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const grandTotal = items.reduce(
-    (acc, item) => acc + item.qty * item.price,
+    (acc, item) =>
+      acc + (Number(item.qty) || 0) * (Number(item.price) || 0),
     0,
   );
 
@@ -65,7 +83,7 @@ const CreateOrder = () => {
     setItems([newRow()]);
   };
 
-  // ── validation ────────────────────────────────────────────────────────────
+  // ───────────────── validation ─────────────────
   const validate = () => {
     if (!customer.trim()) {
       showError("Customer name is required");
@@ -74,17 +92,19 @@ const CreateOrder = () => {
 
     for (let i = 0; i < items.length; i++) {
       if (!items[i].product) {
-        showError(`Row ${i + 1}: please select a product`);
+        showError(`Row ${i + 1}: please select a valid product`);
         return false;
       }
-      if (items[i].qty < 1) {
+
+      if (!items[i].qty || items[i].qty < 1) {
         showError(`Row ${i + 1}: quantity must be at least 1`);
         return false;
       }
     }
 
-    // Warn about duplicate products
+    // duplicate check
     const ids = items.map((i) => i.product).filter(Boolean);
+
     if (new Set(ids).size !== ids.length) {
       showError("Duplicate products found — merge them into one row");
       return false;
@@ -93,27 +113,27 @@ const CreateOrder = () => {
     return true;
   };
 
-  // ── submit ────────────────────────────────────────────────────────────────
+  // ───────────────── submit ─────────────────
   const handleSubmit = async () => {
     if (!validate()) return;
 
-    // NOTE: price is intentionally NOT sent — the backend must resolve it
-    // from productId to prevent client-side price tampering.
     const payload = {
       customer: customer.trim(),
       items: items.map((i) => ({
         productId: i.product,
-        qty: i.qty,
+        qty: Number(i.qty),
       })),
     };
 
     try {
       setLoading(true);
 
-      // await createOrder(payload);
       const data = await createOrderAPI(payload);
+
       console.log(data);
+
       showSuccess(data.message);
+
       handleClose();
     } catch (err) {
       showError(err?.message || "Failed to create order");
@@ -122,25 +142,32 @@ const CreateOrder = () => {
     }
   };
 
-  // ──modal table columns  ─────────────────────────────────────────────────────────
+  // ───────────────── columns ─────────────────
   const columns = [
     {
       header: "Product",
       cell: (row, index) => (
-        <select
-          value={row.product}
-          onChange={(e) => handleChange(index, "product", e.target.value)}
-          className="border px-2 py-1 rounded w-full"
-        >
-          <option value="">Select Product</option>
-          {products.map((p) => (
-            <option key={p._id} value={p._id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
+        <div>
+          <input
+            type="text"
+            list={`products-${index}`}
+            value={row.productName}
+            onChange={(e) =>
+              handleChange(index, "productName", e.target.value)
+            }
+            placeholder="Search product..."
+            className="border px-2 py-1 rounded w-full outline-none"
+          />
+
+          <datalist id={`products-${index}`}>
+            {products.map((p) => (
+              <option key={p._id} value={p.name} />
+            ))}
+          </datalist>
+        </div>
       ),
     },
+
     {
       header: "Qty",
       cell: (row, index) => (
@@ -149,10 +176,11 @@ const CreateOrder = () => {
           min="1"
           value={row.qty}
           onChange={(e) => handleChange(index, "qty", e.target.value)}
-          className="border px-2 py-1 rounded w-20"
+          className="border px-2 py-1 rounded w-20 outline-none"
         />
       ),
     },
+
     {
       header: "Price",
       cell: (row) => (
@@ -163,18 +191,22 @@ const CreateOrder = () => {
         />
       ),
     },
+
     {
       header: "Total",
       cell: (row) => (
-        <span className="font-medium">Rs {row.qty * row.price}</span>
+        <span className="font-medium">
+          Rs {(Number(row.qty) || 0) * (Number(row.price) || 0)}
+        </span>
       ),
     },
+
     {
       header: "Action",
       cell: (_, index) => (
         <button
           onClick={() => removeRow(index)}
-          disabled={items.length === 1} // always keep at least one row
+          disabled={items.length === 1}
           className="text-red-500 disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <Trash2 size={18} />
@@ -183,9 +215,8 @@ const CreateOrder = () => {
     },
   ];
 
-
-  
-    const data = [
+  // ───────────────── dummy sales data ─────────────────
+  const data = [
     {
       _id: 101,
       sn: 1,
@@ -199,14 +230,14 @@ const CreateOrder = () => {
     },
     {
       _id: 102,
-      sn: 1,
-      product: "Pen",
-      qty: 2,
-      totalPrice: 200,
-      price: 100,
-      buyer: "Ram",
-      commission: 5,
-      time: "2026-04-25 11:00 AM",
+      sn: 2,
+      product: "Book",
+      qty: 1,
+      totalPrice: 500,
+      price: 500,
+      buyer: "Hari",
+      commission: 10,
+      time: "2026-04-25 12:30 PM",
     },
   ];
 
@@ -222,6 +253,7 @@ const CreateOrder = () => {
     },
 
     { header: "Qty", accessorKey: "qty" },
+
     { header: "Price", accessorKey: "price" },
 
     {
@@ -242,7 +274,9 @@ const CreateOrder = () => {
       header: "Commission",
       accessorKey: "commission",
       cell: (row) => (
-        <span className="text-purple-600 font-medium">Rs {row.commission}</span>
+        <span className="text-purple-600 font-medium">
+          Rs {row.commission}
+        </span>
       ),
     },
 
@@ -256,12 +290,14 @@ const CreateOrder = () => {
       ),
     },
   ];
-  // ── render ────────────────────────────────────────────────────────────────
+
+  // ───────────────── render ─────────────────
   return (
     <>
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <PageHeader text="Create" />
+
           <button
             onClick={() => setOpen(true)}
             className="bg-primary text-white px-4 py-2 rounded"
@@ -274,9 +310,8 @@ const CreateOrder = () => {
           <h1 className="font-semibold text-base md:text-lg text-gray-700">
             Sales History
           </h1>
-        {/* table ma seles gareko data dekhauna baki rayo  */}
 
-        <DataTable columns={salesColumn} data={data}/>
+          <DataTable columns={salesColumn} data={data} />
         </div>
       </div>
 
@@ -284,18 +319,27 @@ const CreateOrder = () => {
       {open && (
         <div
           className="fixed inset-0 bg-black/40 backdrop-blur-md flex items-center justify-center z-50 px-4"
-          onClick={(e) => e.target === e.currentTarget && handleClose()} // close on backdrop click
+          onClick={(e) => e.target === e.currentTarget && handleClose()}
         >
           <div className="bg-white w-[800px] rounded-lg p-4 space-y-4 overflow-x-auto">
             {/* header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Create Sales Order</h2>
-              <X onClick={handleClose} className="cursor-pointer" />
+              <h2 className="text-lg font-semibold">
+                Create Sales Order
+              </h2>
+
+              <X
+                onClick={handleClose}
+                className="cursor-pointer"
+              />
             </div>
 
             {/* customer */}
             <div>
-              <label className="text-sm text-gray-600">Customer Name</label>
+              <label className="text-sm text-gray-600">
+                Customer Name
+              </label>
+
               <input
                 type="text"
                 value={customer}
@@ -309,11 +353,14 @@ const CreateOrder = () => {
             <DataTable columns={columns} data={items} />
 
             {/* add row */}
-            <button onClick={addRow} className="text-blue-600 text-sm">
+            <button
+              onClick={addRow}
+              className="text-blue-600 text-sm"
+            >
               + Add Product
             </button>
 
-            {/* grand total */}
+            {/* total */}
             <div className="flex justify-end text-lg font-semibold">
               Total: Rs {grandTotal}
             </div>
@@ -326,12 +373,13 @@ const CreateOrder = () => {
               >
                 Cancel
               </button>
+
               <button
                 onClick={handleSubmit}
                 disabled={loading}
                 className="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {loading ? "Submitting…" : "Submit Sell"}
+                {loading ? "Submitting..." : "Submit Sell"}
               </button>
             </div>
           </div>
