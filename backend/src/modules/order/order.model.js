@@ -1,13 +1,21 @@
 import mongoose from "mongoose";
 
 const orderItemSchema = new mongoose.Schema({
+  // Registered product — ObjectId reference (optional)
   product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
-    required: true,
+    default: null,
+  },
+  // Custom product — plain name string (optional)
+  productName: {
+    type: String,
+    default: null,
+    trim: true,
   },
   qty: { type: Number, required: true, min: 1 },
-  price: { type: Number, required: true }, // snapshot at time of order
+  price: { type: Number, required: true },       // snapshot at time of order
+  commission: { type: Number, required: true },  // per unit commission
 });
 
 const orderSchema = new mongoose.Schema(
@@ -17,9 +25,14 @@ const orderSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    customer: { type: String, required: true, trim: true },
+    customer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     items: [orderItemSchema],
     grandTotal: { type: Number, required: true },
+    totalCommission: { type: Number, required: true },
     status: {
       type: String,
       enum: ["pending", "completed", "cancelled"],

@@ -1,32 +1,77 @@
-// store bata products fetch garcha, modal open/close matra handle garcha
-
-import React, { useState } from "react";
-import { ShoppingCart, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ShoppingCart, X, User } from "lucide-react";
 import OrderItemsTable from "./OrderItemsTable";
+import CustomerInput from "./CustomerInput";
 import { showError } from "../../../../utils/toast";
+import useCustomerStore from "../../../../store/customerStore/customerStore";
+import useOrderStore from "../../../../store/orderStore/orderStore";
 
 const CreateSalesModal = ({ open, onClose, products }) => {
-  const [customerName, setCustomerName] = useState("");
+  const customers = useCustomerStore((state) => state.customers);
+  const getCustomers = useCustomerStore((state) => state.getCustomers);
+
+  const createOrder = useOrderStore((state) => state.createOrder);
+  const loading = useOrderStore((state) => state.loading);
+
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [items, setItems] = useState([
-    { _id: Date.now(), product: "", qty: 1, price: 0 },
+    { _id: Date.now(), product: "", productId: null, qty: 1, price: 0 },
   ]);
 
-  const totalAmount = items.reduce((sum, row) => sum + row.qty * row.price, 0);
+  useEffect(() => {
+    if (open) getCustomers();
+  }, [open, getCustomers]);
+
+  const totalAmount = items.reduce(
+    (sum, row) => sum + Number(row.qty) * Number(row.price),
+    0
+  );
 
   const handleClose = () => {
-    setCustomerName("");
-    setItems([{ _id: Date.now(), product: "", qty: 1, price: 0 }]);
+    setSelectedCustomer(null);
+    setItems([{ _id: Date.now(), product: "", productId: null, qty: 1, price: 0 }]);
     onClose();
   };
 
-  const handleSubmit = () => {
-    if (!customerName.trim()) return showError("Customer name required");
-    const hasEmpty = items.some((i) => !i.product.trim());
-    if (hasEmpty) return showError(" product names required");
+  const handleSubmit = async () => {
+    // Validate
+    if (!selectedCustomer)
+      return showError("Please select a registered customer");
 
-    const orderData = { customerName, items, total: totalAmount };
-    console.log("Order submitted:", orderData);
-    // TODO: call your order API here
+    const hasEmptyProduct = items.some((i) => !i.product.trim());
+    if (hasEmptyProduct) return showError("All product names are required");
+
+    const hasInvalidPrice = items.some(
+      (i) => !i.productId && (i.price === "" || Number(i.price) < 0)
+    );
+    if (hasInvalidPrice)
+      return showError("Custom products must have a valid price");
+
+    // Transform items for backend
+    const transformedItems = items.map((item) => {
+      if (item.productId) {
+        // Registered product — backend resolves price from DB
+        return {
+          productId: item.productId,
+          qty: Number(item.qty),
+        };
+      } else {
+        // Custom product — send name + price
+        return {
+          productName: item.product,
+          qty: Number(item.qty),
+          price: Number(item.price),
+        };
+      }
+    });
+
+    const orderData = {
+      customerId: selectedCustomer._id,
+      items: transformedItems,
+    };
+
+    const success = await createOrder(orderData);
+    if (success) handleClose();
   };
 
   if (!open) return null;
@@ -52,18 +97,27 @@ const CreateSalesModal = ({ open, onClose, products }) => {
           </button>
         </div>
 
-        {/* Customer Name */}
+        {/* Customer Search */}
         <div>
           <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">
-            Customer Name
+            User name
           </label>
-          <input
-            type="text"
-            value={customerName}
-            onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="Enter customer name"
-            className="w-full border border-gray-300 px-3.5 py-2.5 rounded-lg text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+          <CustomerInput
+            value={selectedCustomer?.username || ""}
+            customers={customers}
+            onChange={(customer) => setSelectedCustomer(customer)}
           />
+          {/* {selectedCustomer && (
+            <div className="mt-2 inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-3 py-1.5 rounded-lg">
+              <User size={13} className="text-blue-500" />
+              <span className="text-sm text-blue-700 font-medium">
+                {selectedCustomer.username}
+              </span>
+              <span className="text-xs text-blue-400">
+                {selectedCustomer.email}
+              </span>
+            </div>
+          )} */}
         </div>
 
         {/* Items Table */}
@@ -84,15 +138,17 @@ const CreateSalesModal = ({ open, onClose, products }) => {
           <div className="flex gap-3">
             <button
               onClick={handleClose}
-              className="border border-gray-300 px-4 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+              disabled={loading}
+              className="border border-gray-300 px-4 py-1.5 rounded-lg text-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
-              className="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors"
+              disabled={loading}
+              className="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Submit Sell
+              {loading ? "Submitting..." : "Submit Sell"}
             </button>
           </div>
         </div>

@@ -2,13 +2,13 @@ import React from "react";
 import { Trash2, Plus } from "lucide-react";
 import ProductInput from "./ProductInput";
 
-// Grid template — header ra rows duwai same columns use garxa, perfect alignment
 const GRID = "240px 80px 110px 100px 60px";
 
 const OrderItemsTable = ({ items, setItems, products }) => {
+
   const handleNumericChange = (index, field, raw) => {
     setItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: raw } : item)),
+      prev.map((item, i) => (i === index ? { ...item, [field]: raw } : item))
     );
   };
 
@@ -16,29 +16,27 @@ const OrderItemsTable = ({ items, setItems, products }) => {
     const num = Number(raw);
     const clamped =
       field === "qty"
-        ? isNaN(num) || num < 1
-          ? 1
-          : Math.floor(num)
-        : isNaN(num) || num < 0
-        ? 0
-        : num;
+        ? isNaN(num) || num < 1 ? 1 : Math.floor(num)
+        : isNaN(num) || num < 0 ? 0 : num;
     setItems((prev) =>
       prev.map((item, i) =>
-        i === index ? { ...item, [field]: clamped } : item,
-      ),
+        i === index ? { ...item, [field]: clamped } : item
+      )
     );
   };
 
-  const handleProductSelect = (index, productName, price) => {
+  // productId — registered product select garda store, custom bhaye null
+  const handleProductSelect = (index, productName, price, productId = null) => {
     setItems((prev) =>
       prev.map((item, i) => {
         if (i !== index) return item;
         return {
           ...item,
           product: productName,
+          productId,                              // null for custom, _id for registered
           ...(price !== null ? { price } : {}),
         };
-      }),
+      })
     );
   };
 
@@ -51,7 +49,7 @@ const OrderItemsTable = ({ items, setItems, products }) => {
 
   const addRow = () => {
     setItems((prev) => [
-      { _id: Date.now(), product: "", qty: 1, price: 0 },
+      { _id: Date.now(), product: "", productId: null, qty: 1, price: 0 },
       ...prev,
     ]);
   };
@@ -60,11 +58,11 @@ const OrderItemsTable = ({ items, setItems, products }) => {
 
   return (
     <div className="space-y-3">
-      <div className="rounded-md shadow-md border border-gray-200 bg-white overflow-hidden pb-4">
-        {/* Horizontal scroll on mobile */}
+      <div className="rounded-md shadow-md border border-gray-200 bg-white overflow-hidden">
         <div className="overflow-x-auto">
           <div style={{ minWidth: "600px" }}>
-            {/* HEADER — always visible, never scrolls */}
+
+            {/* HEADER */}
             <div
               className="grid bg-gray-100 text-gray-700 uppercase text-xs tracking-wider font-medium"
               style={{ gridTemplateColumns: GRID }}
@@ -76,11 +74,8 @@ const OrderItemsTable = ({ items, setItems, products }) => {
               ))}
             </div>
 
-            {/* ROWS — scrollable, max 3 rows tall */}
-            <div
-              className="overflow-y-auto"
-              style={{ maxHeight: "168px" }} // ~3 rows
-            >
+            {/* ROWS */}
+            <div className="overflow-y-auto" style={{ maxHeight: "168px" }}>
               {items.length === 0 ? (
                 <div className="text-center p-6 text-gray-400 text-sm">
                   No items added
@@ -89,7 +84,7 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                 items.map((row, index) => (
                   <div
                     key={row._id}
-                    className="grid border-t border-gray-100 hover:bg-gray-50 transition "
+                    className="grid border-t border-gray-100 hover:bg-gray-50 transition"
                     style={{ gridTemplateColumns: GRID }}
                   >
                     {/* PRODUCT */}
@@ -97,8 +92,8 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                       <ProductInput
                         value={row.product}
                         products={products}
-                        onChange={(name, price) =>
-                          handleProductSelect(index, name, price)
+                        onChange={(name, price, productId) =>
+                          handleProductSelect(index, name, price, productId)
                         }
                       />
                     </div>
@@ -108,36 +103,32 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                       <input
                         type="number"
                         value={row.qty}
-                        onChange={(e) =>
-                          handleNumericChange(index, "qty", e.target.value)
-                        }
-                        onBlur={(e) =>
-                          handleNumericBlur(index, "qty", e.target.value)
-                        }
+                        onChange={(e) => handleNumericChange(index, "qty", e.target.value)}
+                        onBlur={(e) => handleNumericBlur(index, "qty", e.target.value)}
                         className="border border-gray-300 px-2 py-1.5 rounded-lg w-full text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
                       />
                     </div>
 
-                    {/* PRICE */}
+                    {/* PRICE — registered product bhaye readonly (backend resolves) */}
                     <div className={cellClass}>
                       <input
                         type="number"
                         value={row.price}
-                        onChange={(e) =>
-                          handleNumericChange(index, "price", e.target.value)
-                        }
-                        onBlur={(e) =>
-                          handleNumericBlur(index, "price", e.target.value)
-                        }
-                        className="border border-gray-300 px-2 py-1.5 rounded-lg w-full text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                        readOnly={!!row.productId}
+                        onChange={(e) => handleNumericChange(index, "price", e.target.value)}
+                        onBlur={(e) => handleNumericBlur(index, "price", e.target.value)}
+                        className={`border px-2 py-1.5 rounded-lg w-full text-sm outline-none transition-all ${
+                          row.productId
+                            ? "bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
+                            : "border-gray-300 focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+                        }`}
                       />
                     </div>
 
                     {/* TOTAL */}
                     <div className={cellClass}>
                       <span className="font-semibold text-gray-700 text-sm">
-                        Rs.{" "}
-                        {(Number(row.qty) * Number(row.price)).toLocaleString()}
+                        Rs. {(Number(row.qty) * Number(row.price)).toLocaleString()}
                       </span>
                     </div>
 
@@ -155,6 +146,7 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                 ))
               )}
             </div>
+
           </div>
         </div>
       </div>
