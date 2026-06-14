@@ -8,19 +8,18 @@ const ProductInput = ({ value, onChange, products }) => {
   const [dropdownStyle, setDropdownStyle] = useState({});
   const wrapperRef = useRef(null);
   const inputRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     setQuery(value || "");
   }, [value]);
 
   const filtered = query.trim()
-    ? products.filter((p) =>
-        p.name.toLowerCase().includes(query.toLowerCase())
-      )
+    ? products.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
     : [];
 
   const exactMatch = products.some(
-    (p) => p.name.toLowerCase() === query.toLowerCase()
+    (p) => p.name.toLowerCase() === query.toLowerCase(),
   );
 
   const updateDropdownPosition = () => {
@@ -40,7 +39,12 @@ const ProductInput = ({ value, onChange, products }) => {
     if (!showSuggestions) return;
 
     const handleClickOutside = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target)
+      ) {
         setShowSuggestions(false);
       }
     };
@@ -52,7 +56,7 @@ const ProductInput = ({ value, onChange, products }) => {
 
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("touchstart", handleClickOutside);
-    window.addEventListener("scroll", handleScroll, true);
+    // window.addEventListener("scroll", handleScroll, true);
     window.addEventListener("resize", updateDropdownPosition);
 
     return () => {
@@ -78,6 +82,7 @@ const ProductInput = ({ value, onChange, products }) => {
 
   const dropdown = showSuggestions && query.trim().length > 0 && (
     <div
+      ref={dropdownRef}
       style={dropdownStyle}
       className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
     >
@@ -88,11 +93,12 @@ const ProductInput = ({ value, onChange, products }) => {
               <li
                 key={product._id}
                 // onMouseDown for desktop, onTouchEnd for iOS (fires before onBlur)
-                onMouseDown={() => handleSelect(product)}
-                onTouchEnd={(e) => {
-                  e.preventDefault();
-                  handleSelect(product);
-                }}
+                // onMouseDown={() => handleSelect(product)}
+                // onTouchEnd={(e) => {
+                //   e.preventDefault();
+                //   handleSelect(product);
+                // }}
+                onClick={() => handleSelect(product)}
                 className="flex items-center justify-between px-3 py-2 hover:bg-blue-50 active:bg-blue-50 cursor-pointer transition-colors"
               >
                 <div>

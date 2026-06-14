@@ -34,26 +34,26 @@ const CustomerInput = ({ value, onChange, customers }) => {
     }
   };
 
-  useEffect(() => {
-    if (!showSuggestions) return;
-    const handleClickOutside = (e) => {
-      
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
-        setShowSuggestions(false);
-      }
-    };
-    const handleScroll = () => setShowSuggestions(false);
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("touchstart", handleClickOutside);
-    window.addEventListener("scroll", handleScroll, true);
-    window.addEventListener("resize", updateDropdownPosition);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("touchstart", handleClickOutside);
-      window.removeEventListener("scroll", handleScroll, true);
-      window.removeEventListener("resize", updateDropdownPosition);
-    };
-  }, [showSuggestions]);
+  // useEffect(() => {
+  //   if (!showSuggestions) return;
+  //   const handleClickOutside = (e) => {
+
+  //     if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+  //       setShowSuggestions(false);
+  //     }
+  //   };
+  //   const handleScroll = () => setShowSuggestions(false);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   document.addEventListener("touchstart", handleClickOutside);
+  //   window.addEventListener("scroll", handleScroll, true);
+  //   window.addEventListener("resize", updateDropdownPosition);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //     document.removeEventListener("touchstart", handleClickOutside);
+  //     window.removeEventListener("scroll", handleScroll, true);
+  //     window.removeEventListener("resize", updateDropdownPosition);
+  //   };
+  // }, [showSuggestions]);
 
   const handleSelect = (customer) => {
     setQuery(customer.username);
@@ -64,18 +64,14 @@ const CustomerInput = ({ value, onChange, customers }) => {
   const dropdown = showSuggestions && query.trim().length > 0 && (
     <div
       style={dropdownStyle}
-      className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+      className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden "
     >
       {filtered.length > 0 ? (
         <ul className="max-h-44 overflow-y-auto divide-y divide-gray-50 ">
           {filtered.map((customer) => (
             <li
               key={customer._id}
-              onMouseDown={() => handleSelect(customer)}
-              onTouchEnd={(e) => {
-                e.preventDefault();
-                handleSelect(customer);
-              }}
+              onClick={()=> handleSelect(customer)}
               className="flex items-center gap-3 px-3 py-2 hover:bg-blue-50 active:bg-blue-50 cursor-pointer transition-colors"
             >
               <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">

@@ -7,11 +7,15 @@ import useCustomerStore from "../../../../store/customerStore/customerStore";
 import useOrderStore from "../../../../store/orderStore/orderStore";
 
 const CreateSalesModal = ({ open, onClose, products }) => {
+  // console.log(open, products);
   const customers = useCustomerStore((state) => state.customers);
   const getCustomers = useCustomerStore((state) => state.getCustomers);
 
+
+
   const createOrder = useOrderStore((state) => state.createOrder);
   const loading = useOrderStore((state) => state.loading);
+  
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [items, setItems] = useState([
@@ -22,14 +26,18 @@ const CreateSalesModal = ({ open, onClose, products }) => {
     if (open) getCustomers();
   }, [open, getCustomers]);
 
+
+
   const totalAmount = items.reduce(
     (sum, row) => sum + Number(row.qty) * Number(row.price),
-    0
+    0,
   );
 
   const handleClose = () => {
     setSelectedCustomer(null);
-    setItems([{ _id: Date.now(), product: "", productId: null, qty: 1, price: 0 }]);
+    setItems([
+      { _id: Date.now(), product: "", productId: null, qty: 1, price: 0 },
+    ]);
     onClose();
   };
 
@@ -42,7 +50,7 @@ const CreateSalesModal = ({ open, onClose, products }) => {
     if (hasEmptyProduct) return showError("All product names are required");
 
     const hasInvalidPrice = items.some(
-      (i) => !i.productId && (i.price === "" || Number(i.price) < 0)
+      (i) => !i.productId && (i.price === "" || Number(i.price) < 0),
     );
     if (hasInvalidPrice)
       return showError("Custom products must have a valid price");
@@ -99,7 +107,7 @@ const CreateSalesModal = ({ open, onClose, products }) => {
 
         {/* Customer Search */}
         <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5">
+          <label className="block text-xs font-semibold text-gray-500 uppercase mb-1.5 ">
             User name
           </label>
           <CustomerInput
