@@ -9,3 +9,9 @@ export const getOrderAPI = async () => {
   const response = await apiClient.get("/orders/my-orders");
   return response.data;
 };
+
+export const getAllOrdersApi = async () => {
+  const response = await apiClient.get("/orders/all-orders");
+  console.log(response);
+  return response.data;
+};

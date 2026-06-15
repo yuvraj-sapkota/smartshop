@@ -1,4 +1,8 @@
-import { createOrderService, getMyOrdersService } from "./order.service.js";
+import {
+  createOrderService,
+  getAllOrdersService,
+  getMyOrdersService,
+} from "./order.service.js";
 
 export const createOrder = async (req, res, next) => {
   try {
@@ -21,6 +25,21 @@ export const getMyOrders = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Orders fetched successfully",
+      orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// for admin side
+export const getAllOrders = async (req, res, next) => {
+  try {
+    const orders = await getAllOrdersService();
+
+    res.status(200).json({
+      success: true,
+      message: "All orders fetched successfully",
       orders,
     });
   } catch (error) {

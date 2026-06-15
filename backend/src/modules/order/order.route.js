@@ -2,7 +2,7 @@ import express from "express";
 import protect from "../../middlewares/auth.middleware.js";
 import allowRole from "../../middlewares/role.middleware.js";
 import checkSellerApproved from "../../middlewares/checkSellerApproved.js";
-import { createOrder, getMyOrders } from "./order.controller.js";
+import { createOrder, getAllOrders, getMyOrders } from "./order.controller.js";
 import { createOrderSchema } from "./order.validation.js";
 
 const router = express.Router();
@@ -33,5 +33,7 @@ router.get(
   checkSellerApproved,
   getMyOrders,
 );
+
+router.get("/all-orders", protect, allowRole("admin"), getAllOrders);
 
 export default router;

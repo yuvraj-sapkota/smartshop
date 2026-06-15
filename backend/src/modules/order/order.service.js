@@ -3,7 +3,7 @@ import Product from "../product/product.model.js";
 import User from "../auth/auth.model.js";
 import AppError from "../../utils/AppError.js";
 
-const CUSTOM_PRODUCT_COMMISSION_RATE = 0.10; // 10%
+const CUSTOM_PRODUCT_COMMISSION_RATE = 0.1; // 10%
 
 export const createOrderService = async (data, sellerId) => {
   const { customerId, items } = data;
@@ -31,13 +31,11 @@ export const createOrderService = async (data, sellerId) => {
     if (products.length !== productIds.length) {
       throw new AppError(
         "One or more products not found, not approved, or don't belong to you",
-        400
+        400,
       );
     }
 
-    productMap = Object.fromEntries(
-      products.map((p) => [p._id.toString(), p])
-    );
+    productMap = Object.fromEntries(products.map((p) => [p._id.toString(), p]));
   }
 
   // 4. Build resolved items with commission
@@ -60,7 +58,7 @@ export const createOrderService = async (data, sellerId) => {
       qty: item.qty,
       price: item.price,
       commission: parseFloat(
-        (item.price * CUSTOM_PRODUCT_COMMISSION_RATE).toFixed(2)
+        (item.price * CUSTOM_PRODUCT_COMMISSION_RATE).toFixed(2),
       ),
     })),
   ];
@@ -68,12 +66,12 @@ export const createOrderService = async (data, sellerId) => {
   // 5. Calculate grand total and total commission
   const grandTotal = resolvedItems.reduce(
     (acc, item) => acc + item.qty * item.price,
-    0
+    0,
   );
 
   const totalCommission = resolvedItems.reduce(
     (acc, item) => acc + item.qty * item.commission,
-    0
+    0,
   );
 
   // 6. Create order
@@ -95,5 +93,14 @@ export const getMyOrdersService = async (sellerId) => {
   return Order.find({ seller: sellerId })
     .populate("items.product", "name price commission")
     .populate("customer", "username email")
+    .sort({ createdAt: -1 });
+};
+
+// for admin side
+export const getAllOrdersService = async () => {
+  return Order.find()
+    .populate("items.product", "name price commission")
+    .populate("customer", "username email")
+    .populate("seller", "username email")
     .sort({ createdAt: -1 });
 };

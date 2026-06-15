@@ -5,10 +5,11 @@ import ProductInput from "./ProductInput";
 const GRID = "240px 80px 110px 100px 60px";
 
 const OrderItemsTable = ({ items, setItems, products }) => {
-
   const handleNumericChange = (index, field, raw) => {
+    if (raw.includes("-")) return;
+
     setItems((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: raw } : item))
+      prev.map((item, i) => (i === index ? { ...item, [field]: raw } : item)),
     );
   };
 
@@ -16,12 +17,16 @@ const OrderItemsTable = ({ items, setItems, products }) => {
     const num = Number(raw);
     const clamped =
       field === "qty"
-        ? isNaN(num) || num < 1 ? 1 : Math.floor(num)
-        : isNaN(num) || num < 0 ? 0 : num;
+        ? isNaN(num) || num < 1
+          ? 1
+          : Math.floor(num)
+        : isNaN(num) || num < 0
+        ? 0
+        : num;
     setItems((prev) =>
       prev.map((item, i) =>
-        i === index ? { ...item, [field]: clamped } : item
-      )
+        i === index ? { ...item, [field]: clamped } : item,
+      ),
     );
   };
 
@@ -33,10 +38,10 @@ const OrderItemsTable = ({ items, setItems, products }) => {
         return {
           ...item,
           product: productName,
-          productId,                              // null for custom, _id for registered
+          productId, // null for custom, _id for registered
           ...(price !== null ? { price } : {}),
         };
-      })
+      }),
     );
   };
 
@@ -61,7 +66,6 @@ const OrderItemsTable = ({ items, setItems, products }) => {
       <div className="rounded-md shadow-md border border-gray-200 bg-white overflow-hidden">
         <div className="overflow-x-auto">
           <div style={{ minWidth: "600px" }}>
-
             {/* HEADER */}
             <div
               className="grid bg-gray-100 text-gray-700 uppercase text-xs tracking-wider font-medium"
@@ -102,9 +106,14 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                     <div className={cellClass}>
                       <input
                         type="number"
+                        min="1"
                         value={row.qty}
-                        onChange={(e) => handleNumericChange(index, "qty", e.target.value)}
-                        onBlur={(e) => handleNumericBlur(index, "qty", e.target.value)}
+                        onChange={(e) =>
+                          handleNumericChange(index, "qty", e.target.value)
+                        }
+                        onBlur={(e) =>
+                          handleNumericBlur(index, "qty", e.target.value)
+                        }
                         className="border border-gray-300 px-2 py-1.5 rounded-lg w-full text-sm outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
                       />
                     </div>
@@ -112,11 +121,16 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                     {/* PRICE — registered product bhaye readonly (backend resolves) */}
                     <div className={cellClass}>
                       <input
+                        min="0"
                         type="number"
                         value={row.price}
                         readOnly={!!row.productId}
-                        onChange={(e) => handleNumericChange(index, "price", e.target.value)}
-                        onBlur={(e) => handleNumericBlur(index, "price", e.target.value)}
+                        onChange={(e) =>
+                          handleNumericChange(index, "price", e.target.value)
+                        }
+                        onBlur={(e) =>
+                          handleNumericBlur(index, "price", e.target.value)
+                        }
                         className={`border px-2 py-1.5 rounded-lg w-full text-sm outline-none transition-all ${
                           row.productId
                             ? "bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
@@ -128,7 +142,8 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                     {/* TOTAL */}
                     <div className={cellClass}>
                       <span className="font-semibold text-gray-700 text-sm">
-                        Rs. {(Number(row.qty) * Number(row.price)).toLocaleString()}
+                        Rs.{" "}
+                        {(Number(row.qty) * Number(row.price)).toLocaleString()}
                       </span>
                     </div>
 
@@ -146,7 +161,6 @@ const OrderItemsTable = ({ items, setItems, products }) => {
                 ))
               )}
             </div>
-
           </div>
         </div>
       </div>
