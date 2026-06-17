@@ -13,10 +13,6 @@ const AdminProducts = () => {
     updateProductStatus,
   } = useProductStore();
 
-  useEffect(() => {
-    getAllProducts();
-  }, []);
-
   const adminColumns = [
     {
       header: "SN",
@@ -56,13 +52,18 @@ const AdminProducts = () => {
     {
       header: "Status",
       accessorKey: "status",
-      cell: (row) => (
-        <StatusDropdown
-          productId={row._id}
-          initialStatus={row.status}
-          onUpdate={updateProductStatus}
-        />
-      ),
+      cell: (row) =>
+        row.status === "pending" ? (
+          <StatusDropdown
+            productId={row._id}
+            initialStatus={row.status}
+            onUpdate={updateProductStatus}
+          />
+        ) : (
+          <span 
+          className={`font-medium px-3 py-1 rounded-full ${row.status === "approved" ? "text-green-600 bg-green-100  " : "bg-red-100   text-red-600 "}`}
+          >{row.status}</span>
+        ),
     },
     {
       header: "Date & Time",
@@ -75,8 +76,11 @@ const AdminProducts = () => {
     },
   ];
 
+  useEffect(() => {
+    getAllProducts();
+  }, []);
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 ">
       <PageHeader text="Product Management" />
 
       {loading && <p className="text-gray-400 text-sm">Loading...</p>}

@@ -1,4 +1,5 @@
 import { MapPin, Store } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import StoreModal from "./StoreModal";
 
@@ -25,21 +26,36 @@ export default function StoreCard({ store }) {
   }, [showModal]);
   return (
     <>
-      <div className=" w-full bg-white rounded-2xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition">
+      <div className=" w-full bg-white rounded-2xl shadow-md border border-gray-200 p-5 hover:shadow-lg transition ">
         {/* Store Info */}
-        <div className="mb-3 flex items-center gap-3 border-b border-gray-300 pb-4">
-          <div className="bg-primary text-white px-3 py-2 rounded-lg">
-            {finalInitials}
+        <div className="mb-3 flex items-center justify-between border-b border-gray-300 pb-4">
+          {/* Left side */}
+          <div className="flex items-center gap-3">
+            <div className="bg-primary text-white px-3 py-2 rounded-lg">
+              {finalInitials}
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {store.storeName}
+              </h2>
+
+              <p className="text-gray-500 text-xs flex items-center gap-0.5 ml-1">
+                <MapPin size={12} />
+                {store.storeAddress}
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800">
-              {store.storeName}
-            </h2>
-            <p className="text-gray-500 text-xs leading-2 flex  items-center gap-0.5 ml-1">
-              <MapPin size={12} />
-              {store.storeAddress}
-            </p>
-          </div>
+
+          {/* Right side - WhatsApp */}
+          <a
+            href={`https://wa.me/${store.phone}`} // make sure you have phone in DB
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary hover:bg-primary-hover text-white p-2 rounded-full transition"
+          >
+            <FaWhatsapp size={22}/>
+          </a>
         </div>
 
         {/* products*/}
@@ -77,13 +93,13 @@ export default function StoreCard({ store }) {
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-4 justify-between ">
-          <button className="px-4 py-3 text-sm border rounded-lg hover:bg-gray-100 transition">
+        <div className="flex gap-4 justify-end border-t border-gray-200  ">
+          {/* <button className="px-4 py-3 text-sm border rounded-lg hover:bg-gray-100 transition">
             Details
-          </button>
+          </button> */}
           <button
             onClick={() => setShowModal(true)}
-            className="px-4 py-3 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition"
+            className="px-4 py-3 mt-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-hover transition"
           >
             View all products
           </button>

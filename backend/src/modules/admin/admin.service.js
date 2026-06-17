@@ -25,8 +25,8 @@ export const updateProductStatusService = async (productId, status) => {
 
   if (!product) throw new AppError("Product not found", 404);
 
-  if (product.status === status) {
-    throw new AppError(`Product is already ${status}`, 400);
+  if (product.status !== "pending") {
+    throw new AppError(`Product is already been finalized`, 400);
   }
 
   product.status = status;

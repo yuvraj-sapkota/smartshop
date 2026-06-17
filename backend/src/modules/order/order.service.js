@@ -89,6 +89,7 @@ export const createOrderService = async (data, sellerId) => {
   ]);
 };
 
+// for user side sales history
 export const getMyOrdersService = async (sellerId) => {
   return Order.find({ seller: sellerId })
     .populate("items.product", "name price commission")
@@ -103,4 +104,32 @@ export const getAllOrdersService = async () => {
     .populate("customer", "username email")
     .populate("seller", "username email")
     .sort({ createdAt: -1 });
+};
+
+// for user side, purchase
+export const getMyPurchasesService = async (customerId) => {
+  const orders = await Order.find({ customer: customerId })
+    .populate("seller", "username")
+    .populate("items.product", "name");
+
+  const purchases = [];
+
+  orders.forEach((order) => {
+   
+    order.items.forEach((item) => {
+      purchases.push({
+        _id: item._id,
+        product: item.product?.name || item.productName,
+        quantity: item.qty,
+        mrp: item.price,
+        totalPrice: item.price * item.qty,
+        cashback: " 0",
+        seller: order.seller.username,
+        datetime: order.createdAt,
+      });
+    });
+  });
+  return purchases;
+
+ 
 };

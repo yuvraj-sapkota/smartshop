@@ -5,7 +5,7 @@ const StoreModal = ({ finalInitials, store, setShowModal }) => {
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-md"
+        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-md "
         onClick={(e) => e.target === e.currentTarget && setShowModal(false)}
       >
         <div className="bg-white rounded-2xl w-full max-w-md max-h-[80vh] flex flex-col shadow-xl ">

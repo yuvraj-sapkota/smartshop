@@ -2,6 +2,7 @@ import {
   createOrderService,
   getAllOrdersService,
   getMyOrdersService,
+  getMyPurchasesService,
 } from "./order.service.js";
 
 export const createOrder = async (req, res, next) => {
@@ -41,6 +42,24 @@ export const getAllOrders = async (req, res, next) => {
       success: true,
       message: "All orders fetched successfully",
       orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// for user side, purchase
+
+export const getMyPurchase = async (req, res, next) => {
+  try {
+    const customerId = req.user._id;
+
+    const purchases = await getMyPurchasesService(customerId);
+
+    res.status(200).json({
+      success: true,
+      message: "Purchased history fetched successfully",
+      purchases,
     });
   } catch (error) {
     next(error);
