@@ -1,43 +1,35 @@
 import React from "react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
+import useOrderStore from "../../../store/orderStore/orderStore";
+import { useEffect } from "react";
+import { useMemo } from "react";
 
 const Commission = () => {
-  const data = [
-    {
-      _id: 101,
-      sn: 1,
-      commission: 5,
-      product: "Pen",
-      price: 200,
-      qty: 2,
-      totalPrice: 400,
-      buyer: "Ram",
-      time: "2026-04-25 11:00 AM",
-    },
-    {
-      _id: 102,
-      sn: 2,
-      commission: 5,
-      product: "Pen",
-      price: 200,
-      qty: 2,
-      totalPrice: 400,
-      buyer: "Ram",
-      time: "2026-04-25 11:00 AM",
-    },
-    {
-      _id: 103,
-      sn: 3,
-      commission: 5,
-      product: "Pen",
-      price: 200,
-      qty: 2,
-      totalPrice: 400,
-      buyer: "Ram",
-      time: "2026-04-25 11:00 AM",
-    },
-  ];
+  const orders = useOrderStore((state) => state.orders);
+  const loading = useOrderStore((state) => state.loading);
+  const getMyOrders = useOrderStore((state) => state.getMyOrders);
+
+  useEffect(() => {
+    getMyOrders();
+  }, [getMyOrders]);
+
+  const data = useMemo(() => {
+    return orders.flatMap((order, orderIndex) =>
+      order.items.map((item, itemIndex) => ({
+        _id: `${order._id}-${itemIndex}`,
+        sn: itemIndex + 1,
+        commission: item.commission,
+        product: item.productName || item.product?.name,
+        price: item.price,
+        qty: item.qty,
+        totalPrice: item.totalPrice,
+        buyer: order.customer.username,
+        time: new Date(order.createdAt).toLocaleString(),
+      })),
+    );
+  }, [orders]);
+  
   const columns = [
     { header: "SN", accessorKey: "sn" },
 

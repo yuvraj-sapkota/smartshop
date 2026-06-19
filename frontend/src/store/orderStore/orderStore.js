@@ -27,13 +27,12 @@ const useOrderStore = create((set, get) => ({
       return false; // failed — modal open nai rakhne
     }
   },
-
+// seller side ko lagi
   getMyOrders: async () => {
     if (get().orders.length > 0) return;
     set({ loading: true });
     try {
       const data = await getOrderAPI();
-
       set({ orders: data.orders, loading: false });
     } catch (error) {
       showError(error.response?.data?.message || "Failed to fetch orders");

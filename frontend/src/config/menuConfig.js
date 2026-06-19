@@ -21,7 +21,7 @@ export const menuConfig = {
     { path: "seller-dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "create-order", label: "Create Order", icon: ShoppingBag },
     { path: "products", label: "Products", icon: ShoppingBasket },
-    { path: "sales", label: "Sales", icon: Gift },
+    // { path: "sales", label: "Sales", icon: Gift },
     { path: "commission", label: "Commission", icon: Wallet },
     { path: "seller-fund", label: "Fund", icon: Wallet },
   ],

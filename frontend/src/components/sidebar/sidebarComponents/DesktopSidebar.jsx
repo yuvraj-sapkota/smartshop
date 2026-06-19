@@ -50,7 +50,7 @@ const DesktopSidebar = ({ menuItems, setOpenLogout }) => {
               >
                 <Icon className="w-5 h-5 shrink-0" />
                 {isOpen && (
-                  <span className="font-medium text-sm">{item.label}</span>
+                  <span className="font-medium text-sm ">{item.label}</span>
                 )}
               </NavLink>
             );

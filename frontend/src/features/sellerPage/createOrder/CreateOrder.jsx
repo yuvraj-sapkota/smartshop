@@ -52,7 +52,6 @@ const columns = [
   },
 ];
 
-// Flatten orders — ek order ko multiple items lai alag alag rows banaucha
 const flattenOrders = (orders) => {
   const rows = [];
   orders.forEach((order) => {

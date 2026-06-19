@@ -102,6 +102,8 @@ const SellerFund = () => {
     },
   ];
 
+
+  
   const sellerFields = [
     {
       name: "amount",

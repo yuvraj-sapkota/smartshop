@@ -115,7 +115,6 @@ export const getMyPurchasesService = async (customerId) => {
   const purchases = [];
 
   orders.forEach((order) => {
-   
     order.items.forEach((item) => {
       purchases.push({
         _id: item._id,
@@ -123,13 +122,11 @@ export const getMyPurchasesService = async (customerId) => {
         quantity: item.qty,
         mrp: item.price,
         totalPrice: item.price * item.qty,
-        cashback: " 0",
+        cashback: order.totalCommission * 0.25,
         seller: order.seller.username,
         datetime: order.createdAt,
       });
     });
   });
   return purchases;
-
- 
 };
