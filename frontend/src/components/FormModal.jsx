@@ -28,7 +28,7 @@ const FormModal = ({ open, setOpen, fields, title, btnText, onSubmit }) => {
   return (
     <>
       <div className="fixed inset-0 px-4 bg-black/40 flex items-center justify-center z-50 backdrop-blur-md">
-        <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-4">
+        <div className="bg-white w-full max-w-md rounded-xl shadow-lg p-4  max-h-[90vh] border flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <PageHeader text={title} />
             <button onClick={() => setOpen(false)}>
@@ -36,7 +36,7 @@ const FormModal = ({ open, setOpen, fields, title, btnText, onSubmit }) => {
             </button>
           </div>
 
-          <div className="space-y-4 mb-4">
+          <div className="space-y-4 flex-1 py-4 overflow-y-auto mb-4 bg-white scrollbar-hide">
             {fields.map((field) => (
               <div key={field.name} className="flex flex-col gap-1">
                 <label>{field.label}</label>

@@ -14,7 +14,6 @@ export const getOrderAPI = async () => {
 // all orders admin side ko lagi
 export const getAllOrdersApi = async () => {
   const response = await apiClient.get("/orders/all-orders");
-  console.log(response);
   return response.data;
 };
 

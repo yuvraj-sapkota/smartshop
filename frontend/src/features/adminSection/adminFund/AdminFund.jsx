@@ -1,40 +1,47 @@
 import React from "react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
+import { useEffect } from "react";
+import {
+  getAllSubmitPaymentAPI,
+  updatePaymentStatus,
+} from "../../../services/sellerPayment/sellerPayment.api";
+import { useState } from "react";
 
 const AdminFund = () => {
-  const transactionData = [
-    {
-      _id: 1,
-      sn: 1,
-      amount: 100,
-      type: "deposit",
-      sellerUser: "Ram Store",
-      bankName: "Nepal Bank",
-      accountName: "Ram Prasad",
-      accountNumber: "0098076473",
-      screenshot:
-        "https://storage.googleapis.com/support-forums-api/attachment/thread-191661601-15203805108075818741.JPG", // image path or url
-      screenshottime: " 10:00 PM",
-      status: "pending",
-      datetime: "2026-04-24 10:30 AM",
-    },
-    {
-      _id: 2,
-      sn: 2,
-      amount: 100,
-      type: "withdraw",
-      sellerUser: "Shyam",
-      bankName: "Nepal Bank",
-      accountName: "Ram Prasad",
-      accountNumber: "0098076473",
-      screenshot:
-        "https://storage.googleapis.com/support-forums-api/attachment/thread-191661601-15203805108075818741.JPG", // image path or url
-      screenshottime: " 10:00 PM",
-      status: "approved",
-      datetime: "2026-04-24 10:30 AM",
-    },
-  ];
+  const [transactionData, setTransactionData] = useState([]);
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      const data = await updatePaymentStatus(id, newStatus);
+
+      setTransactionData((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, status: newStatus } : item,
+        ),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const data = await getAllSubmitPaymentAPI();
+        setTransactionData(data.payments);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchPayments();
+  }, []);
+
+  const formattedData = transactionData.map((item, index) => ({
+    ...item,
+    sn: index + 1,
+  }));
 
   const transactionColumns = [
     { header: "SN", accessorKey: "sn" },
@@ -51,13 +58,14 @@ const AdminFund = () => {
       header: "Type",
       accessorKey: "type",
       cell: (row) => (
-        <span className="capitalize text-blue-600 font-medium">{row.type}</span>
+        <span className="capitalize text-blue-600 font-medium">Deposite</span>
       ),
     },
 
     {
       header: "Seller or User",
-      accessorKey: "sellerUser",
+      accessorKey: "seller",
+      cell: (row) => row.seller?.storeName,
     },
 
     {
@@ -77,10 +85,10 @@ const AdminFund = () => {
 
     {
       header: "Screenshot",
-      accessorKey: "screenshot",
+      accessorKey: "screenshotUrl",
       cell: (row) => (
         <img
-          src={row.screenshot}
+          src={row.screenshotUrl}
           alt="screenshot"
           className="w-12 h-12 object-cover rounded "
         />
@@ -88,10 +96,10 @@ const AdminFund = () => {
     },
     {
       header: "Screenshot Time",
-      accessorKey: "screenshottime",
+      accessorKey: "screenshotTime",
       cell: (row) => (
         <span className="text-gray-500 text-xs whitespace-nowrap">
-          {row.screenshottime}
+          {row.screenshotTime}
         </span>
       ),
     },
@@ -102,20 +110,27 @@ const AdminFund = () => {
       cell: (row) => {
         const color =
           row.status === "pending"
-            ? "text-yellow-600"
+            ? "text-yellow-600 bg-yellow-100"
             : row.status === "approved"
-            ? "text-green-600"
-            : "text-red-600";
+            ? "text-green-600 bg-green-100"
+            : "text-red-600 bg-red-100";
 
-        return (
+        return row.status === "pending" ? (
           <select
             defaultValue={row.status}
-            className={`text-sm font-semibold bg-transparent outline-none ${color}`}
+            onChange={(e) => handleStatusChange(row._id, e.target.value)}
+            className={` px-2 py-1 rounded-full text-xs font-semibold bg-transparent outline-none ${color}`}
           >
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
-            <option value="reject">Reject</option>
+            <option value="rejected">Rejected</option>
           </select>
+        ) : (
+          <span
+            className={` capitalize px-2 py-1 rounded-full text-xs font-semibold  ${color}`}
+          >
+            {row.status}
+          </span>
         );
       },
     },
@@ -125,7 +140,7 @@ const AdminFund = () => {
       accessorKey: "datetime",
       cell: (row) => (
         <span className="text-gray-500 text-xs whitespace-nowrap">
-          {row.datetime}
+          {new Date(row.createdAt).toLocaleString()}
         </span>
       ),
     },
@@ -199,10 +214,10 @@ const AdminFund = () => {
 
         <div>
           <h2 className="font-semibold text-lg mb-3 text-gray-700">
-            Transactions Flow
+            Transactions Flow (seller)
           </h2>
 
-          <DataTable columns={transactionColumns} data={transactionData} />
+          <DataTable columns={transactionColumns} data={formattedData} />
         </div>
       </div>
     </>

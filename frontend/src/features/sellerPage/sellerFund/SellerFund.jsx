@@ -3,35 +3,92 @@ import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
 import ImagePreview from "../../../components/ImagePreview";
 import FormModal from "../../../components/FormModal";
+import {
+  getDueAmount,
+  getMyPayments,
+  submitPaymentAPI,
+} from "../../../services/sellerPayment/sellerPayment.api";
+import { useEffect } from "react";
+import { showError } from "../../../utils/toast";
 
 const SellerFund = () => {
   const [open, setOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
-  const depositData = [
-    {
-      _id: 201,
-      sn: 1,
-      depositAmount: 100,
-      bankName: "eSewa",
-      accountName: "Ishor",
-      accountNumber: "1234567",
-      status: "approved",
-      datetime: "2026-04-24 10:00 PM",
-      screenshot:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLvpyxhKPgXyZgDQAbvYj21z01wh40m07kwQ&s",
-      screenshottime: " 10:00 PM",
-    },
-  ];
+  // const [previewImage, setPreviewImage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [depositData, setDepositData] = useState([]);
+  const [dueAmount, setDueAmount] = useState(0);
+
+  const handlePaymentSubmit = async (formData) => {
+    setSubmitting(true);
+
+    try {
+      const body = new FormData();
+      body.append("amount", formData.amount);
+      body.append("bankName", formData.bankName);
+      body.append("accountName", formData.accountName);
+      body.append("accountNumber", formData.accountNumber);
+      body.append("screenshotTime", formData.time);
+      body.append("screenshot", formData.screenshot);
+
+      const data = await submitPaymentAPI(body);
+
+      const newPayment = data.payment;
+
+      setDepositData((prev) => [
+        {
+          ...newPayment,
+          sn: prev.length + 1,
+        },
+        ...prev,
+      ]);
+
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+      alert(error?.data?.message || "Payment submission failed");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const fetchMyPayments = async () => {
+    try {
+      const data = await getMyPayments();
+
+      setDepositData(data.payments);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDueAmount = async () => {
+    try {
+      const data = await getDueAmount();
+      setDueAmount(data.due);
+    } catch (error) {
+      console.log(error);
+      showError(error.response?.data?.message || "Failed to fetch orders");
+    }
+  };
+
+  useEffect(() => {
+    fetchMyPayments();
+    fetchDueAmount();
+  }, []);
+
+  const formattedData = depositData.map((item, index) => ({
+    ...item,
+    sn: index + 1,
+  }));
+
   const depositColumns = [
     { header: "SN", accessorKey: "sn" },
 
     {
       header: "Deposit Amount",
-      accessorKey: "depositAmount",
+      accessorKey: "amount",
       cell: (row) => (
-        <span className="font-semibold text-gray-800">
-          Rs {row.depositAmount}
-        </span>
+        <span className="font-semibold text-gray-800">Rs {row.amount}</span>
       ),
     },
 
@@ -67,13 +124,12 @@ const SellerFund = () => {
         </span>
       ),
     },
-
     {
-      header: "Time & Date",
-      accessorKey: "datetime",
+      header: "Screenshot Time",
+      accessorKey: "screenshotTime",
       cell: (row) => (
         <span className="text-gray-500 text-xs whitespace-nowrap">
-          {row.datetime}
+          {row.screenshotTime}
         </span>
       ),
     },
@@ -83,27 +139,25 @@ const SellerFund = () => {
       accessorKey: "screenshot",
       cell: (row) => (
         <img
-          src={row.screenshot}
+          src={row.screenshotUrl}
           alt="payment proof"
-          onClick={() => setPreviewImage(row.screenshot)}
+          // onClick={() => setPreviewImage(row.screenshotUrl)}
           className="w-12 h-12 object-cover rounded-md "
         />
       ),
     },
 
     {
-      header: "Screenshot Time",
-      accessorKey: "screenshottime",
+      header: "Time & Date",
+      accessorKey: "datetime",
       cell: (row) => (
         <span className="text-gray-500 text-xs whitespace-nowrap">
-          {row.screenshottime}
+          {new Date(row.createdAt).toLocaleString()}
         </span>
       ),
     },
   ];
 
-
-  
   const sellerFields = [
     {
       name: "amount",
@@ -183,7 +237,7 @@ const SellerFund = () => {
         <div className="flex justify-between items-center bg-white shadow-md border border-gray-200 rounded-lg p-4">
           <div className="flex flex-col gap-2">
             <p className="text-gray-500 text-sm">Due Amount</p>
-            <h2 className="text-xl font-bold text-gray-800">Rs 100</h2>
+            <h2 className="text-xl font-bold text-gray-800">{dueAmount}</h2>
           </div>
           <button
             onClick={() => setOpen(true)}
@@ -199,7 +253,7 @@ const SellerFund = () => {
             Payment History
           </h1>
 
-          <DataTable columns={depositColumns} data={depositData} />
+          <DataTable columns={depositColumns} data={formattedData} />
         </div>
       </div>
 
@@ -215,8 +269,8 @@ const SellerFund = () => {
           setOpen={setOpen}
           fields={sellerFields}
           title="Payment Details"
-          btnText="Submit"
-          onSubmit={(data) => console.log(data)}
+          btnText={submitting ? "Submitting...." : "Submit"}
+          onSubmit={handlePaymentSubmit}
         />
       )}
     </>
