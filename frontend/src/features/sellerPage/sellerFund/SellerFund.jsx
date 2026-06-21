@@ -9,7 +9,7 @@ import {
   submitPaymentAPI,
 } from "../../../services/sellerPayment/sellerPayment.api";
 import { useEffect } from "react";
-import { showError } from "../../../utils/toast";
+import { showError, showSuccess } from "../../../utils/toast";
 
 const SellerFund = () => {
   const [open, setOpen] = useState(false);
@@ -31,7 +31,6 @@ const SellerFund = () => {
       body.append("screenshot", formData.screenshot);
 
       const data = await submitPaymentAPI(body);
-
       const newPayment = data.payment;
 
       setDepositData((prev) => [
@@ -41,11 +40,11 @@ const SellerFund = () => {
         },
         ...prev,
       ]);
-
+      showSuccess(data.message);
       setOpen(false);
     } catch (error) {
       console.log(error);
-      alert(error?.data?.message || "Payment submission failed");
+      showError(error?.response?.data?.message || "Payment submission failed");
     } finally {
       setSubmitting(false);
     }

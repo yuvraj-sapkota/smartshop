@@ -29,7 +29,7 @@ const sellerPaymentSchema = new mongoose.Schema(
     },
     screenshotUrl: {
       type: String,
-      required: true,
+      // required: true,
     },
     screenshotTime: {
       type: String,

@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 
 const allowedOrigins = [
-  "http://192.168.1.20:5173",
+  "http://192.168.1.8:5173",
   // "http://10.104.97.161:5173",
   "https://smartshop108.vercel.app",
 ];
