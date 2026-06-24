@@ -285,7 +285,7 @@ const SellerFund = () => {
           <button
             onClick={() => setModalOpen(true)}
             disabled={loadingPage || !canPay}
-            className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
           >
             Pay Due
           </button>

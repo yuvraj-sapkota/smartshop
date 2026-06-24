@@ -7,8 +7,31 @@ import {
   Package,
 } from "lucide-react";
 import StatCard from "../../../components/StatCard";
+import { useEffect, useState } from "react";
+import { getSellerDashboardStatsAPI } from "../../../services/sellerDashboard/sellerDashboard.api";
+import { showError } from "../../../utils/toast";
 
 const SellerDashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getSellerDashboardStatsAPI();
+        setStats(data.stats);
+      } catch (error) {
+        showError(
+          error.response?.data?.message || "Failed to load dashboard data",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   const sellerStats = [
     {
       _id: 1,
@@ -20,24 +43,25 @@ const SellerDashboard = () => {
     },
     {
       _id: 2,
-      label: "Due Commission",
-      value: 200,
-      icon: DollarSign,
-      bg: "bg-yellow-100",
-      text: "text-yellow-600",
-    },
-    {
-      _id: 3,
       label: "Total Commission",
-      value: 500,
+      value: stats?.totalCommission ?? 0,
       icon: TrendingUp,
       bg: "bg-blue-100",
       text: "text-blue-600",
     },
     {
+      _id: 3,
+      label: "Due Commission",
+      value: stats?.dueCommission ?? 0,
+      icon: DollarSign,
+      bg: "bg-yellow-100",
+      text: "text-yellow-600",
+    },
+
+    {
       _id: 4,
       label: "Total Commission Paid",
-      value: 300,
+      value: stats?.totalCommissionPaid ?? 0,
       icon: CheckCircle,
       bg: "bg-green-100",
       text: "text-green-600",
@@ -45,7 +69,7 @@ const SellerDashboard = () => {
     {
       _id: 5,
       label: "Total Sales",
-      value: 2000,
+      value: stats?.totalSales ?? 0,
       icon: ShoppingCart,
       bg: "bg-purple-100",
       text: "text-purple-600",
@@ -53,7 +77,7 @@ const SellerDashboard = () => {
     {
       _id: 6,
       label: "Total Product",
-      value: 21,
+      value: stats?.totalProducts ?? 0,
       icon: Package,
       bg: "bg-orange-100",
       text: "text-orange-600",
@@ -61,12 +85,13 @@ const SellerDashboard = () => {
     {
       _id: 7,
       label: "Pending Product",
-      value: 11,
+      value: stats?.pendingProducts ?? 0,
       icon: Package,
       bg: "bg-yellow-100",
       text: "text-yellow-600",
     },
   ];
+
   return (
     <>
       <h1 className="font-bold text-xl md:text-2xl text-primary mb-4">

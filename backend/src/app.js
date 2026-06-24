@@ -11,6 +11,8 @@ import storeRoutes from "./modules/store/store.route.js";
 import orderRoutes from "./modules/order/order.route.js";
 import userRoutes from "./modules/user/user.routes.js";
 import sellerPaymentRoutes from "./modules/sellerPayment/sellerPayment.routes.js";
+import sellerDashboardRoutes from "./modules/sellerDashboard/sellerDashboard.routes.js";
+
 dotenv.config();
 
 const app = express();
@@ -70,6 +72,7 @@ app.use("/api/stores", storeRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/seller-payments", sellerPaymentRoutes);
+app.use("/api/seller/dashboard", sellerDashboardRoutes);
 
 app.use(errorMiddleware);
 
