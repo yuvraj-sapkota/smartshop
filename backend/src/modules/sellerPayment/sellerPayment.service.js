@@ -22,18 +22,28 @@ const getTotalApprovedPayments = async (sellerId) => {
   return result[0]?.total ?? 0;
 };
 
+// Helper: calculate total pending payments (submitted but not yet approved)
+const getTotalPendingPayments = async (sellerId) => {
+  const result = await SellerPayment.aggregate([
+    { $match: { seller: sellerId, status: "pending" } },
+    { $group: { _id: null, total: { $sum: "$amount" } } },
+  ]);
+  return result[0]?.total ?? 0;
+};
+
 // ─────────────────────────────────────────────
 // GET /due-amount  — seller's current due
 // ─────────────────────────────────────────────
 export const getDueAmountService = async (sellerId) => {
-  const [totalCommission, totalPaid] = await Promise.all([
+  const [totalCommission, totalPaid, totalPending] = await Promise.all([
     getTotalCommission(sellerId),
     getTotalApprovedPayments(sellerId),
+    getTotalPendingPayments(sellerId),
   ]);
 
   const due = parseFloat((totalCommission - totalPaid).toFixed(2));
 
-  return { totalCommission, totalPaid, due };
+  return { totalCommission, totalPaid, totalPending, due };
 };
 
 // ─────────────────────────────────────────────
@@ -84,7 +94,6 @@ export const getAllPaymentsService = async () => {
 // PATCH /:id/status  (admin) — approve or reject
 // ─────────────────────────────────────────────
 export const updatePaymentStatusService = async (paymentId, data) => {
- 
   const { status, adminNote } = data;
 
   const payment = await SellerPayment.findById(paymentId);

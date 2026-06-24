@@ -60,7 +60,7 @@ const StatusBadge = ({ status }) => {
   const styles = {
     rejected: "bg-red-100 text-red-600",
     approved: "bg-green-100 text-green-600",
-    pending:  "bg-yellow-100 text-yellow-600",
+    pending: "bg-yellow-100 text-yellow-600",
   };
   return (
     <span
@@ -83,8 +83,8 @@ const DEPOSIT_COLUMNS = [
       <span className="font-semibold text-gray-800">Rs {row.amount}</span>
     ),
   },
-  { header: "Bank Name",       accessorKey: "bankName" },
-  { header: "Account Name",    accessorKey: "accountName" },
+  { header: "Bank Name", accessorKey: "bankName" },
+  { header: "Account Name", accessorKey: "accountName" },
   {
     header: "Account Number",
     accessorKey: "accountNumber",
@@ -131,9 +131,17 @@ const DEPOSIT_COLUMNS = [
 
 // ── Main component ───────────────────────────────────────────────────────────
 const SellerFund = () => {
-  const [modalOpen,   setModalOpen]   = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   const [depositData, setDepositData] = useState([]);
-  const [dueAmount,   setDueAmount]   = useState(0);
+  // const [dueAmount,   setDueAmount]   = useState(0);
+
+  const [dueInfo, setDueInfo] = useState({
+    due: 0,
+    totalCommission: 0,
+    totalPaid: 0,
+    totalPending: 0,
+  });
+
   const [loadingPage, setLoadingPage] = useState(true);
 
   // ── Data fetching ──────────────────────────────────────────────────────
@@ -153,10 +161,17 @@ const SellerFund = () => {
         }
 
         if (dueRes.status === "fulfilled") {
-          setDueAmount(dueRes.value.due ?? 0);
+          const {
+            due = 0,
+            totalCommission = 0,
+            totalPaid = 0,
+            totalPending = 0,
+          } = dueRes.value;
+          setDueInfo({ due, totalCommission, totalPaid, totalPending });
         } else {
           showError(
-            dueRes.reason?.response?.data?.message ?? "Failed to fetch due amount."
+            dueRes.reason?.response?.data?.message ??
+              "Failed to fetch due amount.",
           );
         }
       } finally {
@@ -173,12 +188,12 @@ const SellerFund = () => {
   // show the error banner — do NOT call setOpen(false) here.
   const handlePaymentSubmit = async (formData) => {
     const body = new FormData();
-    body.append("amount",         formData.amount);
-    body.append("bankName",       formData.bankName);
-    body.append("accountName",    formData.accountName);
-    body.append("accountNumber",  formData.accountNumber);
+    body.append("amount", formData.amount);
+    body.append("bankName", formData.bankName);
+    body.append("accountName", formData.accountName);
+    body.append("accountNumber", formData.accountNumber);
     body.append("screenshotTime", formData.time);
-    body.append("screenshot",     formData.screenshot);
+    body.append("screenshot", formData.screenshot);
 
     // Let the error bubble up — FormModal's try/catch will surface it
     const data = await submitPaymentAPI(body);
@@ -188,6 +203,10 @@ const SellerFund = () => {
       { ...data.payment, sn: prev.length + 1 },
       ...prev,
     ]);
+    setDueInfo((prev) => ({
+      ...prev,
+      totalPending: prev.totalPending + Number(formData.amount),
+    }));
     showSuccess(data.message);
     // FormModal closes itself after onSubmit resolves successfully
   };
@@ -198,6 +217,8 @@ const SellerFund = () => {
     sn: index + 1,
   }));
 
+  // Seller can only submit up to (due - pending) more
+  const canPay = dueInfo.due - dueInfo.totalPending > 0;
   // ── Render ─────────────────────────────────────────────────────────────
   return (
     <>
@@ -217,7 +238,8 @@ const SellerFund = () => {
           </h2>
           <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-4 text-gray-600 space-y-2 text-sm">
             <p>
-              <span className="font-semibold">Bank:</span> Nepal Bank Development
+              <span className="font-semibold">Bank:</span> Nepal Bank
+              Development
             </p>
             <p>
               <span className="font-semibold">Name:</span> Ram Prasad Poudel
@@ -235,14 +257,34 @@ const SellerFund = () => {
             {loadingPage ? (
               <div className="h-7 w-24 bg-gray-100 animate-pulse rounded" />
             ) : (
-              <h2 className="text-xl font-bold text-gray-800">
-                Rs {dueAmount.toLocaleString()}
-              </h2>
+              <>
+                <h2 className="text-xl font-bold text-gray-800">
+                  Rs {dueInfo.due.toLocaleString()}
+                </h2>
+                {/* Breakdown — only shown after load */}
+                <div className="text-xs text-gray-400 space-y-0.5 mt-1">
+                  <p>
+                    Total Commission: Rs
+                    {dueInfo.totalCommission.toLocaleString()}
+                  </p>
+                  <p>
+                    Approved Paid &nbsp;: Rs{" "}
+                    {dueInfo.totalPaid.toLocaleString()}
+                  </p>
+                  {dueInfo.totalPending > 0 && (
+                    <p className="text-yellow-500 font-medium">
+                      Pending Approval: Rs{" "}
+                      {dueInfo.totalPending.toLocaleString()} — awaiting admin
+                      review
+                    </p>
+                  )}
+                </div>
+              </>
             )}
           </div>
           <button
             onClick={() => setModalOpen(true)}
-            disabled={loadingPage}
+            disabled={loadingPage || !canPay}
             className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Pay Due
