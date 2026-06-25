@@ -9,6 +9,8 @@ import {
 import { useState } from "react";
 
 const AdminFund = () => {
+  const [active, setActive] = useState("seller");
+
   const [transactionData, setTransactionData] = useState([]);
 
   const handleStatusChange = async (id, newStatus) => {
@@ -145,6 +147,111 @@ const AdminFund = () => {
       ),
     },
   ];
+
+  // user
+
+  const userTransactions = [
+    {
+      _id: 1,
+      sn: 1,
+      username: "Shyam",
+      amount: 200,
+      status: "pending",
+      createdAt: new Date(),
+    },
+    {
+      _id: 2,
+      sn: 2,
+      username: "Ram",
+      amount: 500,
+      status: "approved",
+      createdAt: new Date(),
+    },
+    {
+      _id: 3,
+      sn: 3,
+      username: "Hari",
+      amount: 300,
+      status: "rejected",
+      createdAt: new Date(),
+    },
+  ];
+
+  const userTransactionColumns = [
+    {
+      header: "SN",
+      accessorKey: "sn",
+    },
+
+    {
+      header: "Username",
+      accessorKey: "username",
+      cell: (row) => (
+        <span className="font-medium text-gray-800">{row.username}</span>
+      ),
+    },
+
+    {
+      header: "Withdraw Amount",
+      accessorKey: "amount",
+      cell: (row) => (
+        <span className="font-semibold text-red-600">Rs {row.amount}</span>
+      ),
+    },
+    {
+      header: "Bank",
+      accessorKey: "bank",
+      cell: (row) => (
+        <button
+          onClick={() => alert("comming soon")}
+          className="px-2 py-2 text-xs font-medium text-white bg-primary rounded-md hover:opacity-90 transition"
+        >
+          View Bank
+        </button>
+      ),
+    },
+
+    {
+      header: "Status",
+      accessorKey: "status",
+      cell: (row) => {
+        const color =
+          row.status === "pending"
+            ? "text-yellow-600 bg-yellow-100"
+            : row.status === "approved"
+            ? "text-green-600 bg-green-100"
+            : "text-red-600 bg-red-100";
+
+        return row.status === "pending" ? (
+          <select
+            defaultValue={row.status}
+            className={` px-2 py-1 rounded-full text-xs font-semibold bg-transparent outline-none ${color}`}
+          >
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        ) : (
+          <span
+            className={` capitalize px-2 py-1 rounded-full text-xs font-semibold  ${color}`}
+          >
+            {row.status}
+          </span>
+        );
+      },
+    },
+
+    {
+      header: "Time & Date",
+      accessorKey: "createdAt",
+      cell: (row) => (
+        <span className="text-gray-500 text-xs whitespace-nowrap">
+          {new Date(row.createdAt).toLocaleString()}
+        </span>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="space-y-10">
@@ -187,7 +294,7 @@ const AdminFund = () => {
           </div>
         </div>
 
-        {/* Pending Section */}
+        {/* transaction overview */}
         <div>
           <h2 className="font-semibold text-lg mb-3 text-gray-700">
             Transactions Overview
@@ -213,11 +320,38 @@ const AdminFund = () => {
         </div>
 
         <div>
-          <h2 className="font-semibold text-lg mb-3 text-gray-700">
-            Transactions Flow (seller)
+          <h2 className="font-semibold text-lg mb-4 text-gray-700">
+            Transactions Flow
           </h2>
 
-          <DataTable columns={transactionColumns} data={formattedData} />
+          <div className="inline-flex p-1 bg-gray-100 rounded-xl border border-gray-200 shadow-sm mb-4">
+            <button
+              onClick={() => setActive("seller")}
+              className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                active == "seller" ? "bg-primary text-white " : ""
+              }`}
+            >
+              Seller Fund
+            </button>
+
+            <button
+              onClick={() => setActive("user")}
+              className={`px-5 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                active == "user" ? "bg-primary text-white" : ""
+              }`}
+            >
+              User Fund
+            </button>
+          </div>
+
+          {active == "seller" ? (
+            <DataTable columns={transactionColumns} data={formattedData} />
+          ) : (
+            <DataTable
+              columns={userTransactionColumns}
+              data={userTransactions}
+            />
+          )}
         </div>
       </div>
     </>
