@@ -1,9 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "../../../components/DataTable";
 import { FileWarning } from "lucide-react";
 import FormModal from "../../../components/FormModal";
+import ConfirmModal from "../../../components/ConfirmModal";
+import {
+  getMyBankDetailAPI,
+  upsertBankDetailAPI,
+} from "../../../services/userPayment/userPayment.api";
 
 const Fund = () => {
+  const [bankDetail, setBankDetail] = useState(null);
+  const [isBank, setIsBank] = useState(false);
+  // const isBank = Boolean(bankDetail);
+  const [withdraw, setWithdraw] = useState(false);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
   const [open, setOpen] = useState(false);
   const fundData = [
     {
@@ -61,7 +74,7 @@ const Fund = () => {
     },
   ];
 
-  const bankDetails = [
+  const bankFields = [
     {
       name: "bankName",
       type: "text",
@@ -88,6 +101,49 @@ const Fund = () => {
     },
   ];
 
+  useEffect(() => {
+    const getMyBankDetail = async () => {
+      try {
+        const data = await getMyBankDetailAPI();
+        console.log(await getMyBankDetailAPI());
+        if (data.bankDetail) {
+          setBankDetail(data.bankDetail);
+          setIsBank(true);
+        }
+      } catch (error) {
+        console.log(error?.response?.data);
+      }
+    };
+
+    getMyBankDetail();
+  }, []);
+
+  const handleBankSubmit = async (data) => {
+    setSubmitting(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("bankName", data.bankName);
+      formData.append("fullName", data.fullName);
+      formData.append("accountNumber", data.accountNumber);
+      if (data.qr?.[0]) formData.append("qr", data.qr[0]);
+
+      const response = await upsertBankDetailAPI(formData);
+
+      setBankDetail(response.data.bankDetail);
+      setIsBank(true);
+      setOpen(false);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ??
+          "Failed to save bank details. Try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <>
       <div className="space-y-10">
@@ -103,42 +159,40 @@ const Fund = () => {
           </button>
         </div>
 
-        {/* warning section  */}
-        <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-lg">
-          <p className="text-sm flex items-center gap-2">
-            <FileWarning size={24} /> You must setup your bank details before
-            making a withdrawal.
-          </p>
-        </div>
+        {isBank ? (
+          <div>
+            <h2 className="font-semibold text-lg mb-3 text-gray-700">
+              Bank Details
+            </h2>
+            <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-4">
+              <div className=" text-gray-600 space-y-2">
+                <p className="">
+                  <span className="font-semibold">Bank:</span>{" "}
+                  {bankDetail?.bankName}
+                </p>
+                <p className="">
+                  <span className="font-semibold">Name:</span>{" "}
+                  {bankDetail?.fullName}
+                </p>
+                <p>
+                  <span>Account:</span> {bankDetail?.accountNumber}
+                </p>
 
-        {/* user bank details  */}
-        <div>
-          <h2 className="font-semibold text-lg mb-3 text-gray-700">
-            Bank Details
-          </h2>
-          <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-4">
-            <div className=" text-gray-600 space-y-2">
-              <p className="">
-                <span className="font-semibold">Bank:</span> Nepal Bank
-                Development
-              </p>
-              <p className="">
-                <span className="font-semibold">Name:</span> Ram Prasad Poudel
-              </p>
-              <p>
-                <span>Account:</span> 000208987654321
-              </p>
-              {/* 
-            {bankDetails.qr && (
-              <img
-                src={URL.createObjectURL(bankDetails.qr)}
-                alt="QR"
-                className="w-24 mt-2 rounded"
-              />
-            )} */}
+                <div>
+                  <p>Qr code:</p>
+                  <img src={bankDetail?.qrUrl} alt="" />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-lg">
+            <p className="text-sm flex items-center gap-2">
+              <FileWarning size={24} /> You must setup your bank details before
+              making a withdrawal.
+            </p>
+          </div>
+        )}
 
         {/* Available Balance  */}
         <div className="flex justify-between items-center bg-white shadow-md border border-gray-200 rounded-lg p-4">
@@ -146,7 +200,10 @@ const Fund = () => {
             <p className="text-gray-500 text-sm">Available Balance</p>
             <h2 className="text-xl font-bold text-gray-800">Rs 100</h2>
           </div>
-          <button className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition">
+          <button
+            onClick={() => setWithdraw(true)}
+            className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition"
+          >
             withdraw
           </button>
         </div>
@@ -166,11 +223,37 @@ const Fund = () => {
         <FormModal
           open={open}
           setOpen={setOpen}
-          fields={bankDetails}
+          fields={bankFields}
           title="Payment Details"
-          btnText="Submit"
-          onSubmit={(data) => console.log(data)}
+          btnText={submitting ? "Saving..." : "Submit"}
+          onSubmit={handleBankSubmit}
+          error={error}
         />
+      )}
+
+      {withdraw && (
+        <>
+          {!isBank ? (
+            <ConfirmModal
+              isOpen={withdraw}
+              title="Missing Information"
+              message="Please setup your bank details"
+              confirmText="ok"
+              cancelText="cancle"
+              onConfirm={() => setWithdraw(false)}
+              onCancel={() => setWithdraw(false)}
+            />
+          ) : (
+            <ConfirmModal
+              isOpen={withdraw}
+              title="Withdrawl"
+              message="Request for withdrawl? "
+              confirmText="Yes"
+              cancelText="No"
+              onCancel={() => setWithdraw(false)}
+            />
+          )}
+        </>
       )}
     </>
   );

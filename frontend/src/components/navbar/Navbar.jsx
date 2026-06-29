@@ -120,9 +120,9 @@ const Navbar = () => {
 
         <div className="flex flex-col p-4 gap-4">
           {/* Example Links */}
-          <p href="#" className="hover:text-gray-500 transition">
+          {/* <p href="#" className="hover:text-gray-500 transition">
             About
-          </p>
+          </p> */}
 
           {/* Login */}
           <button
