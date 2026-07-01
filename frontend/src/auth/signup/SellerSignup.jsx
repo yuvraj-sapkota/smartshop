@@ -61,6 +61,7 @@ const SellerSignup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(form);
     if (!validate()) return;
 
     try {

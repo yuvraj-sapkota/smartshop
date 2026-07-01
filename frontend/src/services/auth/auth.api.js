@@ -13,5 +13,4 @@ export const registerSellerApi = async (data) => {
 export const loginApi = async (data) => {
   const response = await apiClient.post("/auth/login", data);
   return response.data;
-  
 };
