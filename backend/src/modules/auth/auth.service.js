@@ -2,7 +2,11 @@ import bcrypt from "bcryptjs";
 import User from "./auth.model.js";
 import generateToken from "../../utils/generateToken.js";
 import AppError from "../../utils/AppError.js";
-import { checkEmailExists, checkUsernameExists, getReferrerId } from "./auth.helper.js";
+import {
+  checkEmailExists,
+  checkUsernameExists,
+  getReferrerId,
+} from "./auth.helper.js";
 
 export const createUserService = async (data) => {
   const emailExists = await checkEmailExists(data.email);
@@ -50,6 +54,7 @@ export const createSellerService = async (data) => {
   }
 
   const referredBy = await getReferrerId(data.referBy);
+
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
