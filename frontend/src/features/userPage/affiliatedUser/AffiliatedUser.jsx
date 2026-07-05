@@ -19,9 +19,11 @@ const AffiliatedUser = () => {
       const formattedData = data.referrals.map((user, index) => ({
         sn: index + 1,
         _id: user._id,
+        role: user.role,
         store: user.storeName || "-",
         name: user.username,
-        totalSales: 0,
+        totalSales: user.totalSales,
+        earnCommission: user.earnCommission,
         datetime: new Date(user.createdAt).toLocaleString(),
       }));
 
@@ -37,6 +39,13 @@ const AffiliatedUser = () => {
       accessorKey: "sn",
     },
     {
+      header: "User Name",
+      accessorKey: "name",
+      cell: (row) => (
+        <span className="font-medium text-gray-800">{row.name}</span>
+      ),
+    },
+    {
       header: "Store Name",
       accessorKey: "store",
       cell: (row) => (
@@ -48,6 +57,15 @@ const AffiliatedUser = () => {
       accessorKey: "totalSales",
       cell: (row) => (
         <span className="font-semibold text-gray-800">Rs {row.totalSales}</span>
+      ),
+    },
+    {
+      header: "Earn Commission ",
+      accessorKey: "earnCommission",
+      cell: (row) => (
+        <span className="font-semibold text-gray-800">
+          Rs {row.earnCommission}
+        </span>
       ),
     },
     {
@@ -80,6 +98,15 @@ const AffiliatedUser = () => {
       ),
     },
     {
+      header: "Earn Commission ",
+      accessorKey: "earnCommission",
+      cell: (row) => (
+        <span className="font-semibold text-gray-800">
+          Rs {row.earnCommission}
+        </span>
+      ),
+    },
+    {
       header: "Date & Time",
       accessorKey: "datetime",
       cell: (row) => (
@@ -89,6 +116,9 @@ const AffiliatedUser = () => {
       ),
     },
   ];
+
+  const sellerData = referralData.filter((r) => r.role === "seller");
+  const userData = referralData.filter((r) => r.role === "user");
 
   return (
     <>
@@ -103,7 +133,7 @@ const AffiliatedUser = () => {
             active == "seller" ? "bg-primary text-white " : ""
           }`}
         >
-          Seller 
+          Seller
         </button>
 
         <button
@@ -112,14 +142,14 @@ const AffiliatedUser = () => {
             active == "user" ? "bg-primary text-white" : ""
           }`}
         >
-          User 
+          User
         </button>
       </div>
 
       {active === "seller" ? (
-        <DataTable columns={sellerColumns} data={referralData} />
+        <DataTable columns={sellerColumns} data={sellerData} />
       ) : (
-        <DataTable columns={userColumns} data={referralData} />
+        <DataTable columns={userColumns} data={userData} />
       )}
     </>
   );
