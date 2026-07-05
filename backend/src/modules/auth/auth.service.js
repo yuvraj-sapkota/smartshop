@@ -43,6 +43,7 @@ export const createUserService = async (data) => {
 };
 
 export const createSellerService = async (data) => {
+  console.log(data);
   const emailExists = await checkEmailExists(data.email);
   if (emailExists) {
     throw new AppError("Email already exists", 400);
@@ -53,8 +54,8 @@ export const createSellerService = async (data) => {
     throw new AppError("Username already exists", 400);
   }
 
+  // Referral validation
   const referredBy = await getReferrerId(data.referBy);
-
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
@@ -64,6 +65,7 @@ export const createSellerService = async (data) => {
     ...sellerData,
     password: hashedPassword,
     role: "seller",
+    referredBy,
   });
 
   const token = generateToken(seller._id);
