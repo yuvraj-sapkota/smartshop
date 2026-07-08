@@ -1,4 +1,7 @@
-import { getMyReferralsService } from "./referal.service.js";
+import {
+  getMyReferralsService,
+  getMyRewardsService,
+} from "./referal.service.js";
 
 export const getMyReferrals = async (req, res, next) => {
   try {
@@ -9,6 +12,19 @@ export const getMyReferrals = async (req, res, next) => {
       message: "Referral list fetched successfully",
       total: referrals.length,
       referrals,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyRewards = async (req, res, next) => {
+  try {
+    const rewards = await getMyRewardsService(req.user.id);
+    res.status(200).json({
+      success: true,
+      message: "Rewards fetched successfully",
+      rewards,
     });
   } catch (error) {
     next(error);

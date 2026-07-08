@@ -106,6 +106,7 @@ export const getAllOrdersService = async () => {
     .sort({ createdAt: -1 });
 };
 
+
 // for user side, purchase
 export const getMyPurchasesService = async (customerId) => {
   const orders = await Order.find({ customer: customerId })
