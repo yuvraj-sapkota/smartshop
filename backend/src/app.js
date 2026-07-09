@@ -14,13 +14,14 @@ import sellerPaymentRoutes from "./modules/sellerPayment/sellerPayment.routes.js
 import sellerDashboardRoutes from "./modules/sellerDashboard/sellerDashboard.routes.js";
 import userBankRoutes from "./modules/userbankdetail/userbankdetail.routes.js";
 import referralRoutes from "./modules/referral/referal.route.js";
+import userFundRoutes from "./modules/userFund/userFund.routes.js";
 
 dotenv.config();
 
 const app = express();
 
 const allowedOrigins = [
-  "http://192.168.1.4:5173",
+  "http://192.168.1.8:5173",
   "https://smartshop108.vercel.app",
 ];
 
@@ -76,6 +77,7 @@ app.use("/api/seller-payments", sellerPaymentRoutes);
 app.use("/api/seller/dashboard", sellerDashboardRoutes);
 app.use("/api/user/bank", userBankRoutes);
 app.use("/api/referrals", referralRoutes);
+app.use("/api/user-fund", userFundRoutes);
 
 app.use(errorMiddleware);
 

@@ -7,44 +7,51 @@ import {
   getMyBankDetailAPI,
   upsertBankDetailAPI,
 } from "../../../services/userPayment/userPayment.api";
+import {
+  getAvailableBalanceAPI,
+  getMyWithdrawalsAPI,
+  submitWithdrawalAPI,
+} from "../../../services/userFund/userFund.api";
+import { showSuccess } from "../../../utils/toast";
 
 const Fund = () => {
   const [bankDetail, setBankDetail] = useState(null);
   const [isBank, setIsBank] = useState(false);
-  // const isBank = Boolean(bankDetail);
   const [withdraw, setWithdraw] = useState(false);
-
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
   const [open, setOpen] = useState(false);
-  const fundData = [
-    {
-      _id: 101,
-      sn: 1,
-      withdrawAmount: 100,
-      status: "pending",
-      datetime: "2026-04-24 10:30 AM",
-    },
-    {
-      _id: 102,
-      sn: 2,
-      withdrawAmount: 500,
-      status: "approved",
-      datetime: "2026-04-24 11:15 AM",
-    },
-  ];
+
+  const [availableBalance, setAvailableBalance] = useState(0);
+  const [fundData, setFundData] = useState([]);
+  const [withdrawing, setWithdrawing] = useState(false);
+  const [withdrawError, setWithdrawError] = useState("");
+
+  // const fundData = [
+  //   {
+  //     _id: 101,
+  //     sn: 1,
+  //     withdrawAmount: 100,
+  //     status: "pending",
+  //     datetime: "2026-04-24 10:30 AM",
+  //   },
+  //   {
+  //     _id: 102,
+  //     sn: 2,
+  //     withdrawAmount: 500,
+  //     status: "approved",
+  //     datetime: "2026-04-24 11:15 AM",
+  //   },
+  // ];
 
   const fundColumns = [
     { header: "SN", accessorKey: "sn" },
 
     {
       header: "Withdraw Amount",
-      accessorKey: "withdrawAmount",
+      accessorKey: "amount",
       cell: (row) => (
-        <span className="font-semibold text-gray-800">
-          Rs {row.withdrawAmount}
-        </span>
+        <span className="font-semibold text-gray-800">Rs {row.amount}</span>
       ),
     },
 
@@ -101,11 +108,39 @@ const Fund = () => {
     },
   ];
 
+  const fetchBalance = async () => {
+    try {
+      const data = await getAvailableBalanceAPI();
+      console.log(data);
+      setAvailableBalance(data.availableBalance);
+    } catch (error) {
+      console.log(error?.response?.data);
+    }
+  };
+
+  const fetchWithdrawals = async () => {
+    try {
+      const data = await getMyWithdrawalsAPI();
+      console.log(data);
+      const formatted = data.withdrawals.map((item, index) => ({
+        sn: index + 1,
+        _id: item._id,
+        amount: item.amount,
+        status: item.status,
+        datetime: new Date(item.createdAt).toLocaleString(),
+      }));
+      setFundData(formatted);
+    } catch (error) {
+      console.log(error);
+      console.log(error?.response?.data);
+    }
+  };
+
   useEffect(() => {
     const getMyBankDetail = async () => {
       try {
         const data = await getMyBankDetailAPI();
-        console.log(await getMyBankDetailAPI());
+        console.log(data);
         if (data.bankDetail) {
           setBankDetail(data.bankDetail);
           setIsBank(true);
@@ -116,6 +151,8 @@ const Fund = () => {
     };
 
     getMyBankDetail();
+    fetchBalance();
+    fetchWithdrawals();
   }, []);
 
   const handleBankSubmit = async (data) => {
@@ -127,11 +164,11 @@ const Fund = () => {
       formData.append("bankName", data.bankName);
       formData.append("fullName", data.fullName);
       formData.append("accountNumber", data.accountNumber);
-      if (data.qr?.[0]) formData.append("qr", data.qr[0]);
+      if (data.qr) formData.append("qr", data.qr);
 
       const response = await upsertBankDetailAPI(formData);
 
-      setBankDetail(response.data.bankDetail);
+      setBankDetail(response.bankDetail);
       setIsBank(true);
       setOpen(false);
     } catch (error) {
@@ -141,6 +178,24 @@ const Fund = () => {
       );
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleWithdrawConfirm = async () => {
+    setWithdrawing(true);
+    setWithdrawError("");
+    try {
+      const data = await submitWithdrawalAPI(availableBalance);
+      await fetchBalance();
+      await fetchWithdrawals();
+      setWithdraw(false);
+      showSuccess(data.message);
+    } catch (error) {
+      setWithdrawError(
+        error.response?.data?.message ?? "Failed to submit withdrawal request.",
+      );
+    } finally {
+      setWithdrawing(false);
     }
   };
 
@@ -180,7 +235,12 @@ const Fund = () => {
 
                 <div>
                   <p>Qr code:</p>
-                  <img src={bankDetail?.qrUrl} alt="" />
+                  <img
+                    src={bankDetail?.qrUrl}
+                    alt=""
+                    height={100}
+                    width={100}
+                  />
                 </div>
               </div>
             </div>
@@ -198,10 +258,13 @@ const Fund = () => {
         <div className="flex justify-between items-center bg-white shadow-md border border-gray-200 rounded-lg p-4">
           <div className="flex flex-col gap-2">
             <p className="text-gray-500 text-sm">Available Balance</p>
-            <h2 className="text-xl font-bold text-gray-800">Rs 100</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              Rs {availableBalance}
+            </h2>
           </div>
           <button
             onClick={() => setWithdraw(true)}
+            disabled={availableBalance <= 0}
             className="bg-primary text-white px-5 py-2 rounded-lg hover:bg-primary-hover transition"
           >
             withdraw
@@ -247,9 +310,13 @@ const Fund = () => {
             <ConfirmModal
               isOpen={withdraw}
               title="Withdrawl"
-              message="Request for withdrawl? "
+              message={`Request withdrawal of Rs ${availableBalance}? ${
+                withdrawError ? withdrawError : ""
+              }`}
               confirmText="Yes"
               cancelText="No"
+              loading={withdrawing}
+              onConfirm={handleWithdrawConfirm}
               onCancel={() => setWithdraw(false)}
             />
           )}

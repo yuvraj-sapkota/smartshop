@@ -43,26 +43,19 @@ export const getMyReferralsService = async (userId) => {
 };
 
 export const getMyRewardsService = async (userId) => {
-  // 1. Find everyone referred by this user
   const referredUsers = await User.find({ referredBy: userId }).select(
     "_id role",
   );
 
-  console.log(referredUsers);
-
   const referredSellerIds = referredUsers
     .filter((u) => u.role === "seller")
-    .map((u) => u._id);
+    .map((u) => u._id.toString());
   const referredCustomerIds = referredUsers
     .filter((u) => u.role === "user")
-    .map((u) => u._id);
+    .map((u) => u._id.toString());
 
-  console.log(referredSellerIds);
-  console.log(referredCustomerIds);
-
-  // 2. Find orders where a referred seller sold, OR a referred user bought
   const orders = await Order.find({
-     $or: [
+    $or: [
       { seller: { $in: referredSellerIds } },
       { customer: { $in: referredCustomerIds } },
     ],
@@ -72,23 +65,50 @@ export const getMyRewardsService = async (userId) => {
     .populate("items.product", "name")
     .sort({ createdAt: -1 });
 
-  // 3. Break each order into reward rows (10% of commission per item)
   const rewards = [];
+
   orders.forEach((order) => {
+    const isReferredSeller = referredSellerIds.includes(
+      order.seller._id.toString(),
+    );
+    const isReferredBuyer = referredCustomerIds.includes(
+      order.customer._id.toString(),
+    );
+
     order.items.forEach((item) => {
-      rewards.push({
-        _id: item._id,
-        product: item.product?.name || item.productName,
-        quantity: item.qty,
-        mrp: item.price,
-        totalPrice: item.price * item.qty,
-        reward: parseFloat(
-          (item.commission * item.qty * REFERRAL_COMMISSION_RATE).toFixed(2),
-        ),
-        seller: order.seller.username,
-        buyer: order.customer.username,
-        datetime: order.createdAt,
-      });
+      const itemReward = parseFloat(
+        (item.commission * item.qty * REFERRAL_COMMISSION_RATE).toFixed(2),
+      );
+
+      // Reward for referring the seller
+      if (isReferredSeller) {
+        rewards.push({
+          _id: `${item._id}-seller`,
+          product: item.product?.name || item.productName,
+          quantity: item.qty,
+          mrp: item.price,
+          totalPrice: item.price * item.qty,
+          reward: itemReward,
+          seller: order.seller.username,
+          buyer: order.customer.username,
+          datetime: order.createdAt,
+        });
+      }
+
+      // Reward for referring the buyer — separate entry, even if same order
+      if (isReferredBuyer) {
+        rewards.push({
+          _id: `${item._id}-buyer`,
+          product: item.product?.name || item.productName,
+          quantity: item.qty,
+          mrp: item.price,
+          totalPrice: item.price * item.qty,
+          reward: itemReward,
+          seller: order.seller.username,
+          buyer: order.customer.username,
+          datetime: order.createdAt,
+        });
+      }
     });
   });
 
