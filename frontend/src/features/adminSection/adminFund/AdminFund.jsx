@@ -1,23 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
-import { useEffect } from "react";
 import {
   getAllSubmitPaymentAPI,
   updatePaymentStatus,
 } from "../../../services/sellerPayment/sellerPayment.api";
-import { useState } from "react";
+import {
+  getAllWithdrawalsAPI,
+  updateWithdrawalStatusAPI,
+} from "../../../services/userFund/userFund.api";
 
 const AdminFund = () => {
   const [active, setActive] = useState("seller");
 
-  const [transactionData, setTransactionData] = useState([]);
+  const [sellerTransactions, setSellerTransactions] = useState([]);
+  const [userWithdrawals, setUserWithdrawals] = useState([]);
 
-  const handleStatusChange = async (id, newStatus) => {
+  const handleSellerStatusChange = async (id, newStatus) => {
     try {
-      const data = await updatePaymentStatus(id, newStatus);
+      await updatePaymentStatus(id, newStatus);
 
-      setTransactionData((prev) =>
+      setSellerTransactions((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, status: newStatus } : item,
+        ),
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUserStatusChange = async (id, newStatus) => {
+    try {
+      await updateWithdrawalStatusAPI(id, newStatus);
+
+      setUserWithdrawals((prev) =>
         prev.map((item) =>
           item._id === id ? { ...item, status: newStatus } : item,
         ),
@@ -28,24 +45,40 @@ const AdminFund = () => {
   };
 
   useEffect(() => {
-    const fetchPayments = async () => {
+    const fetchSellerTransactions = async () => {
       try {
         const data = await getAllSubmitPaymentAPI();
-        setTransactionData(data.payments);
+        setSellerTransactions(data.payments);
       } catch (error) {
         console.log(error);
       }
     };
 
-    fetchPayments();
+    const fetchUserWithdrawals = async () => {
+      try {
+        const data = await getAllWithdrawalsAPI();
+        setUserWithdrawals(data.withdrawals);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchSellerTransactions();
+    fetchUserWithdrawals();
   }, []);
 
-  const formattedData = transactionData.map((item, index) => ({
+  const formattedSellerTransactions = sellerTransactions.map((item, index) => ({
     ...item,
     sn: index + 1,
   }));
 
-  const transactionColumns = [
+  const formattedUserWithdrawals = userWithdrawals.map((item, index) => ({
+    ...item,
+    sn: index + 1,
+    username: item.user?.username,
+  }));
+
+  const sellerTransactionColumns = [
     { header: "SN", accessorKey: "sn" },
 
     {
@@ -120,7 +153,7 @@ const AdminFund = () => {
         return row.status === "pending" ? (
           <select
             defaultValue={row.status}
-            onChange={(e) => handleStatusChange(row._id, e.target.value)}
+            onChange={(e) => handleSellerStatusChange(row._id, e.target.value)}
             className={` px-2 py-1 rounded-full text-xs font-semibold bg-transparent outline-none ${color}`}
           >
             <option value="pending">Pending</option>
@@ -148,36 +181,7 @@ const AdminFund = () => {
     },
   ];
 
-  // user
-
-  const userTransactions = [
-    {
-      _id: 1,
-      sn: 1,
-      username: "Shyam",
-      amount: 200,
-      status: "pending",
-      createdAt: new Date(),
-    },
-    {
-      _id: 2,
-      sn: 2,
-      username: "Ram",
-      amount: 500,
-      status: "approved",
-      createdAt: new Date(),
-    },
-    {
-      _id: 3,
-      sn: 3,
-      username: "Hari",
-      amount: 300,
-      status: "rejected",
-      createdAt: new Date(),
-    },
-  ];
-
-  const userTransactionColumns = [
+  const userWithdrawalColumns = [
     {
       header: "SN",
       accessorKey: "sn",
@@ -225,6 +229,7 @@ const AdminFund = () => {
         return row.status === "pending" ? (
           <select
             defaultValue={row.status}
+            onChange={(e) => handleUserStatusChange(row._id, e.target.value)}
             className={` px-2 py-1 rounded-full text-xs font-semibold bg-transparent outline-none ${color}`}
           >
             <option value="pending">Pending</option>
@@ -257,12 +262,6 @@ const AdminFund = () => {
       <div className="space-y-10">
         <div className="flex items-center justify-between ">
           <PageHeader text="Fund Management" />
-          <button
-            onClick={() => setOpen(true)}
-            className="bg-white text-primary border border-primary px-5 py-2 rounded-lg hover:bg-primary hover:text-white transition cursor-pointer"
-          >
-            Setup Bank Details
-          </button>
         </div>
 
         {/* admin bank details  */}
@@ -282,14 +281,6 @@ const AdminFund = () => {
               <p>
                 <span>Account:</span> 000208987654321
               </p>
-              {/* 
-            {bankDetails.qr && (
-              <img
-                src={URL.createObjectURL(bankDetails.qr)}
-                alt="QR"
-                className="w-24 mt-2 rounded"
-              />
-            )} */}
             </div>
           </div>
         </div>
@@ -345,11 +336,14 @@ const AdminFund = () => {
           </div>
 
           {active == "seller" ? (
-            <DataTable columns={transactionColumns} data={formattedData} />
+            <DataTable
+              columns={sellerTransactionColumns}
+              data={formattedSellerTransactions}
+            />
           ) : (
             <DataTable
-              columns={userTransactionColumns}
-              data={userTransactions}
+              columns={userWithdrawalColumns}
+              data={formattedUserWithdrawals}
             />
           )}
         </div>

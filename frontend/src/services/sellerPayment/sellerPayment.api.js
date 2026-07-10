@@ -8,7 +8,7 @@ export const submitPaymentAPI = async (formData) => {
   return response.data;
 };
 
-// admin side ko lagi
+// admin side ko lagi seller ko submit payment
 export const getAllSubmitPaymentAPI = async () => {
   const response = await apiClient.get("/seller-payments/all");
   return response.data;
