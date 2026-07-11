@@ -101,11 +101,18 @@ export const getMyOrdersService = async (sellerId) => {
 export const getAllOrdersService = async () => {
   return Order.find()
     .populate("items.product", "name price commission")
-    .populate("customer", "username email")
-    .populate("seller", "username email")
+    .populate({
+      path: "customer",
+      select: "username email referredBy",
+      populate: { path: "referredBy", select: "username" },
+    })
+    .populate({
+      path: "seller",
+      select: "username email referredBy",
+      populate: { path: "referredBy", select: "username" },
+    })
     .sort({ createdAt: -1 });
 };
-
 
 // for user side, purchase
 export const getMyPurchasesService = async (customerId) => {

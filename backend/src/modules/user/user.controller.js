@@ -1,4 +1,4 @@
-import { getCustomersService } from "./user.service.js";
+import { getAllUsersService, getCustomersService } from "./user.service.js";
 
 export const getCustomers = async (req, res, next) => {
   try {
@@ -8,6 +8,15 @@ export const getCustomers = async (req, res, next) => {
       success: true,
       customers,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await getAllUsersService();
+    res.status(200).json({ success: true, users });
   } catch (error) {
     next(error);
   }
