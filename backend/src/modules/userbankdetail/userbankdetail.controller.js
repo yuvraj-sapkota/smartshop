@@ -25,9 +25,20 @@ export const upsertBankDetail = async (req, res, next) => {
   }
 };
 
+// login user ko bank details nikalni
 export const getMyBankDetail = async (req, res, next) => {
   try {
     const bankDetail = await getMyBankDetailService(req.user._id);
+    res.status(200).json({ success: true, bankDetail: bankDetail ?? null });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// admin le user id ko thorugh bank details nikalni
+export const getUserBankDetail = async (req, res, next) => {
+  try {
+    const bankDetail = await getMyBankDetailService(req.params.userId);
     res.status(200).json({ success: true, bankDetail: bankDetail ?? null });
   } catch (error) {
     next(error);

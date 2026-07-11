@@ -2,7 +2,11 @@ import express from "express";
 import protect from "../../middlewares/auth.middleware.js";
 import allowRole from "../../middlewares/role.middleware.js";
 import { uploadQr } from "../../config/cloudinary.js";
-import { getMyBankDetail, upsertBankDetail } from "./userbankdetail.controller.js";
+import {
+  getMyBankDetail,
+  upsertBankDetail,
+  getUserBankDetail,
+} from "./userbankdetail.controller.js";
 import { upsertBankDetailSchema } from "./userbankdetail.validation.js";
 
 const router = express.Router();
@@ -26,5 +30,7 @@ router.post(
 );
 
 router.get("/my-bank", protect, allowRole("user"), getMyBankDetail);
+
+router.get("/:userId", protect, allowRole("admin"), getUserBankDetail);
 
 export default router;

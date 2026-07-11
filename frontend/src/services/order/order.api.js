@@ -12,7 +12,7 @@ export const getOrderAPI = async () => {
 };
 
 // all orders admin side ko lagi
-export const getAllOrdersApi = async () => {
+export const getAllOrdersAPI = async () => {
   const response = await apiClient.get("/orders/all-orders");
   return response.data;
 };

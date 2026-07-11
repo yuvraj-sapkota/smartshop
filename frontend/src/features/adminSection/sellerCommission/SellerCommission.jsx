@@ -1,22 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
+import useOrderStore from "../../../store/orderStore/orderStore";
 
 const SellerCommission = () => {
-  const commissionData = [
-    {
-      _id: 1,
-      sn: 1,
-      commission: 5,
-      product: "Pen",
-      quantity: 2,
-      price: 20,
-      totalPrice: 40,
-      customer: "John",
-      seller: "Ram Store",
-      datetime: "2026-04-28 10:30 AM",
-    },
-  ];
+  const { orders, getAllOrders } = useOrderStore();
+
+  useEffect(() => {
+    getAllOrders();
+  }, []);
+
+  // flatten each order's items into individual rows
+  const commissionData = [];
+  orders.forEach((order) => {
+    order.items.forEach((item) => {
+      commissionData.push({
+        _id: item._id,
+        commission: item.commission * item.qty,
+        product: item.product?.name || item.productName,
+        quantity: item.qty,
+        price: item.price,
+        totalPrice: item.price * item.qty,
+        customer: order.customer?.username,
+        seller: order.seller?.username,
+        datetime: new Date(order.createdAt).toLocaleString(),
+      });
+    });
+  });
+
+  const formattedData = commissionData.map((item, index) => ({
+    ...item,
+    sn: index + 1,
+  }));
+
   const sellerCommission = [
     {
       header: "SN",
@@ -66,11 +82,12 @@ const SellerCommission = () => {
       cell: (row) => <span>{row.datetime}</span>,
     },
   ];
+
   return (
     <>
       <div className=" space-y-8">
         <PageHeader text="Seller Commission" />
-        <DataTable data={commissionData} columns={sellerCommission} />
+        <DataTable data={formattedData} columns={sellerCommission} />
       </div>
     </>
   );

@@ -9,12 +9,18 @@ import {
   getAllWithdrawalsAPI,
   updateWithdrawalStatusAPI,
 } from "../../../services/userFund/userFund.api";
+import { getUserBankDetailAPI } from "../../../services/userPayment/userPayment.api";
 
 const AdminFund = () => {
   const [active, setActive] = useState("seller");
 
   const [sellerTransactions, setSellerTransactions] = useState([]);
   const [userWithdrawals, setUserWithdrawals] = useState([]);
+
+  const [bankModalOpen, setBankModalOpen] = useState(false);
+  const [bankModalLoading, setBankModalLoading] = useState(false);
+  const [bankModalError, setBankModalError] = useState("");
+  const [bankModalData, setBankModalData] = useState(null);
 
   const handleSellerStatusChange = async (id, newStatus) => {
     try {
@@ -41,6 +47,29 @@ const AdminFund = () => {
       );
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleViewBank = async (userId) => {
+    console.log("hello");
+    setBankModalOpen(true);
+    setBankModalLoading(true);
+    setBankModalError("");
+    setBankModalData(null);
+
+    try {
+      const data = await getUserBankDetailAPI(userId);
+      if (data.bankDetail) {
+        setBankModalData(data.bankDetail);
+      } else {
+        setBankModalError("This user hasn't set up their bank details yet.");
+      }
+    } catch (error) {
+      setBankModalError(
+        error.response?.data?.message ?? "Failed to load bank details.",
+      );
+    } finally {
+      setBankModalLoading(false);
     }
   };
 
@@ -207,7 +236,7 @@ const AdminFund = () => {
       accessorKey: "bank",
       cell: (row) => (
         <button
-          onClick={() => alert("comming soon")}
+          onClick={() => handleViewBank(row.user?._id)}
           className="px-2 py-2 text-xs font-medium text-white bg-primary rounded-md hover:opacity-90 transition"
         >
           View Bank
@@ -348,6 +377,68 @@ const AdminFund = () => {
           )}
         </div>
       </div>
+
+      {/* View Bank modal */}
+      {bankModalOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4"
+          onClick={() => setBankModalOpen(false)}
+        >
+          <div
+            className="bg-white w-full max-w-sm rounded-2xl shadow-xl p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Bank Details
+            </h2>
+
+            {bankModalLoading && (
+              <p className="text-gray-500 text-sm">Loading...</p>
+            )}
+
+            {!bankModalLoading && bankModalError && (
+              <p className="text-red-500 text-sm">{bankModalError}</p>
+            )}
+
+            {!bankModalLoading && bankModalData && (
+              <div className="text-gray-600 space-y-2 text-sm">
+                <p>
+                  <span className="font-semibold">Bank:</span>{" "}
+                  {bankModalData.bankName}
+                </p>
+                <p>
+                  <span className="font-semibold">Name:</span>{" "}
+                  {bankModalData.fullName}
+                </p>
+                <p>
+                  <span className="font-semibold">Account:</span>{" "}
+                  {bankModalData.accountNumber}
+                </p>
+                {bankModalData.qrUrl && (
+                  <div>
+                    <p className="font-semibold mb-1">QR code:</p>
+                    <img
+                      src={bankModalData.qrUrl}
+                      alt="QR"
+                      height={120}
+                      width={120}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex justify-end mt-6">
+              <button
+                onClick={() => setBankModalOpen(false)}
+                className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

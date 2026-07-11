@@ -27,22 +27,6 @@ const Fund = () => {
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawError, setWithdrawError] = useState("");
 
-  // const fundData = [
-  //   {
-  //     _id: 101,
-  //     sn: 1,
-  //     withdrawAmount: 100,
-  //     status: "pending",
-  //     datetime: "2026-04-24 10:30 AM",
-  //   },
-  //   {
-  //     _id: 102,
-  //     sn: 2,
-  //     withdrawAmount: 500,
-  //     status: "approved",
-  //     datetime: "2026-04-24 11:15 AM",
-  //   },
-  // ];
 
   const fundColumns = [
     { header: "SN", accessorKey: "sn" },
@@ -111,7 +95,6 @@ const Fund = () => {
   const fetchBalance = async () => {
     try {
       const data = await getAvailableBalanceAPI();
-      console.log(data);
       setAvailableBalance(data.availableBalance);
     } catch (error) {
       console.log(error?.response?.data);

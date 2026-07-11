@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import {
   createOrderAPI,
-  getAllOrdersApi,
+  getAllOrdersAPI,
   getOrderAPI,
 } from "../../services/order/order.api";
 import { showSuccess, showError } from "../../utils/toast";
@@ -43,7 +43,7 @@ const useOrderStore = create((set, get) => ({
   getAllOrders: async () => {
     set({ loading: true });
     try {
-      const data = await getAllOrdersApi();
+      const data = await getAllOrdersAPI();
       set({ orders: data.orders, loading: false });
     } catch (error) {
       showError(error.response?.data?.message || "Failed to fetch orders");

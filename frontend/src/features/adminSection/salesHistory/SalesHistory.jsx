@@ -36,35 +36,10 @@ const SalesHistory = () => {
     getAllOrders();
   }, [getAllOrders]);
 
-  console.log(orders);
   const salesData = flattenSales(orders);
 
-  // const salesData = [
-  //   {
-  //     _id: 1,
-  //     sn: 1,
-  //     product: "Pen",
-  //     quantity: 2,
-  //     price: 20,
-  //     totalPrice: 40,
-  //     commission: 5,
-  //     seller: "Ram Store",
-  //     customer: "John",
-  //     datetime: "2026-04-28 10:00 AM",
-  //   },
-  //   {
-  //     _id: 2,
-  //     sn: 2,
-  //     product: "Pen",
-  //     quantity: 2,
-  //     price: 20,
-  //     totalPrice: 40,
-  //     commission: 5,
-  //     seller: "Ram Store",
-  //     customer: "John",
-  //     datetime: "2026-04-28 10:00 AM",
-  //   },
-  // ];
+
+  
   const salesColumns = [
     {
       header: "SN",
