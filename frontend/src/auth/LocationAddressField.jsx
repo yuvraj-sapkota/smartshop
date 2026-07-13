@@ -128,8 +128,7 @@ const LocationAddressField = ({
         <>
           {locationStatus === "denied" && (
             <p className="text-xs text-gray-500 mb-2">
-              Couldn't access your location — no problem, enter your address
-              below.
+              Couldn't access your location — enter your address below.
             </p>
           )}
           {locationStatus === "unavailable" && (
