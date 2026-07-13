@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AuthForm from "../AuthForm";
+import LocationAddressField from "../LocationAddressField";
 import { registerSellerApi } from "../../services/auth/auth.api";
 import { showError, showSuccess } from "../../utils/toast";
 
@@ -11,64 +12,60 @@ const SellerSignup = () => {
     password: "",
     storeName: "",
     storeAddress: "",
+    latitude: null,
+    longitude: null,
   });
+
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
+  };
 
-    setErrors({
-      ...errors,
-      [e.target.name]: "",
-    });
+  const handleLocationChange = (coords) => {
+    setForm((prev) => ({
+      ...prev,
+      latitude: coords?.latitude ?? null,
+      longitude: coords?.longitude ?? null,
+    }));
+    setErrors((prev) => ({ ...prev, storeAddress: "" }));
   };
 
   const validate = () => {
     let newErrors = {};
 
-    if (!form.username.trim()) {
-      newErrors.username = "Username is required";
-    }
+    if (!form.username.trim()) newErrors.username = "Username is required";
 
-    if (!form.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+    if (!form.email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(form.email))
       newErrors.email = "Invalid email";
-    }
 
-    if (!form.password.trim()) {
-      newErrors.password = "Password is required";
-    } else if (form.password.length < 6) {
+    if (!form.password.trim()) newErrors.password = "Password is required";
+    else if (form.password.length < 6)
       newErrors.password = "Minimum 6 characters required";
-    }
 
-    if (!form.storeName.trim()) {
-      newErrors.storeName = "Store name is required";
-    }
-    if (!form.storeAddress.trim()) {
-      newErrors.storeAddress = "Store address is required";
+    if (!form.storeName.trim()) newErrors.storeName = "Store name is required";
+
+    const hasLocation = form.latitude != null && form.longitude != null;
+    if (!hasLocation && !form.storeAddress.trim()) {
+      newErrors.storeAddress =
+        "Share your store's location or enter its address";
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-
     console.log(form);
+    e.preventDefault();
     if (!validate()) return;
 
     try {
       setIsLoading(true);
-
       const data = await registerSellerApi(form);
-      console.log(data);
       showSuccess(data.message);
 
       setForm({
@@ -78,10 +75,11 @@ const SellerSignup = () => {
         password: "",
         storeName: "",
         storeAddress: "",
+        latitude: null,
+        longitude: null,
       });
+      console.log(form);
     } catch (error) {
-      console.log(error);
-      console.log(error.response?.data);
       showError(error.response?.data?.message || "something went wrong");
     } finally {
       setIsLoading(false);
@@ -119,30 +117,33 @@ const SellerSignup = () => {
       type: "text",
       placeholder: "Enter storeName",
     },
-    {
-      label: "Store Address",
-      name: "storeAddress",
-      type: "textarea",
-      placeholder: "Enter your store address",
-    },
   ];
+
   return (
-    <>
-      <AuthForm
-        title="Create Seller Account"
-        subtitle="Create your seller account to continue"
-        fields={signupFields}
-        form={form}
-        errors={errors}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        buttonText="Create Account"
-        footerText="Already have an account?"
-        footerLinkText="Login"
-        footerLink="/login"
-        isLoading={isLoading}
+    <AuthForm
+      title="Create Seller Account"
+      subtitle="Create your seller account to continue"
+      fields={signupFields}
+      form={form}
+      errors={errors}
+      handleChange={handleChange}
+      handleSubmit={handleSubmit}
+      buttonText="Create Account"
+      footerText="Already have an account?"
+      footerLinkText="Login"
+      footerLink="/login"
+      isLoading={isLoading}
+    >
+      <LocationAddressField
+        label="Store Address"
+        name="storeAddress"
+        value={form.storeAddress}
+        onChange={handleChange}
+        onLocationChange={handleLocationChange}
+        error={errors.storeAddress}
+        placeholder="Enter your store address"
       />
-    </>
+    </AuthForm>
   );
 };
 

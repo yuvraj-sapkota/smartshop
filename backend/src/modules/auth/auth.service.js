@@ -8,6 +8,11 @@ import {
   getReferrerId,
 } from "./auth.helper.js";
 
+const buildLocation = (latitude, longitude) =>
+  latitude != null && longitude != null
+    ? { type: "Point", coordinates: [longitude, latitude] } // [lng, lat] order
+    : undefined;
+
 export const createUserService = async (data) => {
   const emailExists = await checkEmailExists(data.email);
   if (emailExists) {
@@ -21,14 +26,15 @@ export const createUserService = async (data) => {
 
   // Referral validation
   const referredBy = await getReferrerId(data.referBy);
-
   // hashed password
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  const { referBy, ...userData } = data;
+  const { referBy, latitude, longitude, ...userData } = data;
+  const location = buildLocation(latitude, longitude);
 
   const user = await User.create({
     ...userData,
+    ...(location && { location }),
     password: hashedPassword,
     role: "user",
     referredBy,
@@ -43,26 +49,23 @@ export const createUserService = async (data) => {
 };
 
 export const createSellerService = async (data) => {
-  console.log(data);
   const emailExists = await checkEmailExists(data.email);
-  if (emailExists) {
-    throw new AppError("Email already exists", 400);
-  }
+  if (emailExists) throw new AppError("Email already exists", 400);
 
   const usernameExists = await checkUsernameExists(data.username);
-  if (usernameExists) {
-    throw new AppError("Username already exists", 400);
-  }
+  if (usernameExists) throw new AppError("Username already exists", 400);
 
   // Referral validation
   const referredBy = await getReferrerId(data.referBy);
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  const { referBy, ...sellerData } = data;
+  const { referBy, latitude, longitude, ...sellerData } = data;
+  const location = buildLocation(latitude, longitude);
 
   const seller = await User.create({
     ...sellerData,
+    ...(location && { location }),
     password: hashedPassword,
     role: "seller",
     referredBy,
@@ -84,9 +87,7 @@ export const loginService = async (email, password) => {
 
   const isMatched = await bcrypt.compare(password, user.password);
 
-  if (!isMatched) {
-    throw new AppError("Invalid credentials", 400);
-  }
+  if (!isMatched) throw new AppError("Invalid credentials", 400);
 
   const token = generateToken(user._id);
 

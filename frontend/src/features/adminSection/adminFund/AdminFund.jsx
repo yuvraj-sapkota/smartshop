@@ -51,7 +51,6 @@ const AdminFund = () => {
   };
 
   const handleViewBank = async (userId) => {
-    console.log("hello");
     setBankModalOpen(true);
     setBankModalLoading(true);
     setBankModalError("");

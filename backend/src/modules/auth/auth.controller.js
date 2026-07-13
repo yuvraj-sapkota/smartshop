@@ -12,6 +12,7 @@ import {
 
 // USER REGISTER
 export const registerUser = async (req, res, next) => {
+  console.log(req.body);
   try {
     const validatedData = registerUserSchema.parse(req.body);
 

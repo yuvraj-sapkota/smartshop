@@ -17,6 +17,7 @@ const AuthForm = ({
   isLoading = false,
   showRememberMe = false,
   showForgotPassword = false,
+  children,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -107,6 +108,7 @@ const AuthForm = ({
                   )}
                 </div>
               ))}
+              {children}
             </div>
 
             {/* Remember + Forgot */}

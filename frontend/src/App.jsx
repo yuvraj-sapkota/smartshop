@@ -23,7 +23,7 @@ import UserCommission from "./features/adminSection/userCommission/UserCommissio
 import AdminFund from "./features/adminSection/adminFund/AdminFund";
 import Users from "./features/adminSection/users/Users";
 import Sellers from "./features/adminSection/sellers/Sellers";
-import RewardRation from "./features/adminSection/rewardRatio/RewardRation";
+import RewardRatio from "./features/adminSection/rewardRatio/RewardRatio";
 import Login from "./auth/login/Login";
 import ChooseRole from "./auth/ChooseRole";
 import UserSignup from "./auth/signup/UserSignup";
@@ -138,7 +138,7 @@ const App = () => {
             <Route path="sellers" element={<Sellers />} />
             <Route path="seller-detail/:id" element={<SellerDetail />} />
 
-            <Route path="reward-ratio" element={<RewardRation />} />
+            <Route path="reward-ratio" element={<RewardRatio />} />
           </Route>
         </Routes>
       </BrowserRouter>

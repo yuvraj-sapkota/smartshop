@@ -1,4 +1,3 @@
-import React from "react";
 import PageHeader from "../../../components/PageHeader";
 import StatCard from "../../../components/StatCard";
 import { Percent, Gift, Users } from "lucide-react";
@@ -35,7 +34,7 @@ const RewardRation = () => {
       <div className="space-y-10">
         <PageHeader text="Fix Reward Ratio" />
 
-        <div className="space-y-4 "> 
+        <div className="space-y-4 ">
           {commissionConfig.map((item) => (
             <StatCard key={item._id} item={item} />
           ))}
