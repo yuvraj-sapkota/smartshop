@@ -3,6 +3,13 @@ import { FaWhatsapp } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import StoreModal from "./StoreModal";
 
+const formatDistance = (meters) => {
+  if (meters < 1000) {
+    return `${Math.round(meters)} m away`;
+  }
+  return `${(meters / 1000).toFixed(1)} km away`;
+};
+
 export default function StoreCard({ store }) {
   const [showModal, setShowModal] = useState(false);
 
@@ -36,13 +43,21 @@ export default function StoreCard({ store }) {
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">
-                {store.storeName}
-              </h2>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {store.storeName}
+                </h2>
+
+                {store.distance != null && (
+                  <span className="text-[10px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">
+                    {formatDistance(store.distance)}
+                  </span>
+                )}
+              </div>
 
               <p className="text-gray-500 text-xs flex items-center gap-0.5 ml-1">
                 <MapPin size={12} />
-                {store.distance} km away
+                {store.storeAddress}
               </p>
             </div>
           </div>
