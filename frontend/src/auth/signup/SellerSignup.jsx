@@ -18,7 +18,7 @@ const SellerSignup = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [locationStatus, setLocationStatus] = useState("granted");
+  const [locationStatus, setLocationStatus] = useState("idle");
   const [manualMode, setManualMode] = useState(false);
 
   const handleChange = (e) => {
