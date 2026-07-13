@@ -55,7 +55,7 @@ export default function StoreCard({ store }) {
               )}
               {/* </div> */}
 
-              {store.storeAddres && (
+              {store.storeAddress && (
                 <p className="text-gray-500 text-xs flex items-center gap-0.5 ml-1">
                   <MapPin size={12} />
                   {store.storeAddress}
