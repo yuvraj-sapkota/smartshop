@@ -43,22 +43,24 @@ export default function StoreCard({ store }) {
             </div>
 
             <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-xl font-semibold text-gray-800">
-                  {store.storeName}
-                </h2>
+              {/* <div className="flex items-center gap-2 flex-wrap"> */}
+              <h2 className="text-xl font-semibold text-gray-800">
+                {store.storeName}
+              </h2>
 
-                {store.distance != null && (
-                  <span className="text-[10px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">
-                    {formatDistance(store.distance)}
-                  </span>
-                )}
-              </div>
+              {store.distance != null && (
+                <span className="text-[10px] font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full whitespace-nowrap">
+                  {formatDistance(store.distance)}
+                </span>
+              )}
+              {/* </div> */}
 
-              <p className="text-gray-500 text-xs flex items-center gap-0.5 ml-1">
-                <MapPin size={12} />
-                {store.storeAddress}
-              </p>
+              {store.storeAddres && (
+                <p className="text-gray-500 text-xs flex items-center gap-0.5 ml-1">
+                  <MapPin size={12} />
+                  {store.storeAddress}
+                </p>
+              )}
             </div>
           </div>
 
