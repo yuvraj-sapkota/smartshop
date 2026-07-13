@@ -3,6 +3,7 @@ import StoreCard from "../../../components/StoreCard";
 import { useState } from "react";
 import { useEffect } from "react";
 import { getAllStoreAPI } from "../../../services/allStore/allStore.api";
+import { MapPin } from "lucide-react";
 
 const ShopNow = () => {
   const [stores, setStores] = useState([]);
@@ -44,7 +45,7 @@ const ShopNow = () => {
   };
 
   useEffect(() => {
-    fetchStores();
+    requestLocation();
   }, []);
 
   return (
