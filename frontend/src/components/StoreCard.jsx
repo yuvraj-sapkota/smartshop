@@ -42,7 +42,7 @@ export default function StoreCard({ store }) {
 
               <p className="text-gray-500 text-xs flex items-center gap-0.5 ml-1">
                 <MapPin size={12} />
-                {store.storeAddress}
+                {store.distance} km away
               </p>
             </div>
           </div>
@@ -54,7 +54,7 @@ export default function StoreCard({ store }) {
             rel="noopener noreferrer"
             className="bg-primary hover:bg-primary-hover text-white p-2 rounded-full transition"
           >
-            <FaWhatsapp size={22}/>
+            <FaWhatsapp size={22} />
           </a>
         </div>
 
