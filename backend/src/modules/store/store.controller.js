@@ -3,12 +3,22 @@ import { getStoresWithProductsService } from "./store.service.js";
 // store ra product group gareko
 export const getStoresWithProducts = async (req, res, next) => {
   try {
-    const stores = await getStoresWithProductsService();
+    const { lat, lng } = req.query;
 
-    res.status(200).json({
-      success: true,
-      stores,
-    });
+    const parsedLat = lat !== undefined ? Number(lat) : undefined;
+    const parsedLng = lng !== undefined ? Number(lng) : undefined;
+
+    const hasValidLocation =
+      parsedLat !== undefined &&
+      parsedLng !== undefined &&
+      !Number.isNaN(parsedLat) &&
+      !Number.isNaN(parsedLng);
+
+    const stores = await getStoresWithProductsService(
+      hasValidLocation ? { lat: parsedLat, lng: parsedLng } : {},
+    );
+
+    res.status(200).json({ success: true, stores });
   } catch (error) {
     next(error);
   }
