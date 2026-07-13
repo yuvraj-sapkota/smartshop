@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { MapPin, LoaderCircle, CheckCircle2 } from "lucide-react";
 
 const LocationAddressField = ({
@@ -9,11 +8,11 @@ const LocationAddressField = ({
   onLocationChange, // ({ latitude, longitude } | null) => void
   error,
   placeholder = "Enter your address",
+  locationStatus, // NEW — comes from parent now
+  setLocationStatus, // NEW
+  manualMode, // NEW
+  setManualMode, // NEW
 }) => {
-  const [locationStatus, setLocationStatus] = useState("idle");
-  // idle | loading | granted | denied | unavailable
-  const [manualMode, setManualMode] = useState(false);
-
   const handleUseLocation = () => {
     if (!navigator.geolocation) {
       setLocationStatus("unavailable");

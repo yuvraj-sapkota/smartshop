@@ -18,6 +18,8 @@ const SellerSignup = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [locationStatus, setLocationStatus] = useState("granted");
+  const [manualMode, setManualMode] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -78,7 +80,9 @@ const SellerSignup = () => {
         latitude: null,
         longitude: null,
       });
-      console.log(form);
+
+      setLocationStatus("idle");
+      setManualMode(false);
     } catch (error) {
       showError(error.response?.data?.message || "something went wrong");
     } finally {
@@ -142,6 +146,10 @@ const SellerSignup = () => {
         onLocationChange={handleLocationChange}
         error={errors.storeAddress}
         placeholder="Enter your store address"
+        locationStatus={locationStatus}
+        setLocationStatus={setLocationStatus}
+        manualMode={manualMode}
+        setManualMode={setManualMode}
       />
     </AuthForm>
   );

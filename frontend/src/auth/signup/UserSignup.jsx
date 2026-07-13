@@ -17,6 +17,8 @@ const UserSignup = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [locationStatus, setLocationStatus] = useState("idle");
+  const [manualMode, setManualMode] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -73,6 +75,8 @@ const UserSignup = () => {
         latitude: null,
         longitude: null,
       });
+      setLocationStatus("idle");
+      setManualMode(false);
     } catch (error) {
       showError(error.response?.data?.message || "Something went wrong");
     } finally {
@@ -130,6 +134,10 @@ const UserSignup = () => {
         onLocationChange={handleLocationChange}
         error={errors.address}
         placeholder="Enter your address"
+        locationStatus={locationStatus}
+        setLocationStatus={setLocationStatus}
+        manualMode={manualMode}
+        setManualMode={setManualMode}
       />
     </AuthForm>
   );
