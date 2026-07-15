@@ -285,6 +285,14 @@ const AdminFund = () => {
     },
   ];
 
+  const pendingDepositTotal = sellerTransactions
+    .filter((t) => t.status === "pending")
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const pendingWithdrawTotal = userWithdrawals
+    .filter((w) => w.status === "pending")
+    .reduce((sum, w) => sum + w.amount, 0);
+
   return (
     <>
       <div className="space-y-10">
@@ -325,14 +333,16 @@ const AdminFund = () => {
               <div>
                 <p className="text-gray-500 text-sm">Pending Deposit</p>
                 <h3 className="text-lg font-semibold text-green-600">
-                  Rs. 100
+                  Rs. {pendingDepositTotal}
                 </h3>
               </div>
 
               {/* Pending Withdraw */}
               <div className="text-right">
                 <p className="text-gray-500 text-sm">Pending Withdraw</p>
-                <h3 className="text-lg font-semibold text-red-600">Rs. 200</h3>
+                <h3 className="text-lg font-semibold text-red-600">
+                  Rs. {pendingWithdrawTotal}
+                </h3>
               </div>
             </div>
           </div>
