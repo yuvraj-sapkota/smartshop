@@ -82,7 +82,7 @@ const Commission = () => {
   return (
     <>
       <div className="space-y-8">
-        <PageHeader text="Comission for Admin" />
+        <PageHeader text="Commission for Admin" />
 
         {loading ? (
           <p className="text-sm text-gray-400">Loading...</p>

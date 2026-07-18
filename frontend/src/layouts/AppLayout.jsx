@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { LogOut, Menu, User } from "lucide-react";
+import { LogOut, Menu, User, UserRound } from "lucide-react";
 import Sidebar from "../components/sidebar/Sidebar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import useAuthStore from "../store/auth/authStore";
 import { useRef } from "react";
 import ConfirmModal from "../components/ConfirmModal";
@@ -72,7 +72,15 @@ const AppLayout = () => {
                 </button>
 
                 {profileOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg border overflow-hidden z-50 backdrop-blur-2xl ">
+                  <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden z-50 backdrop-blur-2xl ">
+                    <Link
+                      to="profile"
+                      onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-2 w-full px-4 py-2 text-left hover:bg-gray-100"
+                    >
+                      <UserRound size={16} />
+                      Profile
+                    </Link>
                     <button
                       onClick={() => {
                         setLogoutModal(true);
