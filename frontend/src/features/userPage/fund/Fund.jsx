@@ -6,7 +6,7 @@ import ConfirmModal from "../../../components/ConfirmModal";
 import {
   getMyBankDetailAPI,
   upsertBankDetailAPI,
-} from "../../../services/userPayment/userPayment.api";
+} from "../../../services/bankDetail/bankDetail.api";
 import {
   getAvailableBalanceAPI,
   getMyWithdrawalsAPI,
@@ -26,7 +26,6 @@ const Fund = () => {
   const [fundData, setFundData] = useState([]);
   const [withdrawing, setWithdrawing] = useState(false);
   const [withdrawError, setWithdrawError] = useState("");
-
 
   const fundColumns = [
     { header: "SN", accessorKey: "sn" },

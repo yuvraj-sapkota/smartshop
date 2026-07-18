@@ -6,8 +6,9 @@ import {
   getMyBankDetail,
   upsertBankDetail,
   getUserBankDetail,
-} from "./userbankdetail.controller.js";
-import { upsertBankDetailSchema } from "./userbankdetail.validation.js";
+  getAdminBankDetail,
+} from "./bankDetail.controller.js";
+import { upsertBankDetailSchema } from "./bankDetail.validation.js";
 
 const router = express.Router();
 
@@ -23,13 +24,20 @@ const validate = (schema) => (req, res, next) => {
 router.post(
   "/my-bank",
   protect,
-  allowRole("user"),
-  uploadQr.single("qr"), // optional file
+  allowRole("user", "admin"),
+  uploadQr.single("qr"),
   validate(upsertBankDetailSchema),
   upsertBankDetail,
 );
 
-router.get("/my-bank", protect, allowRole("user"), getMyBankDetail);
+router.get("/my-bank", protect, allowRole("user", "admin"), getMyBankDetail);
+
+router.get(
+  "/admin",
+  protect,
+  allowRole("user", "seller", "admin"),
+  getAdminBankDetail,
+);
 
 router.get("/:userId", protect, allowRole("admin"), getUserBankDetail);
 

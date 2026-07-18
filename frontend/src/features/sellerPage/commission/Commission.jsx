@@ -19,17 +19,17 @@ const Commission = () => {
       order.items.map((item, itemIndex) => ({
         _id: `${order._id}-${itemIndex}`,
         sn: itemIndex + 1,
-        commission: item.commission,
+        commission: item.qty * item.commission,
         product: item.productName || item.product?.name,
         price: item.price,
         qty: item.qty,
-        totalPrice: item.totalPrice,
+        totalPrice: item.qty * item.price,
         buyer: order.customer.username,
         time: new Date(order.createdAt).toLocaleString(),
       })),
     );
   }, [orders]);
-  
+
   const columns = [
     { header: "SN", accessorKey: "sn" },
 
@@ -84,7 +84,11 @@ const Commission = () => {
       <div className="space-y-8">
         <PageHeader text="Comission for Admin" />
 
-        <DataTable columns={columns} data={data} />
+        {loading ? (
+          <p className="text-sm text-gray-400">Loading...</p>
+        ) : (
+          <DataTable columns={columns} data={data} />
+        )}
       </div>
     </>
   );

@@ -1,9 +1,11 @@
 import User from "../auth/auth.model.js";
 import Order from "../order/order.model.js";
-
-const REFERRAL_COMMISSION_RATE = 0.1; // 10%
+import { getRewardConfigService } from "../rewardConfig/rewardConfig.service.js";
 
 export const getMyReferralsService = async (userId) => {
+  const { userReferralRate, sellerReferralRate } =
+    await getRewardConfigService();
+
   const referrals = await User.find({ referredBy: userId })
     .select("-password")
     .sort({ createdAt: -1 })
@@ -12,6 +14,7 @@ export const getMyReferralsService = async (userId) => {
   const referralsWithStats = await Promise.all(
     referrals.map(async (user) => {
       const matchField = user.role === "seller" ? "seller" : "customer";
+      const rate = user.role === "seller" ? sellerReferralRate : userReferralRate;
 
       const stats = await Order.aggregate([
         { $match: { [matchField]: user._id } },
@@ -28,7 +31,7 @@ export const getMyReferralsService = async (userId) => {
       const totalCommission = stats[0]?.totalCommission ?? 0;
 
       const earnCommission = parseFloat(
-        (totalCommission * REFERRAL_COMMISSION_RATE).toFixed(2),
+        (totalCommission * rate).toFixed(2),
       );
 
       return {
@@ -43,6 +46,9 @@ export const getMyReferralsService = async (userId) => {
 };
 
 export const getMyRewardsService = async (userId) => {
+  const { userReferralRate, sellerReferralRate } =
+    await getRewardConfigService();
+
   const referredUsers = await User.find({ referredBy: userId }).select(
     "_id role",
   );
@@ -76,12 +82,11 @@ export const getMyRewardsService = async (userId) => {
     );
 
     order.items.forEach((item) => {
-      const itemReward = parseFloat(
-        (item.commission * item.qty * REFERRAL_COMMISSION_RATE).toFixed(2),
-      );
-
       // Reward for referring the seller
       if (isReferredSeller) {
+        const itemReward = parseFloat(
+          (item.commission * item.qty * sellerReferralRate).toFixed(2),
+        );
         rewards.push({
           _id: `${item._id}-seller`,
           product: item.product?.name || item.productName,
@@ -97,6 +102,9 @@ export const getMyRewardsService = async (userId) => {
 
       // Reward for referring the buyer — separate entry, even if same order
       if (isReferredBuyer) {
+        const itemReward = parseFloat(
+          (item.commission * item.qty * userReferralRate).toFixed(2),
+        );
         rewards.push({
           _id: `${item._id}-buyer`,
           product: item.product?.name || item.productName,

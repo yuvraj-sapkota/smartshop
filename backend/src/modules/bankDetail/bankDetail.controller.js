@@ -1,18 +1,14 @@
 import {
   getMyBankDetailService,
   upsertBankDetailService,
-} from "./userbankdetail.service.js";
+} from "./bankDetail.service.js";
 
 export const upsertBankDetail = async (req, res, next) => {
   try {
-    // req.file is optional — user may update text fields without re-uploading QR
     const qrUrl = req.file?.path ?? null;
+    const userId = req.user.role === "admin" ? null : req.user._id;
 
-    const bankDetail = await upsertBankDetailService(
-      req.user._id,
-      req.body,
-      qrUrl,
-    );
+    const bankDetail = await upsertBankDetailService(userId, req.body, qrUrl);
 
     res.status(200).json({
       success: true,
@@ -20,25 +16,34 @@ export const upsertBankDetail = async (req, res, next) => {
       bankDetail,
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
 
-// login user ko bank details nikalni
 export const getMyBankDetail = async (req, res, next) => {
   try {
-    const bankDetail = await getMyBankDetailService(req.user._id);
+    const userId = req.user.role === "admin" ? null : req.user._id;
+    const bankDetail = await getMyBankDetailService(userId);
     res.status(200).json({ success: true, bankDetail: bankDetail ?? null });
   } catch (error) {
     next(error);
   }
 };
 
-// admin le user id ko thorugh bank details nikalni
+// admin viewing a specific OTHER user's bank detail — unchanged behavior
 export const getUserBankDetail = async (req, res, next) => {
   try {
     const bankDetail = await getMyBankDetailService(req.params.userId);
+    res.status(200).json({ success: true, bankDetail: bankDetail ?? null });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// admin ko bank details seller ko fund page ma dekhauna
+export const getAdminBankDetail = async (req, res, next) => {
+  try {
+    const bankDetail = await getMyBankDetailService(null);
     res.status(200).json({ success: true, bankDetail: bankDetail ?? null });
   } catch (error) {
     next(error);

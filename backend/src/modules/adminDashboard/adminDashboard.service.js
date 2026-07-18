@@ -3,13 +3,14 @@ import Order from "../order/order.model.js";
 import Product from "../product/product.model.js";
 import SellerPayment from "../sellerPayment/sellerPayment.model.js";
 import UserWithdrawal from "../userFund/userFund.model.js";
-
-const REFERRAL_COMMISSION_RATE = 0.1; // 10%
-const CASHBACK_RATE = 0.25; // 25%
+import { getRewardConfigService } from "../rewardConfig/rewardConfig.service.js";
 
 const sumAmount = (result) => result[0]?.total ?? 0;
 
 export const getAdminDashboardStatsService = async () => {
+  const { cashbackRate, userReferralRate, sellerReferralRate } =
+    await getRewardConfigService();
+
   // Users referred by someone, needed to total up referral rewards paid out
   const referredUsers = await User.find({ referredBy: { $ne: null } }).select(
     "_id role",
@@ -84,12 +85,12 @@ export const getAdminDashboardStatsService = async () => {
   const totalSales = orderTotals[0]?.totalSales ?? 0;
 
   const totalCashback = parseFloat(
-    (totalCommission * CASHBACK_RATE).toFixed(2),
+    (totalCommission * cashbackRate).toFixed(2),
   );
   const totalReferralReward = parseFloat(
     (
-      (sumAmount(sellerRefStats) + sumAmount(buyerRefStats)) *
-      REFERRAL_COMMISSION_RATE
+      sumAmount(sellerRefStats) * sellerReferralRate +
+      sumAmount(buyerRefStats) * userReferralRate
     ).toFixed(2),
   );
 
@@ -113,12 +114,6 @@ export const getAdminDashboardStatsService = async () => {
     (userTotalCommission - userCompletedWithdrawal).toFixed(2),
   );
 
-  console.log({
-    totalCommission,
-    totalCashback,
-    totalReferralReward,
-    netProfit,
-  });
 
   return {
     highlights: {

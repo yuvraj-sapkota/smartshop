@@ -7,6 +7,7 @@ import {
   getMyPayments,
   submitPaymentAPI,
 } from "../../../services/sellerPayment/sellerPayment.api";
+import { getAdminBankDetailAPI } from "../../../services/bankDetail/bankDetail.api";
 import { showError, showSuccess } from "../../../utils/toast";
 
 // ── Field config for the payment modal ──────────────────────────────────────
@@ -143,15 +144,17 @@ const SellerFund = () => {
   });
 
   const [loadingPage, setLoadingPage] = useState(true);
+  const [adminBankDetail, setAdminBankDetail] = useState(null);
 
   // ── Data fetching ──────────────────────────────────────────────────────
   useEffect(() => {
     const init = async () => {
       try {
-        // Fetch both in parallel
-        const [paymentsRes, dueRes] = await Promise.allSettled([
+        // Fetch all three in parallel
+        const [paymentsRes, dueRes, adminBankRes] = await Promise.allSettled([
           getMyPayments(),
           getDueAmount(),
+          getAdminBankDetailAPI(),
         ]);
 
         if (paymentsRes.status === "fulfilled") {
@@ -173,6 +176,10 @@ const SellerFund = () => {
             dueRes.reason?.response?.data?.message ??
               "Failed to fetch due amount.",
           );
+        }
+
+        if (adminBankRes.status === "fulfilled") {
+          setAdminBankDetail(adminBankRes.value.bankDetail);
         }
       } finally {
         setLoadingPage(false);
@@ -237,16 +244,34 @@ const SellerFund = () => {
             Admin's Bank Details
           </h2>
           <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-4 text-gray-600 space-y-2 text-sm">
-            <p>
-              <span className="font-semibold">Bank:</span> Nepal Bank
-              Development
-            </p>
-            <p>
-              <span className="font-semibold">Name:</span> Ram Prasad Poudel
-            </p>
-            <p>
-              <span className="font-semibold">Account:</span> 000208987654321
-            </p>
+            {adminBankDetail ? (
+              <>
+                <p>
+                  <span className="font-semibold">Bank:</span>{" "}
+                  {adminBankDetail.bankName}
+                </p>
+                <p>
+                  <span className="font-semibold">Name:</span>{" "}
+                  {adminBankDetail.fullName}
+                </p>
+                <p>
+                  <span className="font-semibold">Account:</span>{" "}
+                  {adminBankDetail.accountNumber}
+                </p>
+                {adminBankDetail.qrUrl && (
+                  <img
+                    src={adminBankDetail.qrUrl}
+                    alt="QR"
+                    height={100}
+                    width={100}
+                  />
+                )}
+              </>
+            ) : (
+              <p className="text-gray-400">
+                Admin hasn't set up bank details yet.
+              </p>
+            )}
           </div>
         </section>
 

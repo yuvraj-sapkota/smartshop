@@ -12,18 +12,20 @@ import orderRoutes from "./modules/order/order.route.js";
 import userRoutes from "./modules/user/user.routes.js";
 import sellerPaymentRoutes from "./modules/sellerPayment/sellerPayment.routes.js";
 import sellerDashboardRoutes from "./modules/sellerDashboard/sellerDashboard.routes.js";
-import userBankRoutes from "./modules/userbankdetail/userbankdetail.routes.js";
+
 import referralRoutes from "./modules/referral/referal.route.js";
 import userFundRoutes from "./modules/userFund/userFund.routes.js";
 import userDashboardRoutes from "./modules/userDashboard/userDashboard.routes.js";
 import adminDashboardRoutes from "./modules/adminDashboard/adminDashboard.routes.js";
+import bankDetailRoutes from "./modules/bankDetail/bankDetail.routes.js";
+import rewardConfigRoutes from "./modules/rewardConfig/rewardConfig.routes.js";
 
 dotenv.config();
 
 const app = express();
 
 const allowedOrigins = [
-  "http://192.168.1.12:5173",
+  "http://192.168.1.6:5173",
   "https://smartshop108.vercel.app",
 ];
 
@@ -77,11 +79,13 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/seller-payments", sellerPaymentRoutes);
 app.use("/api/seller/dashboard", sellerDashboardRoutes);
-app.use("/api/user/bank", userBankRoutes);
+
 app.use("/api/referrals", referralRoutes);
 app.use("/api/user-fund", userFundRoutes);
 app.use("/api/user/dashboard", userDashboardRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes);
+app.use("/api/bank", bankDetailRoutes);
+app.use("/api/reward-config", rewardConfigRoutes);
 
 app.use(errorMiddleware);
 

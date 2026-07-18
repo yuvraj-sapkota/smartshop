@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
 import {
+  getMyBankDetailAPI,
+  upsertBankDetailAPI,
+  getUserBankDetailAPI,
+} from "../../../services/bankDetail/bankDetail.api";
+import {
   getAllSubmitPaymentAPI,
   updatePaymentStatus,
 } from "../../../services/sellerPayment/sellerPayment.api";
@@ -9,7 +14,9 @@ import {
   getAllWithdrawalsAPI,
   updateWithdrawalStatusAPI,
 } from "../../../services/userFund/userFund.api";
-import { getUserBankDetailAPI } from "../../../services/userPayment/userPayment.api";
+
+import { FileWarning } from "lucide-react";
+import FormModal from "../../../components/FormModal";
 
 const AdminFund = () => {
   const [active, setActive] = useState("seller");
@@ -21,6 +28,12 @@ const AdminFund = () => {
   const [bankModalLoading, setBankModalLoading] = useState(false);
   const [bankModalError, setBankModalError] = useState("");
   const [bankModalData, setBankModalData] = useState(null);
+
+  const [bankDetail, setBankDetail] = useState(null);
+  const [isBank, setIsBank] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [bankFormError, setBankFormError] = useState("");
 
   const handleSellerStatusChange = async (id, newStatus) => {
     try {
@@ -91,8 +104,21 @@ const AdminFund = () => {
       }
     };
 
+    const fetchMyBankDetail = async () => {
+      try {
+        const data = await getMyBankDetailAPI();
+        if (data.bankDetail) {
+          setBankDetail(data.bankDetail);
+          setIsBank(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     fetchSellerTransactions();
     fetchUserWithdrawals();
+    fetchMyBankDetail();
   }, []);
 
   const formattedSellerTransactions = sellerTransactions.map((item, index) => ({
@@ -293,11 +319,66 @@ const AdminFund = () => {
     .filter((w) => w.status === "pending")
     .reduce((sum, w) => sum + w.amount, 0);
 
+  const bankFields = [
+    {
+      name: "bankName",
+      type: "text",
+      placeholder: "Bank Name / esewa",
+      label: "Enter Bank Name",
+    },
+    {
+      name: "fullName",
+      type: "text",
+      placeholder: "Full Name",
+      label: "Enter Account Holder's Name",
+    },
+    {
+      name: "accountNumber",
+      type: "text",
+      placeholder: "Account Number",
+      label: "Enter Account Number",
+    },
+    { name: "qr", type: "file", label: "Upload QR code" },
+  ];
+
+  const handleBankSubmit = async (data) => {
+    setSubmitting(true);
+    setBankFormError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("bankName", data.bankName);
+      formData.append("fullName", data.fullName);
+      formData.append("accountNumber", data.accountNumber);
+      if (data.qr) formData.append("qr", data.qr);
+
+      const response = await upsertBankDetailAPI(formData);
+
+      setBankDetail(response.bankDetail);
+      setIsBank(true);
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+      setBankFormError(
+        error.response?.data?.message ??
+          "Failed to save bank details. Try again.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <>
       <div className="space-y-10">
         <div className="flex items-center justify-between ">
           <PageHeader text="Fund Management" />
+          <button
+            onClick={() => setOpen(true)}
+            className="bg-white text-primary border border-primary px-5 py-2 rounded-lg hover:bg-primary hover:text-white transition cursor-pointer"
+          >
+            Setup Bank Details
+          </button>
         </div>
 
         {/* admin bank details  */}
@@ -305,20 +386,43 @@ const AdminFund = () => {
           <h2 className="font-semibold text-lg mb-3 text-gray-700">
             Admin Bank Details
           </h2>
-          <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-4">
-            <div className=" text-gray-600 space-y-2">
-              <p className="">
-                <span className="font-semibold">Bank:</span> Nepal Bank
-                Development
-              </p>
-              <p className="">
-                <span className="font-semibold">Name:</span> Ram Prasad Poudel
-              </p>
-              <p>
-                <span>Account:</span> 000208987654321
+
+          {isBank ? (
+            <div className="bg-white border border-gray-200 shadow-sm rounded-lg p-4">
+              <div className="text-gray-600 space-y-2">
+                <p>
+                  <span className="font-semibold">Bank:</span>{" "}
+                  {bankDetail?.bankName}
+                </p>
+                <p>
+                  <span className="font-semibold">Name:</span>{" "}
+                  {bankDetail?.fullName}
+                </p>
+                <p>
+                  <span className="font-semibold">Account:</span>{" "}
+                  {bankDetail?.accountNumber}
+                </p>
+                {bankDetail?.qrUrl && (
+                  <div>
+                    <p>QR code:</p>
+                    <img
+                      src={bankDetail.qrUrl}
+                      alt="QR"
+                      height={100}
+                      width={100}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-lg">
+              <p className="text-sm flex items-center gap-2">
+                <FileWarning size={24} /> Setup your bank details so sellers
+                know where to deposit commission.
               </p>
             </div>
-          </div>
+          )}
         </div>
 
         {/* transaction overview */}
@@ -447,6 +551,18 @@ const AdminFund = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {open && (
+        <FormModal
+          open={open}
+          setOpen={setOpen}
+          fields={bankFields}
+          title="Admin Bank Details"
+          btnText={submitting ? "Saving..." : "Submit"}
+          onSubmit={handleBankSubmit}
+          error={bankFormError}
+        />
       )}
     </>
   );

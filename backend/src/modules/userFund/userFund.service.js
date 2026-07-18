@@ -3,17 +3,16 @@ import User from "../auth/auth.model.js";
 import UserWithdrawal from "./userFund.model.js";
 import AppError from "../../utils/AppError.js";
 
-const REFERRAL_COMMISSION_RATE = 0.1; // 10%
-const CASHBACK_RATE = 0.25; // 25%
+import { getRewardConfigService } from "../rewardConfig/rewardConfig.service.js";
 
 // Helper: total cashback earned from the user's own purchases
-const getTotalCashback = async (userId) => {
+const getTotalCashback = async (userId, cashbackRate) => {
   const result = await Order.aggregate([
     { $match: { customer: userId } },
     {
       $group: {
         _id: null,
-        total: { $sum: { $multiply: ["$totalCommission", CASHBACK_RATE] } },
+        total: { $sum: { $multiply: ["$totalCommission", cashbackRate] } },
       },
     },
   ]);
@@ -21,7 +20,11 @@ const getTotalCashback = async (userId) => {
 };
 
 // Helper: total referral reward earned from referred sellers + referred buyers
-const getTotalReferralReward = async (userId) => {
+const getTotalReferralReward = async (
+  userId,
+  userReferralRate,
+  sellerReferralRate,
+) => {
   const referredUsers = await User.find({ referredBy: userId }).select(
     "_id role",
   );
@@ -47,7 +50,10 @@ const getTotalReferralReward = async (userId) => {
   const sellerRefCommission = sellerRefStats[0]?.total ?? 0;
   const buyerRefCommission = buyerRefStats[0]?.total ?? 0;
 
-  return (sellerRefCommission + buyerRefCommission) * REFERRAL_COMMISSION_RATE;
+  return (
+    sellerRefCommission * sellerReferralRate +
+    buyerRefCommission * userReferralRate
+  );
 };
 
 // Helper: total already withdrawn (approved only)
@@ -63,13 +69,16 @@ const getTotalApprovedWithdrawals = async (userId) => {
 // GET /available-balance
 // ─────────────────────────────────────────────
 export const getAvailableBalanceService = async (userId) => {
+  const { cashbackRate, userReferralRate, sellerReferralRate } =
+    await getRewardConfigService();
+
   const [
     totalCashback,
     totalReferralReward,
     totalWithdrawn,
   ] = await Promise.all([
-    getTotalCashback(userId),
-    getTotalReferralReward(userId),
+    getTotalCashback(userId, cashbackRate),
+    getTotalReferralReward(userId, userReferralRate, sellerReferralRate),
     getTotalApprovedWithdrawals(userId),
   ]);
 

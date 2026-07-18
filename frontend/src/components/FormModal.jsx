@@ -32,6 +32,7 @@ const FormModal = ({
   title,
   btnText = "Submit",
   onSubmit,
+  defaultValues = {},
 }) => {
   const [form, setForm] = useState({});
   const [previews, setPreviews] = useState({});
@@ -41,9 +42,11 @@ const FormModal = ({
   // Individual refs per field name
   const inputRefs = useRef({});
 
-  // ── Reset all state when modal opens/closes ────────────────────────────
+  // ── Reset/seed all state when modal opens/closes ────────────────────────
   useEffect(() => {
-    if (!open) {
+    if (open) {
+      setForm(defaultValues || {});
+    } else {
       // Revoke every object URL to avoid memory leaks
       Object.values(previews).forEach((url) => url && URL.revokeObjectURL(url));
       setForm({});
