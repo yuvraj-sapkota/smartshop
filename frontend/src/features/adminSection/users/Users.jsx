@@ -25,7 +25,6 @@ const Users = () => {
 
     fetchUsers();
   }, []);
-
   const userColumns = [
     { header: "SN", accessorKey: "sn" },
 

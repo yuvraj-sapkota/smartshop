@@ -19,6 +19,7 @@ import userDashboardRoutes from "./modules/userDashboard/userDashboard.routes.js
 import adminDashboardRoutes from "./modules/adminDashboard/adminDashboard.routes.js";
 import bankDetailRoutes from "./modules/bankDetail/bankDetail.routes.js";
 import rewardConfigRoutes from "./modules/rewardConfig/rewardConfig.routes.js";
+import profileRoutes from "./modules/profile/profile.routes.js";
 
 dotenv.config();
 
@@ -79,13 +80,13 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/seller-payments", sellerPaymentRoutes);
 app.use("/api/seller/dashboard", sellerDashboardRoutes);
-
 app.use("/api/referrals", referralRoutes);
 app.use("/api/user-fund", userFundRoutes);
 app.use("/api/user/dashboard", userDashboardRoutes);
 app.use("/api/admin/dashboard", adminDashboardRoutes);
 app.use("/api/bank", bankDetailRoutes);
 app.use("/api/reward-config", rewardConfigRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.use(errorMiddleware);
 

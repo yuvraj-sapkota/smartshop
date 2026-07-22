@@ -1,7 +1,6 @@
 import React from "react";
 import Landing from "./pages/Landing";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
 import Dashboard from "./features/userPage/dashboard/Dashboard";
 import Purchases from "./features/userPage/purchases/Purchases";
 import Reward from "./features/userPage/reward/Reward";
@@ -31,6 +30,8 @@ import SellerSignup from "./auth/signup/SellerSignup";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import SellerDetail from "./features/adminSection/sellers/SellerDetail";
+import Profile from "./features/profile/Profile";
+
 const App = () => {
   return (
     <>
@@ -94,6 +95,8 @@ const App = () => {
             <Route path="reward" element={<Reward />} />
             <Route path="fund" element={<Fund />} />
             <Route path="affiliated-user" element={<AffiliatedUser />} />
+            <Route path="profile" element={<Profile />} />
+            {/* <Route path="affiliated-user" element={<AffiliatedUser />} /> */}
           </Route>
 
           <Route
@@ -106,13 +109,12 @@ const App = () => {
           >
             <Route index element={<Navigate to="shop" />} />
             <Route path="shop" element={<ShopNow />} />
-
             <Route path="seller-dashboard" element={<SellerDashboard />} />
             <Route path="create-order" element={<CreateOrder />} />
             <Route path="products" element={<Product />} />
-            {/* <Route path="sales" element={<Sales />} /> */}
             <Route path="commission" element={<Commission />} />
             <Route path="seller-fund" element={<SellerFund />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
 
           {/* admin routes */}
@@ -132,13 +134,11 @@ const App = () => {
             <Route path="seller-commission" element={<SellerCommission />} />
             <Route path="user-commission" element={<UserCommission />} />
             <Route path="fund" element={<AdminFund />} />
-
             <Route path="users" element={<Users />} />
-
             <Route path="sellers" element={<Sellers />} />
             <Route path="seller-detail/:id" element={<SellerDetail />} />
-
             <Route path="reward-ratio" element={<RewardRatio />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
         </Routes>
       </BrowserRouter>

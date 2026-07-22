@@ -12,7 +12,6 @@ import {
 
 // USER REGISTER
 export const registerUser = async (req, res, next) => {
-  console.log(req.body);
   try {
     const validatedData = registerUserSchema.parse(req.body);
 
@@ -30,8 +29,6 @@ export const registerUser = async (req, res, next) => {
 
 // SELLER REGISTER
 export const registerSeller = async (req, res, next) => {
-  console.log("hello register");
-  console.log(req.body);
   try {
     const validatedData = registerSellerSchema.parse(req.body);
 
@@ -49,7 +46,6 @@ export const registerSeller = async (req, res, next) => {
 
 // LOGIN
 export const loginUser = async (req, res, next) => {
-  console.log("login data");
   try {
     const validatedData = loginSchema.parse(req.body);
 

@@ -41,6 +41,7 @@ const RewardRatio = () => {
   const fetchConfig = async () => {
     try {
       const data = await getRewardConfigAPI();
+      console.log(data);
       setConfig(data.config);
     } catch (error) {
       showError("Failed to load reward ratios.");

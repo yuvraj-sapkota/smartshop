@@ -41,10 +41,12 @@ export const createUserService = async (data) => {
   });
 
   const token = generateToken(user._id);
+  const userWithoutPassword = user.toObject();
+  delete userWithoutPassword.password;
 
   return {
     token,
-    user,
+    user: userWithoutPassword,
   };
 };
 
@@ -72,9 +74,12 @@ export const createSellerService = async (data) => {
   });
 
   const token = generateToken(seller._id);
+  const sellerWithoutPassword = seller.toObject();
+  delete sellerWithoutPassword.password;
+
   return {
     token,
-    user: seller,
+    user: sellerWithoutPassword,
   };
 };
 
@@ -90,9 +95,11 @@ export const loginService = async (email, password) => {
   if (!isMatched) throw new AppError("Invalid credentials", 400);
 
   const token = generateToken(user._id);
+  const userWithoutPassword = user.toObject();
+  delete userWithoutPassword.password;
 
   return {
     token,
-    user,
+    user: userWithoutPassword,
   };
 };
