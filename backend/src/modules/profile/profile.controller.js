@@ -2,6 +2,7 @@ import {
   getMyProfileService,
   updateMyProfileService,
   changePasswordService,
+  addReferralService,
 } from "./profile.service.js";
 
 export const getMyProfile = async (req, res, next) => {
@@ -37,6 +38,23 @@ export const changePassword = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Password changed successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// profile page bata referredBy add gareko
+export const addReferral = async (req, res, next) => {
+  try {
+    const profile = await addReferralService(
+      req.user._id,
+      req.body.referralUsername,
+    );
+    res.status(200).json({
+      success: true,
+      message: "Referral added successfully",
+      profile,
     });
   } catch (error) {
     next(error);

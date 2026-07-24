@@ -14,8 +14,8 @@ const orderItemSchema = new mongoose.Schema({
     trim: true,
   },
   qty: { type: Number, required: true, min: 1 },
-  price: { type: Number, required: true },       // snapshot at time of order
-  commission: { type: Number, required: true },  // per unit commission
+  price: { type: Number, required: true }, // snapshot at time of order
+  commission: { type: Number, required: true }, // per unit commission
 });
 
 const orderSchema = new mongoose.Schema(
@@ -33,13 +33,16 @@ const orderSchema = new mongoose.Schema(
     items: [orderItemSchema],
     grandTotal: { type: Number, required: true },
     totalCommission: { type: Number, required: true },
+    cashbackRate: { type: Number },
+    userReferralRate: { type: Number },
+    sellerReferralRate: { type: Number },
     status: {
       type: String,
       enum: ["pending", "completed", "cancelled"],
       default: "pending",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Order = mongoose.model("Order", orderSchema);

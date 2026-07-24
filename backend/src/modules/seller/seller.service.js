@@ -1,3 +1,4 @@
+import AppError from "../../utils/AppError.js";
 import User from "../auth/auth.model.js";
 
 export const getAllSellersService = async () => {
@@ -10,10 +11,12 @@ export const getSellerByIdService = async (id) => {
   const seller = await User.findOne({
     _id: id,
     role: "seller",
-  }).select("-password");
+  })
+    .select("-password")
+    .populate("referredBy", "username");
 
   if (!seller) {
-    throw new Error("Seller not found");
+    throw new AppError("Seller not found", 404);
   }
 
   return seller;

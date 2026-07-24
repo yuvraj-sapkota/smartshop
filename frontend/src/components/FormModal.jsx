@@ -166,7 +166,9 @@ const FormModal = ({
     } catch (err) {
       // Surface a top-level submit error if the promise rejects
       setErrors({
-        _form: err?.message || "Something went wrong. Please try again.",
+        _form:
+          err?.response.data?.message ||
+          "Something went wrong. Please try again.",
       });
     } finally {
       setLoading(false);

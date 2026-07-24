@@ -2,11 +2,18 @@ import Order from "./order.model.js";
 import Product from "../product/product.model.js";
 import User from "../auth/auth.model.js";
 import AppError from "../../utils/AppError.js";
+import { getRewardConfigService } from "../rewardConfig/rewardConfig.service.js";
 
 const CUSTOM_PRODUCT_COMMISSION_RATE = 0.1; // 10%
 
 export const createOrderService = async (data, sellerId) => {
   const { customerId, items } = data;
+
+  const {
+    cashbackRate,
+    userReferralRate,
+    sellerReferralRate,
+  } = await getRewardConfigService();
 
   // 1. Verify customer exists and is a regular user
   const customer = await User.findOne({ _id: customerId, role: "user" });
@@ -81,6 +88,9 @@ export const createOrderService = async (data, sellerId) => {
     items: resolvedItems,
     grandTotal,
     totalCommission,
+    cashbackRate,
+    userReferralRate,
+    sellerReferralRate,
   });
 
   return order.populate([
@@ -118,11 +128,17 @@ export const getAllOrdersService = async () => {
 export const getMyPurchasesService = async (customerId) => {
   const orders = await Order.find({ customer: customerId })
     .populate("seller", "username")
-    .populate("items.product", "name");
+    .populate("items.product", "name")
+    .sort({ createdAt: -1 });
 
   const purchases = [];
 
   orders.forEach((order) => {
+    // Legacy orders placed before this feature existed have no stored
+    // rate — 0.25 was the original hardcoded cashback rate, so it's the
+    // correct fallback for them.
+    const rate = order.cashbackRate ?? 0.25;
+
     order.items.forEach((item) => {
       purchases.push({
         _id: item._id,
@@ -130,7 +146,7 @@ export const getMyPurchasesService = async (customerId) => {
         quantity: item.qty,
         mrp: item.price,
         totalPrice: item.price * item.qty,
-        cashback: order.totalCommission * 0.25,
+        cashback: parseFloat((item.commission * item.qty * rate).toFixed(2)),
         seller: order.seller.username,
         datetime: order.createdAt,
       });

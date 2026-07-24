@@ -14,3 +14,11 @@ export const changePasswordAPI = async (data) => {
   const response = await apiClient.put("/profile/password", data);
   return response.data;
 };
+
+// profile page bata referredBy add gareko
+export const addReferralAPI = async (referralUsername) => {
+  const response = await apiClient.put("/profile/referral", {
+    referralUsername,
+  });
+  return response.data;
+};

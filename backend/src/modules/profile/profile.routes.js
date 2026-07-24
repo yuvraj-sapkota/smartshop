@@ -4,10 +4,12 @@ import {
   getMyProfile,
   updateMyProfile,
   changePassword,
+  addReferral,
 } from "./profile.controller.js";
 import {
   updateProfileSchema,
   changePasswordSchema,
+  addReferralSchema,
 } from "./profile.validation.js";
 
 const router = express.Router();
@@ -29,5 +31,6 @@ router.put(
   validate(changePasswordSchema),
   changePassword,
 );
+router.put("/referral", protect, validate(addReferralSchema), addReferral);
 
 export default router;

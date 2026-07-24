@@ -4,7 +4,9 @@ import AppError from "../../utils/AppError.js";
 import { checkEmailExists, checkUsernameExists } from "../auth/auth.helper.js";
 
 export const getMyProfileService = async (userId) => {
-  const user = await User.findById(userId).select("-password");
+  const user = await User.findById(userId)
+    .select("-password")
+    .populate("referredBy", "username");
   if (!user) throw new AppError("User not found", 404);
   return user;
 };
@@ -64,4 +66,32 @@ export const changePasswordService = async (
 
   user.password = await bcrypt.hash(newPassword, 10);
   await user.save();
+};
+
+// profile page bata referredBy add gareko 
+export const addReferralService = async (userId, referralUsername) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("User not found", 404);
+
+  if (user.referredBy) {
+    throw new AppError("Referral is already set and cannot be changed", 400);
+  }
+
+  if (referralUsername.trim().toLowerCase() === user.username.toLowerCase()) {
+    throw new AppError("You cannot refer yourself", 400);
+  }
+
+  const referrer = await checkUsernameExists(referralUsername.trim());
+  if (!referrer) {
+    throw new AppError("No user found with that username", 404);
+  }
+
+  user.referredBy = referrer._id;
+  await user.save();
+
+  const updated = await User.findById(userId)
+    .select("-password")
+    .populate("referredBy", "username");
+
+  return updated;
 };

@@ -3,16 +3,21 @@ import User from "../auth/auth.model.js";
 import UserWithdrawal from "./userFund.model.js";
 import AppError from "../../utils/AppError.js";
 
-import { getRewardConfigService } from "../rewardConfig/rewardConfig.service.js";
-
 // Helper: total cashback earned from the user's own purchases
-const getTotalCashback = async (userId, cashbackRate) => {
+const getTotalCashback = async (userId) => {
   const result = await Order.aggregate([
     { $match: { customer: userId } },
     {
       $group: {
         _id: null,
-        total: { $sum: { $multiply: ["$totalCommission", cashbackRate] } },
+        total: {
+          $sum: {
+            $multiply: [
+              "$totalCommission",
+              { $ifNull: ["$cashbackRate", 0.25] },
+            ],
+          },
+        },
       },
     },
   ]);
@@ -20,11 +25,7 @@ const getTotalCashback = async (userId, cashbackRate) => {
 };
 
 // Helper: total referral reward earned from referred sellers + referred buyers
-const getTotalReferralReward = async (
-  userId,
-  userReferralRate,
-  sellerReferralRate,
-) => {
+const getTotalReferralReward = async (userId) => {
   const referredUsers = await User.find({ referredBy: userId }).select(
     "_id role",
   );
@@ -39,21 +40,42 @@ const getTotalReferralReward = async (
   const [sellerRefStats, buyerRefStats] = await Promise.all([
     Order.aggregate([
       { $match: { seller: { $in: referredSellerIds } } },
-      { $group: { _id: null, total: { $sum: "$totalCommission" } } },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: {
+              $multiply: [
+                "$totalCommission",
+                { $ifNull: ["$sellerReferralRate", 0.1] },
+              ],
+            },
+          },
+        },
+      },
     ]),
     Order.aggregate([
       { $match: { customer: { $in: referredCustomerIds } } },
-      { $group: { _id: null, total: { $sum: "$totalCommission" } } },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: {
+              $multiply: [
+                "$totalCommission",
+                { $ifNull: ["$userReferralRate", 0.1] },
+              ],
+            },
+          },
+        },
+      },
     ]),
   ]);
 
-  const sellerRefCommission = sellerRefStats[0]?.total ?? 0;
-  const buyerRefCommission = buyerRefStats[0]?.total ?? 0;
+  const sellerRefReward = sellerRefStats[0]?.total ?? 0;
+  const buyerRefReward = buyerRefStats[0]?.total ?? 0;
 
-  return (
-    sellerRefCommission * sellerReferralRate +
-    buyerRefCommission * userReferralRate
-  );
+  return sellerRefReward + buyerRefReward;
 };
 
 // Helper: total already withdrawn (approved only)
@@ -69,18 +91,12 @@ const getTotalApprovedWithdrawals = async (userId) => {
 // GET /available-balance
 // ─────────────────────────────────────────────
 export const getAvailableBalanceService = async (userId) => {
-  const { cashbackRate, userReferralRate, sellerReferralRate } =
-    await getRewardConfigService();
-
-  const [
-    totalCashback,
-    totalReferralReward,
-    totalWithdrawn,
-  ] = await Promise.all([
-    getTotalCashback(userId, cashbackRate),
-    getTotalReferralReward(userId, userReferralRate, sellerReferralRate),
-    getTotalApprovedWithdrawals(userId),
-  ]);
+  const [totalCashback, totalReferralReward, totalWithdrawn] =
+    await Promise.all([
+      getTotalCashback(userId),
+      getTotalReferralReward(userId),
+      getTotalApprovedWithdrawals(userId),
+    ]);
 
   const totalEarned = parseFloat(
     (totalCashback + totalReferralReward).toFixed(2),

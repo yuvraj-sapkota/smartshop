@@ -3,26 +3,25 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Mail,
-  Phone,
   User,
   MapPin,
   Calendar,
   Store,
-  Package,
   ShieldCheck,
-  Receipt,
   UserCheck,
 } from "lucide-react";
 import {
   getSingleSeller,
   updateSellerStatus,
 } from "../../../services/seller/seller.api";
+import { showError } from "../../../utils/toast";
 
 const SellerDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
   const [seller, setSeller] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const statusBadge = {
     pending: "bg-amber-50 text-amber-700",
@@ -30,31 +29,13 @@ const SellerDetail = () => {
     rejected: "bg-red-50 text-red-700",
   };
 
-  // STATIC DATA
-  //   const [seller, setSeller] = useState({
-  //     _id: "1",
-  //     name: "Yuvraj Sharma",
-  //     email: "yuvraj@gmail.com",
-  //     phone: "9862130453",
-  //     username: "yuvi_dev",
-  //     address: "Kathmandu, Nepal",
-  //     storeName: "Yuvi Store",
-  //     sellerStatus: "pending",
-  //     createdAt: "2025-05-01T10:00:00Z",
-  //     referredBy: {
-  //       name: "Admin User",
-  //       email: "admin@gmail.com",
-  //       phone: "9800000000",
-  //     },
-  //   });
-
   const handleStatusUpdate = async (status) => {
     try {
       const res = await updateSellerStatus(id, status);
 
       setSeller(res.seller);
     } catch (error) {
-      console.log(error);
+      showError(error);
     }
   };
 
@@ -63,14 +44,19 @@ const SellerDetail = () => {
       try {
         const data = await getSingleSeller(id);
         setSeller(data.seller);
-        console.log(data.seller);
       } catch (error) {
-        console.log(error);
+        showError(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchSeller();
   }, [id]);
+
+  if (loading) {
+    return <p className="text-sm text-gray-400">Loading...</p>;
+  }
 
   if (!seller) {
     return <p>Seller not found</p>;
@@ -194,8 +180,10 @@ const SellerDetail = () => {
           <UserCheck size={13} /> Referred by
         </p>
 
-        {seller.referBy ? (
-          <p className="text-sm text-gray-700">{seller.referBy}</p>
+        {seller.referredBy ? (
+          <p className="text-sm text-gray-700 font-medium">
+            {seller.referredBy.username}
+          </p>
         ) : (
           <p className="text-sm text-gray-400">No referral</p>
         )}

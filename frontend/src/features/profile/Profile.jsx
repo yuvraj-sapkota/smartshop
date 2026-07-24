@@ -8,7 +8,8 @@ import {
   changePasswordAPI,
 } from "../../services/profile/profile.api";
 import { showError, showSuccess } from "../../utils/toast";
-import { Mail, MapPin, Phone, User } from "lucide-react";
+import { LucideHome, Mail, MapPin, Phone, User } from "lucide-react";
+import { addReferralAPI } from "../../services/profile/profile.api";
 
 const PROFILE_FIELDS_BASE = [
   { name: "username", type: "text", label: "Username", required: true },
@@ -48,6 +49,15 @@ const PASSWORD_FIELDS = [
   },
 ];
 
+const REFERRAL_FIELDS = [
+  {
+    name: "referralUsername",
+    type: "text",
+    label: "Referrer's Username",
+    required: true,
+  },
+];
+
 const Profile = () => {
   const role = useAuthStore((state) => state.user?.role);
 
@@ -55,6 +65,13 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
   const [passwordOpen, setPasswordOpen] = useState(false);
+  const [referralOpen, setReferralOpen] = useState(false);
+
+  const handleAddReferral = async (formData) => {
+    const data = await addReferralAPI(formData.referralUsername);
+    setProfile(data.profile);
+    showSuccess(data.message || "Referral added successfully");
+  };
 
   const fetchProfile = async () => {
     try {
@@ -145,7 +162,7 @@ const Profile = () => {
                 Phone
               </p>
               <p className="font-medium text-gray-800">
-                {profile?.phone || "-"}
+                {profile?.phone || "not provided"}
               </p>
             </div>
             <div>
@@ -162,13 +179,24 @@ const Profile = () => {
             {role === "seller" && (
               <>
                 <div>
-                  <p className="text-xs text-gray-400">Store Name</p>
+                  <p className="text-xs text-gray-400 flex items-center gap-2 font-medium">
+                    <span>
+                      <LucideHome size={16} />
+                    </span>{" "}
+                    Store Name
+                  </p>
                   <p className="font-medium text-gray-800">
-                    {profile?.storeName || "-"}
+                    {profile?.storeName}
                   </p>
                 </div>
+
                 <div>
-                  <p className="text-xs text-gray-400">Store Address</p>
+                  <p className="text-xs text-gray-400 flex items-center gap-2 font-medium">
+                    <span>
+                      <MapPin size={14} />{" "}
+                    </span>{" "}
+                    Store Address
+                  </p>
                   <p className="font-medium text-gray-800">
                     {profile?.storeAddress || "-"}
                   </p>
@@ -177,6 +205,34 @@ const Profile = () => {
             )}
           </div>
         )}
+
+        <div className="flex items-center justify-between">
+          <PageHeader text="Refered by" />
+          {!profile?.referredBy && (
+            <button
+              onClick={() => setReferralOpen(true)}
+              className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-hover transition-colors"
+            >
+              Add referral
+            </button>
+          )}
+        </div>
+
+        <div className="bg-white shadow-sm border border-gray-200 rounded-xl p-6">
+          <p className="text-xs text-gray-400 flex items-center gap-2 font-medium">
+            <span>
+              <User size={14} />{" "}
+            </span>{" "}
+            Refer by
+          </p>
+          {profile?.referredBy?.username ? (
+            <p className="text-sm font-medium text-gray-800">
+              {profile?.referredBy?.username}
+            </p>
+          ) : (
+            <p className="text-sm text-gray-400">No referral</p>
+          )}
+        </div>
       </div>
 
       <FormModal
@@ -196,6 +252,15 @@ const Profile = () => {
         title="Change Password"
         btnText="Update Password"
         onSubmit={handleChangePassword}
+      />
+
+      <FormModal
+        open={referralOpen}
+        setOpen={setReferralOpen}
+        fields={REFERRAL_FIELDS}
+        title="Add Referral"
+        btnText="Save"
+        onSubmit={handleAddReferral}
       />
     </>
   );

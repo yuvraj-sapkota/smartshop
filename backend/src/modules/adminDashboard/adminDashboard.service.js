@@ -3,14 +3,10 @@ import Order from "../order/order.model.js";
 import Product from "../product/product.model.js";
 import SellerPayment from "../sellerPayment/sellerPayment.model.js";
 import UserWithdrawal from "../userFund/userFund.model.js";
-import { getRewardConfigService } from "../rewardConfig/rewardConfig.service.js";
 
 const sumAmount = (result) => result[0]?.total ?? 0;
 
 export const getAdminDashboardStatsService = async () => {
-  const { cashbackRate, userReferralRate, sellerReferralRate } =
-    await getRewardConfigService();
-
   // Users referred by someone, needed to total up referral rewards paid out
   const referredUsers = await User.find({ referredBy: { $ne: null } }).select(
     "_id role",
@@ -41,18 +37,50 @@ export const getAdminDashboardStatsService = async () => {
           _id: null,
           totalCommission: { $sum: "$totalCommission" },
           totalSales: { $sum: "$grandTotal" },
+          totalCashback: {
+            $sum: {
+              $multiply: [
+                "$totalCommission",
+                { $ifNull: ["$cashbackRate", 0.25] },
+              ],
+            },
+          },
         },
       },
     ]),
 
     Order.aggregate([
       { $match: { seller: { $in: referredSellerIds } } },
-      { $group: { _id: null, total: { $sum: "$totalCommission" } } },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: {
+              $multiply: [
+                "$totalCommission",
+                { $ifNull: ["$sellerReferralRate", 0.1] },
+              ],
+            },
+          },
+        },
+      },
     ]),
 
     Order.aggregate([
       { $match: { customer: { $in: referredCustomerIds } } },
-      { $group: { _id: null, total: { $sum: "$totalCommission" } } },
+      {
+        $group: {
+          _id: null,
+          total: {
+            $sum: {
+              $multiply: [
+                "$totalCommission",
+                { $ifNull: ["$userReferralRate", 0.1] },
+              ],
+            },
+          },
+        },
+      },
     ]),
 
     SellerPayment.aggregate([
@@ -85,13 +113,10 @@ export const getAdminDashboardStatsService = async () => {
   const totalSales = orderTotals[0]?.totalSales ?? 0;
 
   const totalCashback = parseFloat(
-    (totalCommission * cashbackRate).toFixed(2),
+    (orderTotals[0]?.totalCashback ?? 0).toFixed(2),
   );
   const totalReferralReward = parseFloat(
-    (
-      sumAmount(sellerRefStats) * sellerReferralRate +
-      sumAmount(buyerRefStats) * userReferralRate
-    ).toFixed(2),
+    (sumAmount(sellerRefStats) + sumAmount(buyerRefStats)).toFixed(2),
   );
 
   const grossProfit = totalCommission;
