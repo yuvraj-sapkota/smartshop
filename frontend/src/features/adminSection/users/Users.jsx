@@ -11,6 +11,7 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const data = await getAllUsersAPI();
+        console.log(data);
         const formatted = data.users.map((user, index) => ({
           ...user,
           sn: index + 1,
@@ -25,6 +26,7 @@ const Users = () => {
 
     fetchUsers();
   }, []);
+
   const userColumns = [
     { header: "SN", accessorKey: "sn" },
 
@@ -44,6 +46,22 @@ const Users = () => {
         ) : (
           <span className="text-gray-400">--</span>
         ),
+    },
+
+    {
+      header: "Total Purchase",
+      accessorKey: "totalPurchase",
+      cell: (row) => <span>Rs. {row.totalPurchase}</span>,
+    },
+
+    {
+      header: "Total Earn",
+      accessorKey: "totalEarn",
+      cell: (row) => (
+        <span className="font-semibold text-green-600">
+          Rs. {row.totalEarn}
+        </span>
+      ),
     },
 
     {

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getMyPurchasesAPI } from "../../../services/order/order.api";
 import { showError } from "../../../utils/toast";
 
-export default function TransactionTable() {
+export default function Purchases() {
   const [purchases, setPurchases] = useState([]);
 
   useEffect(() => {
@@ -24,30 +24,6 @@ export default function TransactionTable() {
     ...purchase,
     sn: index + 1,
   }));
-
-  //   {
-  //     _id: 101,
-  //     sn: 1,
-  //     product: "Product A",
-  //     quantity: 2,
-  //     totalMrp: 500,
-  //     totalPrice: 400,
-  //     cashback: 50,
-  //     seller: "ABC Store",
-  //     datetime: "2026-04-23 10:30 AM",
-  //   },
-  //   {
-  //     _id: 102,
-  //     sn: 2,
-  //     product: "Product B",
-  //     quantity: 1,
-  //     totalMrp: 1000,
-  //     totalPrice: 400,
-  //     cashback: 100,
-  //     seller: "XYZ Shop",
-  //     datetime: "2026-04-23 12:15 PM",
-  //   },
-  // ];
 
   const columns = [
     { header: "SN", accessorKey: "sn" },
@@ -88,7 +64,7 @@ export default function TransactionTable() {
       accessorKey: "datetime",
       cell: (row) => (
         <span className="text-gray-500 text-xs whitespace-nowrap">
-          {row.datetime}
+          {new Date(row.datatime).toLocaleString()}
         </span>
       ),
     },

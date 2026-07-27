@@ -1,76 +1,30 @@
 import React, { useEffect, useState } from "react";
 import PageHeader from "../../../components/PageHeader";
 import DataTable from "../../../components/DataTable";
-import useOrderStore from "../../../store/orderStore/orderStore";
-
-const REFERRAL_COMMISSION_RATE = 0.1; // 10%
-const CASHBACK_RATE = 0.25; // 25%
+import { getUserCommissionAPI } from "../../../services/order/order.api";
+import { showError } from "../../../utils/toast";
 
 const UserCommission = () => {
-  const { orders, getAllOrders } = useOrderStore();
+  const [rewardData, setRewardData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [active, setActive] = useState("reward");
 
   useEffect(() => {
-    getAllOrders();
+    const fetchCommission = async () => {
+      try {
+        const data = await getUserCommissionAPI();
+        setRewardData(data.rewardData);
+      } catch (error) {
+        showError(
+          error.response?.data?.message || "Failed to fetch commission data",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCommission();
   }, []);
-
-  const rewardData = [];
-
-  orders.forEach((order) => {
-    order.items.forEach((item) => {
-      const product = item.product?.name || item.productName;
-      const itemCommission = item.commission * item.qty;
-      const base = {
-        product,
-        quantity: item.qty,
-        price: item.price,
-        totalPrice: item.price * item.qty,
-        seller: order.seller.username,
-        buyer: order.customer.username,
-        datetime: new Date(order.createdAt).toLocaleString(),
-      };
-
-      // Cashback — buyer earns from their own purchase
-      rewardData.push({
-        _id: `${item._id}-cashback`,
-        ...base,
-        reward: parseFloat((itemCommission * CASHBACK_RATE).toFixed(2)),
-        earnBy: order.customer.username,
-        type: "cashback",
-      });
-
-      // Referral reward — whoever referred the seller
-      if (order.seller.referredBy) {
-        rewardData.push({
-          _id: `${item._id}-sellerRef`,
-          ...base,
-          reward: parseFloat(
-            (itemCommission * REFERRAL_COMMISSION_RATE).toFixed(2),
-          ),
-          earnBy: order.seller.referredBy.username,
-          type: "reward",
-        });
-      }
-
-      // Referral reward — whoever referred the buyer
-      if (order.customer.referredBy) {
-        rewardData.push({
-          _id: `${item._id}-buyerRef`,
-          ...base,
-          reward: parseFloat(
-            (itemCommission * REFERRAL_COMMISSION_RATE).toFixed(2),
-          ),
-          earnBy: order.customer.referredBy.username,
-          type: "reward",
-        });
-      }
-    });
-  });
-
-  const formattedRewardData = rewardData.map((item, index) => ({
-    ...item,
-    sn: index + 1,
-  }));
 
   const rewardColumns = [
     {
@@ -125,7 +79,7 @@ const UserCommission = () => {
     {
       header: "Time & Date",
       accessorKey: "datetime",
-      cell: (row) => <span>{row.datetime}</span>,
+      cell: (row) => <span>{new Date(row.datetime).toLocaleString()}</span>,
     },
   ];
 
@@ -162,10 +116,14 @@ const UserCommission = () => {
           </button>
         </div>
 
-        <DataTable
-          data={active === "reward" ? rewardRows : cashbackRows}
-          columns={rewardColumns}
-        />
+        {loading ? (
+          <p className="text-sm text-gray-400">Loading...</p>
+        ) : (
+          <DataTable
+            data={active === "reward" ? rewardRows : cashbackRows}
+            columns={rewardColumns}
+          />
+        )}
       </div>
     </>
   );

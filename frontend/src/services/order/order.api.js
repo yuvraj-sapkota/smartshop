@@ -17,6 +17,12 @@ export const getAllOrdersAPI = async () => {
   return response.data;
 };
 
+// admin side, user commission page
+export const getUserCommissionAPI = async () => {
+  const response = await apiClient.get("/orders/user-commission");
+  return response.data;
+};
+
 // user side ko lagi user purchases
 export const getMyPurchasesAPI = async () => {
   const response = await apiClient.get("/orders/my-purchases");

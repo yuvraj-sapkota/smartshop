@@ -124,6 +124,78 @@ export const getAllOrdersService = async () => {
     .sort({ createdAt: -1 });
 };
 
+// for admin side — reward/cashback breakdown, one row per item per reward type
+export const getUserCommissionService = async () => {
+  const orders = await Order.find()
+    .populate({
+      path: "customer",
+      select: "username referredBy",
+      populate: { path: "referredBy", select: "username" },
+    })
+    .populate({
+      path: "seller",
+      select: "username referredBy",
+      populate: { path: "referredBy", select: "username" },
+    })
+    .populate("items.product", "name")
+    .sort({ createdAt: -1 });
+
+  const rewardData = [];
+
+  orders.forEach((order) => {
+    const cashbackRate = order.cashbackRate ?? 0.25;
+    const sellerReferralRate = order.sellerReferralRate ?? 0.1;
+    const userReferralRate = order.userReferralRate ?? 0.1;
+
+    order.items.forEach((item) => {
+      const product = item.product?.name || item.productName;
+      const itemCommission = item.commission * item.qty;
+      const base = {
+        product,
+        quantity: item.qty,
+        price: item.price,
+        totalPrice: item.price * item.qty,
+        seller: order.seller.username,
+        buyer: order.customer.username,
+        datetime: order.createdAt,
+      };
+
+      // Cashback — buyer earns from their own purchase
+      rewardData.push({
+        _id: `${item._id}-cashback`,
+        ...base,
+        reward: parseFloat((itemCommission * cashbackRate).toFixed(2)),
+        earnBy: order.customer.username,
+        type: "cashback",
+      });
+
+      // Referral reward — whoever referred the seller
+      if (order.seller.referredBy) {
+        rewardData.push({
+          _id: `${item._id}-sellerRef`,
+          ...base,
+          reward: parseFloat((itemCommission * sellerReferralRate).toFixed(2)),
+          earnBy: order.seller.referredBy.username,
+          type: "reward",
+        });
+      }
+
+      // Referral reward — whoever referred the buyer
+      if (order.customer.referredBy) {
+        rewardData.push({
+          _id: `${item._id}-buyerRef`,
+          ...base,
+          reward: parseFloat((itemCommission * userReferralRate).toFixed(2)),
+          earnBy: order.customer.referredBy.username,
+          type: "reward",
+        });
+      }
+    });
+  });
+
+  return rewardData;
+};
+
 // for user side, purchase
 export const getMyPurchasesService = async (customerId) => {
   const orders = await Order.find({ customer: customerId })

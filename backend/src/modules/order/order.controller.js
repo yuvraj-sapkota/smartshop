@@ -3,6 +3,7 @@ import {
   getAllOrdersService,
   getMyOrdersService,
   getMyPurchasesService,
+  getUserCommissionService,
 } from "./order.service.js";
 
 export const createOrder = async (req, res, next) => {
@@ -48,8 +49,21 @@ export const getAllOrders = async (req, res, next) => {
   }
 };
 
-// for user side, purchase
+// for admin side, user commission page
+export const getUserCommission = async (req, res, next) => {
+  try {
+    const rewardData = await getUserCommissionService();
+    res.status(200).json({
+      success: true,
+      message: "User commission data fetched successfully",
+      rewardData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
+// for user side, purchase
 export const getMyPurchase = async (req, res, next) => {
   try {
     const customerId = req.user._id;

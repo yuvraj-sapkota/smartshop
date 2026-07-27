@@ -7,6 +7,7 @@ import {
   getAllOrders,
   getMyOrders,
   getMyPurchase,
+  getUserCommission,
 } from "./order.controller.js";
 import { createOrderSchema } from "./order.validation.js";
 
@@ -30,7 +31,6 @@ router.post(
   validate(createOrderSchema),
   createOrder,
 );
-
 router.get(
   "/my-orders",
   protect,
@@ -38,9 +38,8 @@ router.get(
   checkSellerApproved,
   getMyOrders,
 );
-
 router.get("/all-orders", protect, allowRole("admin"), getAllOrders);
-
+router.get("/user-commission", protect, allowRole("admin"), getUserCommission);
 router.get("/my-purchases", protect, allowRole("user"), getMyPurchase);
 
 export default router;
