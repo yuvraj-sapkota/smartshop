@@ -78,10 +78,22 @@ const getTotalReferralReward = async (userId) => {
   return sellerRefReward + buyerRefReward;
 };
 
-// Helper: total already withdrawn (approved only)
-const getTotalApprovedWithdrawals = async (userId) => {
+// Helper: money that's no longer available to request — either already paid
+// out (approved) or waiting on your decision (pending). Rejected withdrawals
+// are excluded, since that money was never actually taken from the user.
+const getTotalReservedWithdrawals = async (userId) => {
   const result = await UserWithdrawal.aggregate([
-    { $match: { user: userId } },
+    { $match: { user: userId, status: { $in: ["approved", "pending"] } } },
+    { $group: { _id: null, total: { $sum: "$amount" } } },
+  ]);
+  return result[0]?.total ?? 0;
+};
+
+// Helper: withdrawal requests still awaiting your decision (for display only,
+// e.g. the "Pending Withdraw" stat on the user dashboard)
+const getTotalPendingWithdrawals = async (userId) => {
+  const result = await UserWithdrawal.aggregate([
+    { $match: { user: userId, status: "pending" } },
     { $group: { _id: null, total: { $sum: "$amount" } } },
   ]);
   return result[0]?.total ?? 0;
@@ -91,12 +103,15 @@ const getTotalApprovedWithdrawals = async (userId) => {
 // GET /available-balance
 // ─────────────────────────────────────────────
 export const getAvailableBalanceService = async (userId) => {
-  const [totalCashback, totalReferralReward, totalWithdrawn] =
-    await Promise.all([
-      getTotalCashback(userId),
-      getTotalReferralReward(userId),
-      getTotalApprovedWithdrawals(userId),
-    ]);
+  const [
+    totalCashback,
+    totalReferralReward,
+    totalWithdrawn,
+  ] = await Promise.all([
+    getTotalCashback(userId),
+    getTotalReferralReward(userId),
+    getTotalReservedWithdrawals(userId),
+  ]);
 
   const totalEarned = parseFloat(
     (totalCashback + totalReferralReward).toFixed(2),

@@ -5,6 +5,7 @@ import {
   CheckCircle,
   ShoppingCart,
   Package,
+  Clock,
 } from "lucide-react";
 import StatCard from "../../../components/StatCard";
 import { useEffect, useState } from "react";
@@ -35,11 +36,11 @@ const SellerDashboard = () => {
   const sellerStats = [
     {
       _id: 1,
-      label: "Available Balance (prepaid)",
-      value: 0,
-      icon: Wallet,
-      bg: "bg-emerald-100",
-      text: "text-emerald-600",
+      label: "Total Sales",
+      value: stats?.totalSales ?? 0,
+      icon: ShoppingCart,
+      bg: "bg-purple-100",
+      text: "text-purple-600",
     },
     {
       _id: 2,
@@ -57,25 +58,32 @@ const SellerDashboard = () => {
       bg: "bg-yellow-100",
       text: "text-yellow-600",
     },
-
     {
       _id: 4,
-      label: "Total Commission Paid",
+      label: "Pending Deposit",
+      value: stats?.pendingDeposit ?? 0,
+      icon: Clock,
+      bg: "bg-orange-100",
+      text: "text-orange-600",
+    },
+    {
+      _id: 5,
+      label: "Commission Paid",
       value: stats?.totalCommissionPaid ?? 0,
       icon: CheckCircle,
       bg: "bg-green-100",
       text: "text-green-600",
     },
     {
-      _id: 5,
-      label: "Total Sales",
-      value: stats?.totalSales ?? 0,
-      icon: ShoppingCart,
-      bg: "bg-purple-100",
-      text: "text-purple-600",
+      _id: 6,
+      label: "Prepaid Amount",
+      value: stats?.prepaidAmount ?? 0,
+      icon: Wallet,
+      bg: "bg-emerald-100",
+      text: "text-emerald-600",
     },
     {
-      _id: 6,
+      _id: 7,
       label: "Total Product",
       value: stats?.totalProducts ?? 0,
       icon: Package,
@@ -83,7 +91,7 @@ const SellerDashboard = () => {
       text: "text-orange-600",
     },
     {
-      _id: 7,
+      _id: 8,
       label: "Pending Product",
       value: stats?.pendingProducts ?? 0,
       icon: Package,

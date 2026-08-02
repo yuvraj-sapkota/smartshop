@@ -141,6 +141,7 @@ const SellerFund = () => {
     totalCommission: 0,
     totalPaid: 0,
     totalPending: 0,
+    prepaidAmount: 0,
   });
 
   const [loadingPage, setLoadingPage] = useState(true);
@@ -169,8 +170,15 @@ const SellerFund = () => {
             totalCommission = 0,
             totalPaid = 0,
             totalPending = 0,
+            prepaidAmount = 0,
           } = dueRes.value;
-          setDueInfo({ due, totalCommission, totalPaid, totalPending });
+          setDueInfo({
+            due,
+            totalCommission,
+            totalPaid,
+            totalPending,
+            prepaidAmount,
+          });
         } else {
           showError(
             dueRes.reason?.response?.data?.message ??
@@ -225,7 +233,7 @@ const SellerFund = () => {
   }));
 
   // Seller can only submit up to (due - pending) more
-  const canPay = dueInfo.due - dueInfo.totalPending > 0;
+  const canPay = true;
   // ── Render ─────────────────────────────────────────────────────────────
   return (
     <>
@@ -276,7 +284,7 @@ const SellerFund = () => {
         </section>
 
         {/* Due amount + pay button */}
-        <div className="flex justify-between items-center bg-white shadow-md border border-gray-200 rounded-lg p-4">
+        <div className="flex  gap-4  justify-between items-start bg-white shadow-md border border-gray-200 rounded-lg p-4">
           <div className="flex flex-col gap-1">
             <p className="text-gray-500 text-sm">Due Amount</p>
             {loadingPage ? (
@@ -306,6 +314,17 @@ const SellerFund = () => {
                 </div>
               </>
             )}
+          </div>
+          {/* {dueInfo.prepaidAmount > 0 && (
+            <p className="text-green-600 font-medium">
+              Prepaid Credit: Rs {dueInfo.prepaidAmount.toLocaleString()}
+            </p>
+          )} */}
+          <div>
+            <p className="text-gray-500 text-sm">Prepaid Amount</p>
+            <h2 className="text-xl font-bold text-gray-800">
+              Rs {dueInfo.prepaidAmount.toLocaleString()}
+            </h2>
           </div>
           <button
             onClick={() => setModalOpen(true)}

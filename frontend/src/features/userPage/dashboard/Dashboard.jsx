@@ -5,6 +5,7 @@ import {
   ShoppingCart,
   Gift,
   Users,
+  CheckCircle,
 } from "lucide-react";
 import StatCard from "../../../components/StatCard";
 import { useEffect, useState } from "react";
@@ -48,6 +49,14 @@ const Dashboard = () => {
       icon: Clock,
       bg: "bg-yellow-100",
       text: "text-yellow-600",
+    },
+    {
+      _id: 8,
+      label: "Completed Withdraw",
+      value: stats?.completedWithdraw ?? 0,
+      icon: CheckCircle,
+      bg: "bg-green-100",
+      text: "text-green-600",
     },
     {
       _id: 3,

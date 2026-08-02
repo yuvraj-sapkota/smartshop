@@ -7,6 +7,7 @@ export const getUserDashboardStatsService = async (userId) => {
   const [
     balance,
     pendingWithdrawStats,
+    completedWithdrawStats,
     purchaseStats,
     affiliateUsers,
   ] = await Promise.all([
@@ -14,6 +15,11 @@ export const getUserDashboardStatsService = async (userId) => {
 
     UserWithdrawal.aggregate([
       { $match: { user: userId, status: "pending" } },
+      { $group: { _id: null, total: { $sum: "$amount" } } },
+    ]),
+
+    UserWithdrawal.aggregate([
+      { $match: { user: userId, status: "approved" } },
       { $group: { _id: null, total: { $sum: "$amount" } } },
     ]),
 
@@ -28,6 +34,7 @@ export const getUserDashboardStatsService = async (userId) => {
   return {
     availableBalance: balance.availableBalance,
     pendingWithdraw: pendingWithdrawStats[0]?.total ?? 0,
+    completedWithdraw: completedWithdrawStats[0]?.total ?? 0,
     totalEarned: balance.totalEarned,
     totalPurchase: purchaseStats[0]?.total ?? 0,
     totalCashback: balance.totalCashback,

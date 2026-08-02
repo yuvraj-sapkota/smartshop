@@ -12,7 +12,7 @@ import {
   getMyWithdrawalsAPI,
   submitWithdrawalAPI,
 } from "../../../services/userFund/userFund.api";
-import { showSuccess } from "../../../utils/toast";
+import { showError, showSuccess } from "../../../utils/toast";
 
 const Fund = () => {
   const [bankDetail, setBankDetail] = useState(null);
@@ -96,14 +96,15 @@ const Fund = () => {
       const data = await getAvailableBalanceAPI();
       setAvailableBalance(data.availableBalance);
     } catch (error) {
-      console.log(error?.response?.data);
+      showError(
+        error.response?.data?.message || "Failed to load available balance.",
+      );
     }
   };
 
   const fetchWithdrawals = async () => {
     try {
       const data = await getMyWithdrawalsAPI();
-      console.log(data);
       const formatted = data.withdrawals.map((item, index) => ({
         sn: index + 1,
         _id: item._id,
@@ -113,8 +114,9 @@ const Fund = () => {
       }));
       setFundData(formatted);
     } catch (error) {
-      console.log(error);
-      console.log(error?.response?.data);
+      showError(
+        error.response?.data?.message || "Failed to load withdrawal history.",
+      );
     }
   };
 
@@ -122,13 +124,14 @@ const Fund = () => {
     const getMyBankDetail = async () => {
       try {
         const data = await getMyBankDetailAPI();
-        console.log(data);
         if (data.bankDetail) {
           setBankDetail(data.bankDetail);
           setIsBank(true);
         }
       } catch (error) {
-        console.log(error?.response?.data);
+        showError(
+          error.response?.data?.message || "Failed to load bank details.",
+        );
       }
     };
 
@@ -284,7 +287,7 @@ const Fund = () => {
               title="Missing Information"
               message="Please setup your bank details"
               confirmText="ok"
-              cancelText="cancle"
+              cancelText="cancel"
               onConfirm={() => setWithdraw(false)}
               onCancel={() => setWithdraw(false)}
             />

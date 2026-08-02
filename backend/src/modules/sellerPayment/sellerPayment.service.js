@@ -41,9 +41,14 @@ export const getDueAmountService = async (sellerId) => {
     getTotalPendingPayments(sellerId),
   ]);
 
-  const due = parseFloat((totalCommission - totalPaid).toFixed(2));
+  const balance = parseFloat((totalCommission - totalPaid).toFixed(2));
 
-  return { totalCommission, totalPaid, totalPending, due };
+  // balance > 0 means they still owe money; balance < 0 means they've
+  // overpaid and that extra is sitting as credit toward future commission
+  const due = balance > 0 ? balance : 0;
+  const prepaidAmount = balance < 0 ? Math.abs(balance) : 0;
+
+  return { totalCommission, totalPaid, totalPending, due, prepaidAmount };
 };
 
 // ─────────────────────────────────────────────
@@ -52,14 +57,8 @@ export const getDueAmountService = async (sellerId) => {
 export const submitPaymentService = async (sellerId, data, screenshotUrl) => {
   const { amount, bankName, accountName, accountNumber, screenshotTime } = data;
 
-  // Guard: cannot overpay
-  const { due } = await getDueAmountService(sellerId);
-  if (amount > due) {
-    throw new AppError(
-      `Payment amount (Rs ${amount}) exceeds due amount (Rs ${due})`,
-      400,
-    );
-  }
+  // No upper limit anymore — sellers may pay more than they currently owe;
+  // the excess becomes prepaid credit that offsets future commission.
 
   const payment = await SellerPayment.create({
     seller: sellerId,

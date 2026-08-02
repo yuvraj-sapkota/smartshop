@@ -4,20 +4,22 @@ import DataTable from "../../../components/DataTable";
 import { Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { getAllSellers } from "../../../services/seller/seller.api";
+import { showError } from "../../../utils/toast";
 
 const Sellers = () => {
   const navigate = useNavigate();
   const [sellers, setSellers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const storeData = sellers.map((item, index) => ({
     _id: item._id,
     sn: index + 1,
     store: item.storeName,
-
     username: item.username,
-    needToPay: "",
+    needToPay: item.needToPay,
+    totalSales: item.totalSales,
     status: item.sellerStatus,
-    refer: item.referBy || "--",
+    refer: item.referredBy?.username || "--",
     datetime: new Date(item.createdAt).toLocaleString(),
   }));
 
@@ -38,10 +40,16 @@ const Sellers = () => {
     },
 
     {
+      header: "Total Sales",
+      accessorKey: "totalSales",
+      cell: (row) => <span>Rs {row.totalSales}</span>,
+    },
+
+    {
       header: "Need to Pay",
       accessorKey: "needToPay",
       cell: (row) =>
-        row.status === "approved" && row.needToPay ? (
+        row.status === "approved" && row.needToPay > 0 ? (
           <span className="text-blue-600 font-semibold">
             Rs {row.needToPay}
           </span>
@@ -105,17 +113,24 @@ const Sellers = () => {
         const data = await getAllSellers();
         setSellers(data.sellers);
       } catch (error) {
-        console.log(error);
+        showError(error.response?.data?.message || "Failed to fetch sellers");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchSeller();
   }, []);
+
   return (
     <>
       <div className="space-y-10">
         <PageHeader text="Sellers" />
-        <DataTable data={storeData} columns={storeColumns} />
+        {loading ? (
+          <p className="text-sm text-gray-400">Loading...</p>
+        ) : (
+          <DataTable data={storeData} columns={storeColumns} />
+        )}
       </div>
     </>
   );

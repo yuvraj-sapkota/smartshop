@@ -1,31 +1,21 @@
 import Order from "../order/order.model.js";
 import Product from "../product/product.model.js";
-import SellerPayment from "../sellerPayment/sellerPayment.model.js";
+import { getDueAmountService } from "../sellerPayment/sellerPayment.service.js";
 
 export const getSellerDashboardStatsService = async (sellerId) => {
   const [
     orderStats,
-    paymentStats,
+    dueInfo,
     totalProducts,
     pendingProducts,
   ] = await Promise.all([
-    // Total commission + total sales from orders
+    // Total sales only — commission/paid/due now come from getDueAmountService
     Order.aggregate([
       { $match: { seller: sellerId } },
-      {
-        $group: {
-          _id: null,
-          totalCommission: { $sum: "$totalCommission" },
-          totalSales: { $sum: "$grandTotal" },
-        },
-      },
+      { $group: { _id: null, totalSales: { $sum: "$grandTotal" } } },
     ]),
 
-    // Approved payments only
-    SellerPayment.aggregate([
-      { $match: { seller: sellerId, status: "approved" } },
-      { $group: { _id: null, totalPaid: { $sum: "$amount" } } },
-    ]),
+    getDueAmountService(sellerId),
 
     // All products count
     Product.countDocuments({ seller: sellerId }),
@@ -34,16 +24,14 @@ export const getSellerDashboardStatsService = async (sellerId) => {
     Product.countDocuments({ seller: sellerId, status: "pending" }),
   ]);
 
-  const totalCommission = orderStats[0]?.totalCommission ?? 0;
   const totalSales = orderStats[0]?.totalSales ?? 0;
-  const totalPaid = paymentStats[0]?.totalPaid ?? 0;
-  const dueCommission = parseFloat((totalCommission - totalPaid).toFixed(2));
 
   return {
-    availableBalance: 0, // future feature
-    dueCommission,
-    totalCommission,
-    totalCommissionPaid: totalPaid,
+    prepaidAmount: dueInfo.prepaidAmount,
+    dueCommission: dueInfo.due,
+    pendingDeposit: dueInfo.totalPending,
+    totalCommission: dueInfo.totalCommission,
+    totalCommissionPaid: dueInfo.totalPaid,
     totalSales,
     totalProducts,
     pendingProducts,
