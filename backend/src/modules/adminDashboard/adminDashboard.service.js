@@ -3,8 +3,27 @@ import Order from "../order/order.model.js";
 import Product from "../product/product.model.js";
 import SellerPayment from "../sellerPayment/sellerPayment.model.js";
 import UserWithdrawal from "../userFund/userFund.model.js";
+import { getDueAmountService } from "../sellerPayment/sellerPayment.service.js";
 
 const sumAmount = (result) => result[0]?.total ?? 0;
+
+// Check every seller individually, then add up their real "still owed" and
+// "prepaid credit" amounts — never subtract two grand totals from each
+// other, since one seller's credit can't cover another seller's debt.
+const getSellerDueTotals = async () => {
+  const sellers = await User.find({ role: "seller" }).select("_id");
+  const dueInfos = await Promise.all(
+    sellers.map((seller) => getDueAmountService(seller._id)),
+  );
+
+  return dueInfos.reduce(
+    (totals, info) => ({
+      totalOutstanding: totals.totalOutstanding + info.due,
+      totalPrepaid: totals.totalPrepaid + info.prepaidAmount,
+    }),
+    { totalOutstanding: 0, totalPrepaid: 0 },
+  );
+};
 
 export const getAdminDashboardStatsService = async () => {
   // Users referred by someone, needed to total up referral rewards paid out
@@ -30,6 +49,7 @@ export const getAdminDashboardStatsService = async () => {
     pendingProducts,
     totalUsers,
     totalSellers,
+    sellerDueTotals,
   ] = await Promise.all([
     Order.aggregate([
       {
@@ -107,6 +127,7 @@ export const getAdminDashboardStatsService = async () => {
     Product.countDocuments({ status: "pending" }),
     User.countDocuments({ role: "user" }),
     User.countDocuments({ role: "seller" }),
+    getSellerDueTotals(),
   ]);
 
   const totalCommission = orderTotals[0]?.totalCommission ?? 0;
@@ -127,7 +148,10 @@ export const getAdminDashboardStatsService = async () => {
   const sellerCompletedDeposit = sumAmount(approvedSellerPayments);
   const sellerPendingDeposit = sumAmount(pendingSellerPayments);
   const sellerOutstandingDeposit = parseFloat(
-    (totalCommission - sellerCompletedDeposit).toFixed(2),
+    sellerDueTotals.totalOutstanding.toFixed(2),
+  );
+  const sellerPrepaidAmount = parseFloat(
+    sellerDueTotals.totalPrepaid.toFixed(2),
   );
 
   const userTotalCommission = parseFloat(
@@ -155,6 +179,7 @@ export const getAdminDashboardStatsService = async () => {
       completedDeposit: sellerCompletedDeposit,
       pendingDeposit: sellerPendingDeposit,
       outstandingDeposit: sellerOutstandingDeposit,
+      prepaidAmount: sellerPrepaidAmount,
     },
     userOverview: {
       totalCommission: userTotalCommission,

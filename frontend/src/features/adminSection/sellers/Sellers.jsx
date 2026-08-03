@@ -17,6 +17,7 @@ const Sellers = () => {
     store: item.storeName,
     username: item.username,
     needToPay: item.needToPay,
+    prepaidAmount: item.prepaidAmount,
     totalSales: item.totalSales,
     status: item.sellerStatus,
     refer: item.referredBy?.username || "--",
@@ -52,6 +53,18 @@ const Sellers = () => {
         row.status === "approved" && row.needToPay > 0 ? (
           <span className="text-blue-600 font-semibold">
             Rs {row.needToPay}
+          </span>
+        ) : (
+          <span className="text-gray-400">Rs 0</span>
+        ),
+    },
+    {
+      header: "Prepaid",
+      accessorKey: "prepaidAmount",
+      cell: (row) =>
+        row.prepaidAmount > 0 ? (
+          <span className="text-emerald-600 font-semibold">
+            Rs {row.prepaidAmount}
           </span>
         ) : (
           <span className="text-gray-400">--</span>
@@ -112,6 +125,7 @@ const Sellers = () => {
       try {
         const data = await getAllSellers();
         setSellers(data.sellers);
+        console.log(data.sellers);
       } catch (error) {
         showError(error.response?.data?.message || "Failed to fetch sellers");
       } finally {

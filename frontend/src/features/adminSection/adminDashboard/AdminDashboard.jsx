@@ -8,6 +8,7 @@ import {
   TrendingUp,
   Package,
   AlertCircle,
+  PiggyBank,
 } from "lucide-react";
 import PageHeader from "../../../components/PageHeader";
 import StatCard from "../../../components/StatCard";
@@ -131,6 +132,14 @@ const AdminDashboard = () => {
       icon: AlertCircle,
       bg: "bg-red-100",
       text: "text-red-600",
+    },
+    {
+      _id: 5,
+      label: "Prepaid Amount",
+      value: s?.prepaidAmount ?? 0,
+      icon: PiggyBank,
+      bg: "bg-emerald-100",
+      text: "text-emerald-600",
     },
   ];
 

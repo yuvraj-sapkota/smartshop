@@ -1,7 +1,7 @@
 import AppError from "../../utils/AppError.js";
 import User from "../auth/auth.model.js";
 import Order from "../order/order.model.js";
-import SellerPayment from "../sellerPayment/sellerPayment.model.js";
+import { getDueAmountService } from "../sellerPayment/sellerPayment.service.js";
 
 export const getAllSellersService = async () => {
   const sellers = await User.find({ role: "seller" })
@@ -12,35 +12,21 @@ export const getAllSellersService = async () => {
 
   const sellersWithStats = await Promise.all(
     sellers.map(async (seller) => {
-      const [salesStats, approvedDeposits] = await Promise.all([
+      const [salesStats, dueInfo] = await Promise.all([
         Order.aggregate([
           { $match: { seller: seller._id } },
-          {
-            $group: {
-              _id: null,
-              totalSales: { $sum: "$grandTotal" },
-              totalCommission: { $sum: "$totalCommission" },
-            },
-          },
+          { $group: { _id: null, totalSales: { $sum: "$grandTotal" } } },
         ]),
-        SellerPayment.aggregate([
-          { $match: { seller: seller._id, status: "approved" } },
-          { $group: { _id: null, total: { $sum: "$amount" } } },
-        ]),
+        getDueAmountService(seller._id),
       ]);
 
       const totalSales = salesStats[0]?.totalSales ?? 0;
-      const totalCommission = salesStats[0]?.totalCommission ?? 0;
-      const completedDeposit = approvedDeposits[0]?.total ?? 0;
-      const needToPay = parseFloat(
-        (totalCommission - completedDeposit).toFixed(2),
-      );
 
       return {
         ...seller,
         totalSales,
-        // totalCommission,
-        needToPay,
+        needToPay: dueInfo.due,
+        prepaidAmount: dueInfo.prepaidAmount,
       };
     }),
   );
