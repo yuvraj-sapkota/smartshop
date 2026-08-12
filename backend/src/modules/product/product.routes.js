@@ -11,6 +11,8 @@ import {
 import protect from "../../middlewares/auth.middleware.js";
 import Product from "./product.model.js";
 import AppError from "../../utils/AppError.js";
+import { createProductSchema } from "./product.validation.js";
+import validate from "../../middlewares/validate.middleware.js";
 
 const router = express.Router();
 
@@ -19,6 +21,7 @@ router.post(
   protect,
   allowRole("seller"),
   checkSellerApproved,
+  validate(createProductSchema),
   createProduct,
 );
 

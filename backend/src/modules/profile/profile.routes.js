@@ -11,17 +11,9 @@ import {
   changePasswordSchema,
   addReferralSchema,
 } from "./profile.validation.js";
+import validate from "../../middlewares/validate.middleware.js";
 
 const router = express.Router();
-
-const validate = (schema) => (req, res, next) => {
-  try {
-    req.body = schema.parse(req.body);
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
 
 router.get("/", protect, getMyProfile);
 router.put("/", protect, validate(updateProfileSchema), updateMyProfile);

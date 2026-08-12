@@ -10,24 +10,19 @@ import {
   getUserCommission,
 } from "./order.controller.js";
 import { createOrderSchema } from "./order.validation.js";
+import validate from "../../middlewares/validate.middleware.js";
+import {orderCreateLimiter} from "../../middlewares/rateLimit.middleware.js"
 
 const router = express.Router();
 
-// Validate body before hitting the controller
-const validate = (schema) => (req, res, next) => {
-  try {
-    req.body = schema.parse(req.body);
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
+
 
 router.post(
   "/create",
   protect,
   allowRole("seller"),
   checkSellerApproved,
+  orderCreateLimiter,
   validate(createOrderSchema),
   createOrder,
 );

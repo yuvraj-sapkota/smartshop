@@ -31,6 +31,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import SellerDetail from "./features/adminSection/sellers/SellerDetail";
 import Profile from "./features/profile/Profile";
+import Unauthorized from "./pages/Unauthorized";
 
 const App = () => {
   return (
@@ -77,6 +78,7 @@ const App = () => {
               </PublicRoute>
             }
           />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* user routes protected  */}
 

@@ -3,6 +3,11 @@ import Product from "../product/product.model.js";
 import User from "../auth/auth.model.js";
 import AppError from "../../utils/AppError.js";
 import { getRewardConfigService } from "../rewardConfig/rewardConfig.service.js";
+import {
+  calculateReward,
+  DEFAULT_CASHBACK_RATE,
+  DEFAULT_REFERRAL_RATE,
+} from "../../utils/rewardMath.js";
 
 const CUSTOM_PRODUCT_COMMISSION_RATE = 0.1; // 10%
 
@@ -143,10 +148,6 @@ export const getUserCommissionService = async () => {
   const rewardData = [];
 
   orders.forEach((order) => {
-    const cashbackRate = order.cashbackRate ?? 0.25;
-    const sellerReferralRate = order.sellerReferralRate ?? 0.1;
-    const userReferralRate = order.userReferralRate ?? 0.1;
-
     order.items.forEach((item) => {
       const product = item.product?.name || item.productName;
       const itemCommission = item.commission * item.qty;
@@ -164,7 +165,11 @@ export const getUserCommissionService = async () => {
       rewardData.push({
         _id: `${item._id}-cashback`,
         ...base,
-        reward: parseFloat((itemCommission * cashbackRate).toFixed(2)),
+        reward: calculateReward(
+          itemCommission,
+          order.cashbackRate,
+          DEFAULT_CASHBACK_RATE,
+        ),
         earnBy: order.customer.username,
         type: "cashback",
       });
@@ -174,7 +179,11 @@ export const getUserCommissionService = async () => {
         rewardData.push({
           _id: `${item._id}-sellerRef`,
           ...base,
-          reward: parseFloat((itemCommission * sellerReferralRate).toFixed(2)),
+          reward: calculateReward(
+            itemCommission,
+            order.sellerReferralRate,
+            DEFAULT_REFERRAL_RATE,
+          ),
           earnBy: order.seller.referredBy.username,
           type: "reward",
         });
@@ -185,7 +194,11 @@ export const getUserCommissionService = async () => {
         rewardData.push({
           _id: `${item._id}-buyerRef`,
           ...base,
-          reward: parseFloat((itemCommission * userReferralRate).toFixed(2)),
+          reward: calculateReward(
+            itemCommission,
+            order.userReferralRate,
+            DEFAULT_REFERRAL_RATE,
+          ),
           earnBy: order.customer.referredBy.username,
           type: "reward",
         });
@@ -206,11 +219,6 @@ export const getMyPurchasesService = async (customerId) => {
   const purchases = [];
 
   orders.forEach((order) => {
-    // Legacy orders placed before this feature existed have no stored
-    // rate — 0.25 was the original hardcoded cashback rate, so it's the
-    // correct fallback for them.
-    const rate = order.cashbackRate ?? 0.25;
-
     order.items.forEach((item) => {
       purchases.push({
         _id: item._id,
@@ -218,7 +226,11 @@ export const getMyPurchasesService = async (customerId) => {
         quantity: item.qty,
         mrp: item.price,
         totalPrice: item.price * item.qty,
-        cashback: parseFloat((item.commission * item.qty * rate).toFixed(2)),
+        cashback: calculateReward(
+          item.commission * item.qty,
+          order.cashbackRate,
+          DEFAULT_CASHBACK_RATE,
+        ),
         seller: order.seller.username,
         datetime: order.createdAt,
       });

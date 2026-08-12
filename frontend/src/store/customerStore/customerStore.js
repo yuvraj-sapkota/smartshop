@@ -7,8 +7,6 @@ const useCustomerStore = create((set, get) => ({
   loading: false,
 
   getCustomers: async () => {
-    // Already fetched bhayo bhane API call nagara
-    if (get().customers.length > 0) return;
 
     set({ loading: true });
     try {

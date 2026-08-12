@@ -13,7 +13,7 @@ import userRoutes from "./modules/user/user.routes.js";
 import sellerPaymentRoutes from "./modules/sellerPayment/sellerPayment.routes.js";
 import sellerDashboardRoutes from "./modules/sellerDashboard/sellerDashboard.routes.js";
 
-import referralRoutes from "./modules/referral/referal.route.js";
+import referralRoutes from "./modules/referral/referral.route.js";
 import userFundRoutes from "./modules/userFund/userFund.routes.js";
 import userDashboardRoutes from "./modules/userDashboard/userDashboard.routes.js";
 import adminDashboardRoutes from "./modules/adminDashboard/adminDashboard.routes.js";
@@ -30,7 +30,6 @@ const allowedOrigins = [
   "https://smartshop108.vercel.app",
 ];
 
-// app.options("*", cors());
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -45,29 +44,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   }),
 );
-
-// app.use(
-//   cors({
-//     origin: function (origin, callback) {
-//       if (!origin) return callback(null, true);
-
-//       const allowed = [
-//         "localhost",
-//         "127.0.0.1",
-//         "smartshop108.vercel.app",
-//         "vercel.app",
-//       ];
-
-//       if (allowed.some((o) => origin.includes(o))) {
-//         return callback(null, true);
-//       }
-
-//       console.log("❌ Blocked origin:", origin);
-//       return callback(new Error("Not allowed by CORS"));
-//     },
-//     credentials: true,
-//   }),
-// );
 
 app.use(express.json());
 
@@ -91,6 +67,3 @@ app.use("/api/profile", profileRoutes);
 app.use(errorMiddleware);
 
 export default app;
-
-// 1. seller register huda admin page ma dekhini
-// 2. admin le seller lai accept wa reject garna milni

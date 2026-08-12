@@ -35,7 +35,7 @@ const useProductStore = create((set, get) => ({
 
   // get all products -- -- admin
   getAllProducts: async () => {
-    if (get().allProducts.length > 0) return;
+    
 
     set({ loading: true, error: null });
     try {
@@ -49,7 +49,7 @@ const useProductStore = create((set, get) => ({
 
   // individual seller ko products
   getMyProducts: async () => {
-    if (get().products.length > 0) return;
+  
 
     set({ loading: true, error: null });
     try {
@@ -60,7 +60,7 @@ const useProductStore = create((set, get) => ({
       });
     } catch (error) {
       showError(error.response?.data?.message || "something went wrong");
-      loading: false;
+      set({ loading: false });
     }
   },
 

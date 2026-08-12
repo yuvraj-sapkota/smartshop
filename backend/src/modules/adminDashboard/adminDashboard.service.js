@@ -4,6 +4,11 @@ import Product from "../product/product.model.js";
 import SellerPayment from "../sellerPayment/sellerPayment.model.js";
 import UserWithdrawal from "../userFund/userFund.model.js";
 import { getDueAmountService } from "../sellerPayment/sellerPayment.service.js";
+import {
+  rewardAggregationExpr,
+  DEFAULT_CASHBACK_RATE,
+  DEFAULT_REFERRAL_RATE,
+} from "../../utils/rewardMath.js";
 
 const sumAmount = (result) => result[0]?.total ?? 0;
 
@@ -58,12 +63,11 @@ export const getAdminDashboardStatsService = async () => {
           totalCommission: { $sum: "$totalCommission" },
           totalSales: { $sum: "$grandTotal" },
           totalCashback: {
-            $sum: {
-              $multiply: [
-                "$totalCommission",
-                { $ifNull: ["$cashbackRate", 0.25] },
-              ],
-            },
+            $sum: rewardAggregationExpr(
+              "$totalCommission",
+              "$cashbackRate",
+              DEFAULT_CASHBACK_RATE,
+            ),
           },
         },
       },
@@ -75,12 +79,11 @@ export const getAdminDashboardStatsService = async () => {
         $group: {
           _id: null,
           total: {
-            $sum: {
-              $multiply: [
-                "$totalCommission",
-                { $ifNull: ["$sellerReferralRate", 0.1] },
-              ],
-            },
+            $sum: rewardAggregationExpr(
+              "$totalCommission",
+              "$sellerReferralRate",
+              DEFAULT_REFERRAL_RATE,
+            ),
           },
         },
       },
@@ -92,12 +95,11 @@ export const getAdminDashboardStatsService = async () => {
         $group: {
           _id: null,
           total: {
-            $sum: {
-              $multiply: [
-                "$totalCommission",
-                { $ifNull: ["$userReferralRate", 0.1] },
-              ],
-            },
+            $sum: rewardAggregationExpr(
+              "$totalCommission",
+              "$userReferralRate",
+              DEFAULT_REFERRAL_RATE,
+            ),
           },
         },
       },

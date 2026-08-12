@@ -8,6 +8,9 @@ import {
   getAllWithdrawals,
   updateWithdrawalStatus,
 } from "./userFund.controller.js";
+import { fundActionLimiter } from "../../middlewares/rateLimit.middleware.js";
+import validate from "../../middlewares/validate.middleware.js";
+import { updateWithdrawalStatusSchema } from "./userFund.validation.js";
 
 const router = express.Router();
 
@@ -18,7 +21,13 @@ router.get(
   allowRole("user"),
   getAvailableBalance,
 );
-router.post("/submit-withdrawal", protect, allowRole("user"), submitWithdrawal);
+router.post(
+  "/submit-withdrawal",
+  protect,
+  fundActionLimiter,
+  allowRole("user"),
+  submitWithdrawal,
+);
 router.get("/my-withdrawals", protect, allowRole("user"), getMyWithdrawals);
 
 // ── Admin routes ─────────────────────────────────────────────
@@ -27,6 +36,7 @@ router.patch(
   "/:id/status",
   protect,
   allowRole("admin"),
+  validate(updateWithdrawalStatusSchema),
   updateWithdrawalStatus,
 );
 

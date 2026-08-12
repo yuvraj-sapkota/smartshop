@@ -30,7 +30,7 @@ export const getMyProductsService = async (sellerId) => {
 
 // delete product
 export const deleteProductService = async (productId, sellerId) => {
-  const deletedProduct = await Product.findByIdAndDelete({
+  const deletedProduct = await Product.findOneAndDelete({
     _id: productId,
     seller: sellerId,
   });
@@ -38,4 +38,3 @@ export const deleteProductService = async (productId, sellerId) => {
     throw new AppError("Product not found ", 404);
   }
 };
-

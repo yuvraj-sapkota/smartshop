@@ -67,6 +67,10 @@ const userSchema = new mongoose.Schema(
         type: [Number], // [longitude, latitude] — MongoDB order, not [lat, lng]
       },
     },
+    withdrawalLock: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

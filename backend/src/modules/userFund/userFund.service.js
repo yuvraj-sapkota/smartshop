@@ -2,6 +2,11 @@ import Order from "../order/order.model.js";
 import User from "../auth/auth.model.js";
 import UserWithdrawal from "./userFund.model.js";
 import AppError from "../../utils/AppError.js";
+import {
+  rewardAggregationExpr,
+  DEFAULT_CASHBACK_RATE,
+  DEFAULT_REFERRAL_RATE,
+} from "../../utils/rewardMath.js";
 
 // Helper: total cashback earned from the user's own purchases
 const getTotalCashback = async (userId) => {
@@ -11,12 +16,11 @@ const getTotalCashback = async (userId) => {
       $group: {
         _id: null,
         total: {
-          $sum: {
-            $multiply: [
-              "$totalCommission",
-              { $ifNull: ["$cashbackRate", 0.25] },
-            ],
-          },
+          $sum: rewardAggregationExpr(
+            "$totalCommission",
+            "$cashbackRate",
+            DEFAULT_CASHBACK_RATE,
+          ),
         },
       },
     },
@@ -44,12 +48,11 @@ const getTotalReferralReward = async (userId) => {
         $group: {
           _id: null,
           total: {
-            $sum: {
-              $multiply: [
-                "$totalCommission",
-                { $ifNull: ["$sellerReferralRate", 0.1] },
-              ],
-            },
+            $sum: rewardAggregationExpr(
+              "$totalCommission",
+              "$sellerReferralRate",
+              DEFAULT_REFERRAL_RATE,
+            ),
           },
         },
       },
@@ -60,12 +63,11 @@ const getTotalReferralReward = async (userId) => {
         $group: {
           _id: null,
           total: {
-            $sum: {
-              $multiply: [
-                "$totalCommission",
-                { $ifNull: ["$userReferralRate", 0.1] },
-              ],
-            },
+            $sum: rewardAggregationExpr(
+              "$totalCommission",
+              "$userReferralRate",
+              DEFAULT_REFERRAL_RATE,
+            ),
           },
         },
       },
@@ -135,21 +137,40 @@ export const getAvailableBalanceService = async (userId) => {
 export const submitWithdrawalService = async (userId, data) => {
   const { amount } = data;
 
-  const { availableBalance } = await getAvailableBalanceService(userId);
+  // Try to acquire the lock atomically — this only succeeds if nobody
+  // else currently has a withdrawal in progress for this user.
+  const lockedUser = await User.findOneAndUpdate(
+    { _id: userId, withdrawalLock: { $ne: true } },
+    { $set: { withdrawalLock: true } },
+  );
 
-  if (amount > availableBalance) {
+  if (!lockedUser) {
     throw new AppError(
-      `Withdraw amount (Rs ${amount}) exceeds available balance (Rs ${availableBalance})`,
-      400,
+      "A withdrawal request is already being processed. Please wait and try again.",
+      429,
     );
   }
 
-  const withdrawal = await UserWithdrawal.create({
-    user: userId,
-    amount,
-  });
+  try {
+    const { availableBalance } = await getAvailableBalanceService(userId);
 
-  return withdrawal;
+    if (amount > availableBalance) {
+      throw new AppError(
+        `Withdraw amount (Rs ${amount}) exceeds available balance (Rs ${availableBalance})`,
+        400,
+      );
+    }
+
+    const withdrawal = await UserWithdrawal.create({
+      user: userId,
+      amount,
+    });
+
+    return withdrawal;
+  } finally {
+    // Always release the lock, whether we succeeded or threw.
+    await User.findByIdAndUpdate(userId, { $set: { withdrawalLock: false } });
+  }
 };
 
 // ─────────────────────────────────────────────

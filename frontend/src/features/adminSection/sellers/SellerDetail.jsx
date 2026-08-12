@@ -35,7 +35,9 @@ const SellerDetail = () => {
 
       setSeller(res.seller);
     } catch (error) {
-      showError(error);
+      showError(
+        error.response?.data?.message || "Failed to update seller status",
+      );
     }
   };
 
@@ -45,7 +47,7 @@ const SellerDetail = () => {
         const data = await getSingleSeller(id);
         setSeller(data.seller);
       } catch (error) {
-        showError(error);
+        showError(error.response?.data?.message || "Failed to fetch seller");
       } finally {
         setLoading(false);
       }

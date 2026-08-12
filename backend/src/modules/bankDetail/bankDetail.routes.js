@@ -9,17 +9,11 @@ import {
   getAdminBankDetail,
 } from "./bankDetail.controller.js";
 import { upsertBankDetailSchema } from "./bankDetail.validation.js";
+import validate from "../../middlewares/validate.middleware.js";
 
 const router = express.Router();
 
-const validate = (schema) => (req, res, next) => {
-  try {
-    req.body = schema.parse(req.body);
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
+
 
 router.post(
   "/my-bank",

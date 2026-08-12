@@ -29,7 +29,6 @@ const useOrderStore = create((set, get) => ({
   },
 // seller side ko lagi
   getMyOrders: async () => {
-    if (get().orders.length > 0) return;
     set({ loading: true });
     try {
       const data = await getOrderAPI();

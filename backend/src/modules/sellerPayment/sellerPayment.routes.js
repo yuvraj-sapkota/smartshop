@@ -14,22 +14,10 @@ import {
   submitPaymentSchema,
   updatePaymentStatusSchema,
 } from "./sellerPayment.validation.js";
+import validate from "../../middlewares/validate.middleware.js";
+import { fundActionLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 const router = express.Router();
-
-// ── Validation middleware (same pattern as order routes) ──────────────────────
-const validate = (schema) => (req, res, next) => {
-  try {
-    // zod parse — coerce number fields that come as strings from multipart
-    req.body = schema.parse({
-      ...req.body,
-      amount: req.body.amount ? Number(req.body.amount) : undefined,
-    });
-    next();
-  } catch (err) {
-    next(err);
-  }
-};
 
 // ── Seller routes ─────────────────────────────────────────────────────────────
 
@@ -39,7 +27,7 @@ router.get(
   protect,
   allowRole("seller"),
   checkSellerApproved,
-  getDueAmount
+  getDueAmount,
 );
 
 // POST /api/seller-payments/submit    (1)
@@ -48,9 +36,10 @@ router.post(
   protect,
   allowRole("seller"),
   checkSellerApproved,
-  uploadScreenshot.single("screenshot"), 
-  validate(submitPaymentSchema), 
-  submitPayment
+  fundActionLimiter,
+  uploadScreenshot.single("screenshot"),
+  validate(submitPaymentSchema),
+  submitPayment,
 );
 
 // GET  /api/seller-payments/my-payments
@@ -59,7 +48,7 @@ router.get(
   protect,
   allowRole("seller"),
   checkSellerApproved,
-  getMyPayments
+  getMyPayments,
 );
 
 // ── Admin routes ──────────────────────────────────────────────────────────────
@@ -73,7 +62,7 @@ router.patch(
   protect,
   allowRole("admin"),
   validate(updatePaymentStatusSchema),
-  updatePaymentStatus
+  updatePaymentStatus,
 );
 
 export default router;

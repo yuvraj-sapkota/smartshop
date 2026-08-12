@@ -22,11 +22,33 @@ const ProductModal = ({ open, setOpen }) => {
   const validation = () => {
     let newErrors = {};
 
-    if (!productDetails.name) newErrors.name = "Product name is required";
-    if (!productDetails.price) newErrors.price = "price is required";
-    if (!productDetails.commission)
+    if (!productDetails.name.trim())
+      newErrors.name = "Product name is required";
+
+    if (!productDetails.price) {
+      newErrors.price = "Price is required";
+    } else if (
+      isNaN(Number(productDetails.price)) ||
+      Number(productDetails.price) <= 0
+    ) {
+      newErrors.price = "Price must be a valid number greater than 0";
+    }
+
+    if (!productDetails.commission) {
       newErrors.commission = "Commission is required";
-    if (!productDetails.measure) newErrors.measure = "Measured is required";
+    } else if (
+      isNaN(Number(productDetails.commission)) ||
+      Number(productDetails.commission) <= 0
+    ) {
+      newErrors.commission = "Commission must be a valid number greater than 0";
+    } else if (
+      Number(productDetails.commission) > Number(productDetails.price)
+    ) {
+      newErrors.commission = "Commission cannot be greater than price";
+    }
+
+    if (!productDetails.measure.trim())
+      newErrors.measure = "Measure is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -37,10 +59,14 @@ const ProductModal = ({ open, setOpen }) => {
 
     if (!validation()) return;
 
-    await createProduct(productDetails);
+    await createProduct({
+      ...productDetails,
+      price: Number(productDetails.price),
+      commission: Number(productDetails.commission),
+    });
+
     setOpen(false);
   };
-
 
   return (
     <>

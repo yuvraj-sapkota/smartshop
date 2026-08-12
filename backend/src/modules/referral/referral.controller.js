@@ -1,7 +1,7 @@
 import {
   getMyReferralsService,
   getMyRewardsService,
-} from "./referal.service.js";
+} from "./referral.service.js";
 
 export const getMyReferrals = async (req, res, next) => {
   try {
