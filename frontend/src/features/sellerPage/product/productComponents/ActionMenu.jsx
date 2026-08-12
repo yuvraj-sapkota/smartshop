@@ -1,6 +1,6 @@
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
-import { showSuccess } from "../../../../utils/toast";
+import { showSuccess, showError } from "../../../../utils/toast";
 import ConfirmModal from "../../../../components/ConfirmModal";
 
 const ActionMenu = ({ row, onDelete }) => {
@@ -46,7 +46,7 @@ const ActionMenu = ({ row, onDelete }) => {
       setShowConfirm(false);
       setOpen(false);
     } catch (error) {
-      console.log(error.response?.data?.message);
+      showError(error.response?.data?.message || "Failed to delete product");
     } finally {
       setLoading(false);
     }

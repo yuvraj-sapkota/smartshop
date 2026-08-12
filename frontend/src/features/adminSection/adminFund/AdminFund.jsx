@@ -17,6 +17,7 @@ import {
 
 import { FileWarning } from "lucide-react";
 import FormModal from "../../../components/FormModal";
+import { showError } from "../../../utils/toast";
 
 const AdminFund = () => {
   const [active, setActive] = useState("seller");
@@ -45,7 +46,9 @@ const AdminFund = () => {
         ),
       );
     } catch (error) {
-      console.log(error);
+      showError(
+        error.response?.data?.message || "Failed to update payment status",
+      );
     }
   };
 
@@ -59,7 +62,9 @@ const AdminFund = () => {
         ),
       );
     } catch (error) {
-      console.log(error);
+      showError(
+        error.response?.data?.message || "Failed to update withdrawal status",
+      );
     }
   };
 
@@ -91,7 +96,9 @@ const AdminFund = () => {
         const data = await getAllSubmitPaymentAPI();
         setSellerTransactions(data.payments);
       } catch (error) {
-        console.log(error);
+        showError(
+          error.response?.data?.message || "Failed to load seller transactions",
+        );
       }
     };
 
@@ -100,7 +107,9 @@ const AdminFund = () => {
         const data = await getAllWithdrawalsAPI();
         setUserWithdrawals(data.withdrawals);
       } catch (error) {
-        console.log(error);
+        showError(
+          error.response?.data?.message || "Failed to load user withdrawals",
+        );
       }
     };
 
@@ -112,7 +121,9 @@ const AdminFund = () => {
           setIsBank(true);
         }
       } catch (error) {
-        console.log(error);
+        showError(
+          error.response?.data?.message || "Failed to load bank details",
+        );
       }
     };
 
