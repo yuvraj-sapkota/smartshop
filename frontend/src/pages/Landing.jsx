@@ -15,11 +15,11 @@ export default function Landing() {
     const fetchStores = async () => {
       try {
         const data = await getAllStoreAPI();
-
+console.log(data)
         setStores(data.stores);
       } catch (error) {
         console.log(error)
-        showError(error.response?.data?.message || "Failed to load shops");
+        showError(error?.response?.data?.message || "Failed to load shopss");
       } finally {
         setLoading(false);
       }

@@ -28,6 +28,8 @@ const app = express();
 const allowedOrigins = [
   "http://192.168.1.100:5173",
   "https://smartshop108.vercel.app",
+  "https://www.hamropoint.com",
+  "https://hamropoint.com",
 ];
 
 app.use(
