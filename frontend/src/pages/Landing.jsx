@@ -18,6 +18,7 @@ export default function Landing() {
 
         setStores(data.stores);
       } catch (error) {
+        console.log(error)
         showError(error.response?.data?.message || "Failed to load shops");
       } finally {
         setLoading(false);
@@ -42,7 +43,7 @@ export default function Landing() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {stores.map((store) => (
-              <StoreCard key={store.id} store={store} />
+              <StoreCard key={store.sellerId} store={store} />
             ))}
           </div>
         )}
