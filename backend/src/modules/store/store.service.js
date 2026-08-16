@@ -46,7 +46,7 @@ export const getStoresWithProductsService = async ({ lat, lng } = {}) => {
           },
         },
       },
-      { $project: { storeName: 1, storeAddress: 1, distance: 1 } },
+      { $project: { storeName: 1, storeAddress: 1, distance: 1, phone: 1 } },
     ]);
 
     // Sellers with products but no saved coordinates — appended after, unsorted
@@ -59,7 +59,7 @@ export const getStoresWithProductsService = async ({ lat, lng } = {}) => {
         role: "seller",
         sellerStatus: "approved",
       },
-      { _id: 1, storeName: 1, storeAddress: 1 },
+      { _id: 1, storeName: 1, storeAddress: 1, phone: 1 },
     ).lean();
 
     approvedSellers = [...nearbySellers, ...remainingSellers];
@@ -70,7 +70,7 @@ export const getStoresWithProductsService = async ({ lat, lng } = {}) => {
         role: "seller",
         sellerStatus: "approved",
       },
-      { _id: 1, storeName: 1, storeAddress: 1 },
+      { _id: 1, storeName: 1, storeAddress: 1, phone: 1 },
     ).lean();
   }
 
@@ -85,6 +85,7 @@ export const getStoresWithProductsService = async ({ lat, lng } = {}) => {
       sellerId: seller._id,
       storeName: seller.storeName,
       storeAddress: seller.storeAddress,
+      phone: seller.phone,
       distance: seller.distance ?? null, // meters, null if unknown
       productCount: 0,
       products: [],

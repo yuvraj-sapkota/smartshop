@@ -13,6 +13,7 @@ const formatDistance = (meters) => {
 export default function StoreCard({ store }) {
   const [showModal, setShowModal] = useState(false);
 
+  console.log(store)
   // store ko first 2 letters likaleko
   const words = store.storeName.trim().split(/\s+/);
   const initials =
@@ -66,7 +67,7 @@ export default function StoreCard({ store }) {
 
           {/* Right side - WhatsApp */}
           <a
-            href={`https://wa.me/${store.phone}`} // make sure you have phone in DB
+            href={`https://wa.me/${store.phone}`}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary hover:bg-primary-hover text-white p-2 rounded-full transition"
