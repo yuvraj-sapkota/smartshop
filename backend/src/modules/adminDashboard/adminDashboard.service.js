@@ -149,6 +149,7 @@ export const getAdminDashboardStatsService = async () => {
 
   const sellerCompletedDeposit = sumAmount(approvedSellerPayments);
   const sellerPendingDeposit = sumAmount(pendingSellerPayments);
+
   const sellerOutstandingDeposit = parseFloat(
     sellerDueTotals.totalOutstanding.toFixed(2),
   );
@@ -160,16 +161,22 @@ export const getAdminDashboardStatsService = async () => {
     (totalCashback + totalReferralReward).toFixed(2),
   );
   const userCompletedWithdrawal = sumAmount(approvedWithdrawals);
+
+  const cashInHand = parseFloat(
+    (sellerCompletedDeposit - userCompletedWithdrawal).toFixed(2),
+  );
+
+
   const userPendingWithdrawal = sumAmount(pendingWithdrawals);
   const userOutstandingWithdrawal = parseFloat(
     (userTotalCommission - userCompletedWithdrawal).toFixed(2),
   );
 
-
   return {
     highlights: {
       grossProfit,
       netProfit,
+      cashInHand,
       totalSales,
       totalProducts,
       pendingProducts,

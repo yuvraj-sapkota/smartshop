@@ -59,6 +59,14 @@ const AdminDashboard = () => {
       text: "text-emerald-600",
     },
     {
+      _id: 8,
+      label: "Cash In Hand",
+      value: h?.cashInHand ?? 0,
+      icon: Wallet,
+      bg: "bg-teal-100",
+      text: "text-teal-600",
+    },
+    {
       _id: 3,
       label: "Total Sales",
       value: h?.totalSales ?? 0,
