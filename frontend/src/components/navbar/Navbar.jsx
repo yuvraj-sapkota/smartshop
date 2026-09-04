@@ -23,7 +23,7 @@ const Navbar = () => {
           <Logo />
 
           {/* Desktop Search */}
-          <div className="hidden md:flex items-center gap-2 w-1/3">
+          {/* <div className="hidden md:flex items-center gap-2 w-1/3">
             <input
               type="text"
               placeholder="Search products..."
@@ -32,7 +32,7 @@ const Navbar = () => {
             <button className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition">
               Search
             </button>
-          </div>
+          </div> */}
 
           {/* Desktop Right Side */}
           <div className="hidden md:flex items-center gap-3">
@@ -66,13 +66,13 @@ const Navbar = () => {
           {/* Mobile Icons */}
           <div className="flex items-center gap-3 md:hidden text-gray-700">
             {/* Search */}
-            <Search
-              className="cursor-pointer hover:scale-110 transition"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-            />
+              {/* <Search
+                className="cursor-pointer hover:scale-110 transition"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+              />
 
-            {/* Plus */}
-            <Plus className="cursor-pointer hover:scale-110 transition" />
+            
+              <Plus className="cursor-pointer hover:scale-110 transition" /> */}
 
             {/* Menu */}
             <Menu
